@@ -1,0 +1,73 @@
+{{- if .Values.alertmanager.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: alertmanager
+spec:
+  replicas: {{ .Values.alertmanager.replicas }}
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+      - name: alertmanager
+        image: {{ .Values.alertmanager.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: web
+          containerPort: {{ .Values.alertmanager.port }}
+        args:
+          - '--config.file=/etc/alertmanager/alertmanager.yml'
+          - '--storage.path=/alertmanager'
+        resources:
+          requests:
+            memory: {{ .Values.alertmanager.resources.requests.memory }}
+            cpu: {{ .Values.alertmanager.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.alertmanager.resources.limits.memory }}
+            cpu: {{ .Values.alertmanager.resources.limits.cpu }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/alertmanager
+        - name: storage
+          mountPath: /alertmanager
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: web
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: web
+          initialDelaySeconds: 30
+          periodSeconds: 15
+      volumes:
+      - name: config
+        configMap:
+          name: alertmanager-config
+      - name: storage
+        persistentVolumeClaim:
+          claimName: alertmanager-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: alertmanager-storage
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.alertmanager.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.alertmanager.persistence.size }}
+{{- end }}

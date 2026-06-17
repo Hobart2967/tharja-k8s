@@ -8,3 +8,10 @@
   become: true
   when: not service_status.stat.exists
   ansible.builtin.command: sh -c "curl -sfL https://get.k3s.io | sh -s - --docker"
+
+- name: Install socat to enable port forwarding
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - socat

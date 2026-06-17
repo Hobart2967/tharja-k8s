@@ -1,0 +1,74 @@
+{{- if .Values.loki.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: loki
+spec:
+  replicas: {{ .Values.loki.replicas }}
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      containers:
+      - name: loki
+        image: {{ .Values.loki.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: web
+          containerPort: {{ .Values.loki.port }}
+        args:
+          - '-config.file=/etc/loki/loki-config.yml'
+        resources:
+          requests:
+            memory: {{ .Values.loki.resources.requests.memory }}
+            cpu: {{ .Values.loki.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.loki.resources.limits.memory }}
+            cpu: {{ .Values.loki.resources.limits.cpu }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/loki
+        - name: storage
+          mountPath: /loki
+        livenessProbe:
+          httpGet:
+            path: /ready
+            port: web
+          initialDelaySeconds: 120
+          periodSeconds: 15
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: web
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
+      volumes:
+      - name: config
+        configMap:
+          name: loki-config
+      - name: storage
+        persistentVolumeClaim:
+          claimName: loki-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: loki-storage
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.loki.persistence.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.loki.persistence.size }}
+{{- end }}

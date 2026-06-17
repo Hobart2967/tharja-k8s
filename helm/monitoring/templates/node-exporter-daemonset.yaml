@@ -1,0 +1,59 @@
+{{- if .Values.nodeExporter.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - name: node-exporter
+        image: {{ .Values.nodeExporter.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+          - '--path.rootfs=/rootfs'
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+        ports:
+        - name: metrics
+          containerPort: {{ .Values.nodeExporter.port }}
+        resources:
+          requests:
+            memory: {{ .Values.nodeExporter.resources.requests.memory }}
+            cpu: {{ .Values.nodeExporter.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.nodeExporter.resources.limits.memory }}
+            cpu: {{ .Values.nodeExporter.resources.limits.cpu }}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+      volumes:
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+{{- end }}

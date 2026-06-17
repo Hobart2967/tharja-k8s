@@ -1,0 +1,4 @@
+releases:
+  - name: monitoring
+    namespace: monitoring
+    chart: ./helm/monitoring
