@@ -1,0 +1,15 @@
+---
+
+- name: Configure firewalld blocklist ipset - {{ipset.name}}
+  become: true
+  template:
+    src: shared/firewalld/add_ipset/templates/etc/firewalld/ipsets/ipset.xml.j2
+    dest: /etc/firewalld/ipsets/{{ipset.name}}.xml
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Reload firewall
+  when: reload
+  become: true
+  ansible.builtin.command: firewall-cmd --reload

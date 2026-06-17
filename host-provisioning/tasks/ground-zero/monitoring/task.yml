@@ -1,0 +1,124 @@
+
+- name: "Create monitoring user"
+  become: true
+  ansible.builtin.user:
+    name: "monitoring"
+    comment: "User for monitoring with grafana, etc."
+    shell: /bin/zsh
+    create_home: true
+    home: /etc/monitoring
+    state: present
+    append: yes
+    groups: "docker"
+
+- name: "Ensure web directory is owned by vhost user"
+  become: true
+  ansible.builtin.file:
+    path: /etc/monitoring
+    state: directory
+    mode: '0755'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: Create directory /etc/monitoring
+  become: true
+  ansible.builtin.file:
+    path: /etc/monitoring
+    state: directory
+    mode: '0755'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: Update or create docker compose configuration
+  become: true
+  ansible.builtin.template:
+    src: tasks/ground-zero/monitoring/etc/monitoring/docker-compose.yaml.j2
+    dest: /etc/monitoring/docker-compose.yaml
+    mode: '0644'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: "Create and start services: Monitoring"
+  become_user: "monitoring"
+  community.docker.docker_compose_v2:
+    project_src: /etc/monitoring/
+
+- name: Get Monitoring container info
+  include_tasks: shared/monitoring/get-info/task.yml
+
+- name: Configure prometheus
+  become: true
+  ansible.builtin.template:
+    src: tasks/ground-zero/monitoring/etc/monitoring/prometheus/prometheus.yml.j2
+    dest: /etc/monitoring/prometheus/prometheus.yml
+    mode: '0644'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: Configure promtail
+  become: true
+  ansible.builtin.template:
+    src: tasks/ground-zero/monitoring/etc/monitoring/promtail/promtail-config.yml.j2
+    dest: /etc/monitoring/promtail/promtail-config.yml
+    mode: '0644'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: Configure loki
+  become: true
+  ansible.builtin.template:
+    src: tasks/ground-zero/monitoring/etc/monitoring/loki/loki-config.yml.j2
+    dest: /etc/monitoring/loki/loki-config.yml
+    mode: '0644'
+    owner: "monitoring"
+    group: "monitoring"
+
+- name: Add loki docker plugin
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:2.9.1
+    alias: loki
+    state: enable
+
+- name: Read Daemon JSON
+  shell: cat /etc/docker/daemon.json
+  register: daemon_json_raw
+
+- name: Set daemon JSON fact
+  ansible.builtin.set_fact:
+    jsondata: "{{ daemon_json_raw.stdout | from_json }}"
+
+- name: Update the fact
+  # TODO: Fix this. This does not appear in daemon json.
+  ansible.utils.update_fact:
+    updates:
+      - path: jsondata['log-driver']
+        value: loki
+      - path: jsondata['log-opts']
+        value:
+          loki-url: "http://localhost:3100/loki/api/v1/push"
+
+- name: Write daemon JSON
+  become: true
+  ansible.builtin.copy:
+    content: "{{ jsondata | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Add (container) port forwarding"
+  include_tasks: shared/vhost/firewall/container_forward.yml
+  vars:
+    forward:
+      description: Loki VPN TCP 3100 -> Docker
+      zone: public
+      from:
+        source: address="192.168.178.0/24"
+        port: 3100
+      to:
+        destination: "172.52.0.3"
+        port: 3100
+      family: ipv4
+      source: ipset
+      protocol: tcp
+  when: vhost.firewall.port_forward is defined

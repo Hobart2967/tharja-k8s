@@ -1,0 +1,13 @@
+- name: Configure firewalld blocklist policy - {{policy.name}}
+  become: true
+  template:
+    src: shared/firewalld/policy/templates/etc/firewalld/policies/policy.xml.j2
+    dest: /etc/firewalld/policies/{{policy.name}}.xml
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Reload firewall
+  when: reload
+  become: true
+  ansible.builtin.command: firewall-cmd --reload

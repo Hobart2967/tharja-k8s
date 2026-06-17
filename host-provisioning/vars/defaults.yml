@@ -1,0 +1,117 @@
+provision:
+  ground_zero: false
+  security: false
+  dns: false
+  vpn: false
+  k3s: true
+
+provisioned_vhosts: []
+ #- net.adventurespiele
+ #- de.avsn
+ #- online.sone
+ #- engineer.marcoklein
+ #- de.avsn.maps
+ #- de.avsn.hark
+ #- de.avsn.rimworld
+ #- net.codewyre
+ #- net.codewyre.planning
+ #- net.codewyre.monitoring
+ #- net.codewyre.cloud
+ #- de.devforyou
+ #- net.codewyre.ntfy
+ #- automation
+ #- de.avsn.satisfactory
+ #- net.codewyre.elamicha
+ #- net.codewyre.leaetienne
+
+
+launchpad_mirror: https://mirror.netcologne.de/ubuntu/
+#launchpad_mirror: https://launchpad.net/ubuntu/
+
+arch: amd64
+
+default_user: hobart
+default_user_name: Hobart2967
+default_user_email: hobart2967@outlook.com
+
+secrets: {}
+
+asdf_vm_version: 0.16.5
+asdf_vm_plugins:
+  - name: nodejs
+    packages:
+      - name: 18.20.7
+      - name: 22.5.1
+        default: true
+
+  - name: java
+    packages:
+      - name: corretto-21.0.6.7.1
+        default: true
+      - name: corretto-11.0.26.4.1
+      - name: corretto-17.0.11.9.1
+      - name: corretto-19.0.2.7.1
+
+  - name: python
+    packages:
+      - name: 3.13.1
+        default: true
+
+  - name: awscli
+    packages:
+      - name: 2.23.13
+        default: true
+
+  - name: dotnet-core
+    packages:
+    - name: 6.0.425
+      default: true
+
+  - name: maven
+    packages:
+    - name: 3.9.6
+      default: true
+
+  - name: terraform
+    packages:
+    - name: 1.11.0
+      default: true
+
+security:
+  # Enables acquisition of certificates during provisioning. Otherwise, run `cert-renew <domain>` manually afterwards
+  renew_certs: true
+
+  fail2ban:
+    maxretry: 3
+    bantime: 43200
+    report:
+      active: false
+      #data: 'my/keepass/entry/path' # TODO: move this to 1pw or something else
+
+  firewall:
+    docker_subnets:
+      - 10.42.0.0/16
+      - 10.43.0.0/16
+
+    ipsets:
+      - name: banned-web
+        entries: []
+        type: hash:net
+
+    in:
+      - description: SSH
+        port: 22
+        protocol: tcp
+      - description: K3s API Server
+        port: 6443
+        protocol: tcp
+      - description: HTTP # Will automatically be redirected to HTTPS
+        port: 80
+        protocol: tcp
+      - description: HTTPS
+        port: 443
+        protocol: tcp
+dns:
+  disable_recursion: true
+
+vhosts: []

@@ -1,0 +1,51 @@
+---
+
+# - name: Install nginx
+#   apt:
+#     state: present
+#     update_cache: true
+#     pkg:
+#       - nginx
+
+# - name: Configure Logging for nginx
+#   become: true
+#   ansible.builtin.blockinfile:
+#     path: /etc/monitoring/promtail/promtail-config.yml
+#     append_newline: true
+#     insertafter: "# Custom Log Files"
+#     marker_begin: "BEGIN nginx-{{type}}-monitoring"
+#     marker_end: "END nginx-{{type}}-monitoring"
+#     block: |
+#       # ----
+#             - targets:
+#                 - localhost
+#               labels:
+#                 job: nginx-{{type}}
+#                 __path__: /var/log/nginx/{{type}}.log*
+#   loop:
+#     - access
+#     - error
+#   loop_control:
+#     loop_var: type
+
+- name: Restart promtail
+  become: true
+  ansible.builtin.command: docker compose restart promtail
+  args:
+    chdir: /etc/monitoring
+
+- name: Configure Port 80 to redirect to 443
+  become: true
+  ansible.builtin.template:
+    src: tasks/ground-zero/nginx/etc/nginx/sites-available/default.j2
+    dest: /etc/nginx/sites-available/default
+    mode: '0644'
+    owner: "root"
+    group: "root"
+
+- name: "Add ngix user to certreaders group"
+  become: true
+  ansible.builtin.user:
+    name: "www-data"
+    append: yes
+    groups: "certreaders"

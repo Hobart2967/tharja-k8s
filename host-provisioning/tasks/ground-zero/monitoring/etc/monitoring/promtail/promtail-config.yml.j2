@@ -1,0 +1,71 @@
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: local
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          host: {{ machine }}
+          job: boot
+          __path__: /var/log/boot.log*
+      - targets:
+          - localhost
+        labels:
+          host: {{ machine }}
+          job: auth
+          __path__: /var/log/auth.log*
+      - targets:
+          - localhost
+        labels:
+          host: {{ machine }}
+          job: dmesg
+          __path__: /var/log/dmesg*
+      - targets:
+          - localhost
+        labels:
+          host: {{ machine }}
+          job: dpkg
+          __path__: /var/log/dpkg.log*
+      - targets:
+          - localhost
+        labels:
+          job: kernel
+          host: {{ machine }}
+          __path__: /var/log/kern.log*
+      - targets:
+          - localhost
+        labels:
+          job: sys
+          host: {{ machine }}
+          __path__: /var/log/syslog*
+
+      - targets:
+          - localhost
+        labels:
+          job: apt-history
+          host: {{ machine }}
+          __path__: /var/log/apt/history.log*
+
+      - targets:
+          - localhost
+        labels:
+          job: apt-term
+          host: {{ machine }}
+          __path__: /var/log/apt/term.log*
+      - targets:
+          - localhost
+        labels:
+          job: docker_logs
+          host: {{ machine }}
+          __path__: /var/lib/docker/containers/*/*-json.log
+
+# Custom Log Files

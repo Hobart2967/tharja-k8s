@@ -1,0 +1,11 @@
+# Customized file for banning and unbanning IPs using firewalld ipsets, linked to drops and port forwards.
+[Definition]
+
+actionstart =
+actionstop =
+actioncheck =
+actionban = firewall-cmd --ipset=<ipset> --add-entry=<ip>
+            firewall-cmd --permanent --ipset=<ipset> --add-entry=<ip>
+
+actionunban = firewall-cmd --ipset=<ipset> --remove-entry=<ip>
+              firewall-cmd --permanent --ipset=<ipset> --remove-entry=<ip>

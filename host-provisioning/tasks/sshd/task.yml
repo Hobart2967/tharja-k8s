@@ -1,0 +1,5 @@
+- name: Configure Firewalld for SSH
+  include_tasks: tasks/sshd/firewalld.yml
+
+- name: Configure Fail2Ban for SSH
+  include_tasks: tasks/sshd/fail2ban.yml

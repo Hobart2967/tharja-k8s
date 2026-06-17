@@ -1,0 +1,118 @@
+- name: Uninstall UFW
+  apt:
+    state: absent
+    purge: true
+    pkg:
+      - ufw
+
+- name: (Re)Start firewalld
+  become: true
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: firewalld
+
+- name: Ensure /etc/docker/daemon.json exists
+  become: true
+  become_user: "{{ default_user }}"
+  stat:
+    path: /etc/docker/daemon.json
+  register: daemon_json
+
+- name: Write default daemon_json
+  become: true
+  template:
+    src: tasks/security/firewall/templates/etc/docker/daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  register: docker_daemon_config
+  when: not daemon_json.stat.exists
+
+- name: Read Daemon JSON
+  shell: cat /etc/docker/daemon.json
+  register: daemon_json_raw
+
+- name: Set daemon JSON fact
+  ansible.builtin.set_fact:
+    jsondata: "{{ daemon_json_raw.stdout | from_json }}"
+
+- name: Update the fact
+  ansible.utils.update_fact:
+    updates:
+      - path: jsondata.iptables
+        value: false
+
+- name: Write daemon JSON
+  become: true
+  ansible.builtin.copy:
+    content: "{{ jsondata | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add docker zone
+  firewalld:
+    zone: docker
+    state: present
+    permanent: true
+
+- name: Set target to ACCEPT
+  firewalld:
+    zone: docker
+    target: ACCEPT
+    state: present
+    permanent: true
+
+- name: Add policy docker-outbound
+  include_tasks: shared/firewalld/policy/task.yml
+  vars:
+    policy:
+      name: docker-outbound
+      description: Traffic Policy for docker containers -> outside
+      target: ACCEPT
+      masquerade: true
+      ingress_zone: docker
+      egress_zone: ANY
+    reload: false
+
+- name: Add policy docker-inbound
+  include_tasks: shared/firewalld/policy/task.yml
+  vars:
+    policy:
+      name: docker-inbound
+      description: Traffic Policy for allowing traffic forwarding to containers
+      target: ACCEPT
+      ingress_zone: ANY
+      egress_zone: docker
+    reload: false
+
+- name: Add docker subnets to docker firewalld zone
+  ansible.posix.firewalld:
+    zone: docker
+    permanent: true
+    state: enabled
+    source: "{{ subnet }}"
+  loop: "{{ security.firewall.docker_subnets }}"
+  loop_control:
+    loop_var: "subnet"
+
+- name: Add port permits
+  ansible.posix.firewalld:
+    zone: "{{ permit.zone is defined | ternary(permit.zone, 'public') }}"
+    port: "{{ permit.port }}/{{permit.protocol}}"
+    permanent: true
+    state: enabled
+  loop: "{{ security.firewall.in }}"
+  loop_control:
+    loop_var: permit
+  when: security.firewall.in is defined
+
+- name: Reboot machine to clean iptables made dirty by docker
+  ansible.builtin.reboot:
+  when: docker_daemon_config.changed
+
+- name: Reload firewalld configuration
+  ansible.builtin.command: firewall-cmd --reload

@@ -1,0 +1,8 @@
+- name: Make sure python module "{{module}}" is present
+  become: true # needed if the other tasks are not played as root
+  pip:
+    name: "{{ module }}"
+    state: present
+  loop: []
+  loop_control:
+    loop_var: module

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <policy version="1.0" target="{{policy.target}}">
+{% if policy.description is defined %}
+    <description>{{policy.description}}</description>
+{% endif %}
+{% if policy.masquerade is defined and policy.masquerade %}
+    <masquerade/>
+{% endif %}
+    <ingress-zone name="{{policy.ingress_zone}}"/>
+    <egress-zone name="{{policy.egress_zone}}"/>
+  </policy>

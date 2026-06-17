@@ -1,0 +1,6 @@
+- name: Add port forwards
+  ansible.posix.firewalld:
+    rich_rule: rule family={{forward.family}} source {{ forward.from.source }} forward-port port={{forward.from.port}} protocol={{forward.protocol}} to-port={{forward.to.port}} to-addr={{forward.to.destination}}
+    permanent: true
+    state: enabled
+    zone: "{{forward.zone}}"

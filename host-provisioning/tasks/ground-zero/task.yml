@@ -1,0 +1,90 @@
+---
+- name: Add apt repositories
+  include_tasks: tasks/ground-zero/apt/task.yml
+
+- name: Install basic packages
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - zsh
+
+      - openssh-server
+
+      # Common Tools
+      - acl # Required for this ansible project
+      - net-tools
+      - ethtool
+      - trash-cli
+      - nano
+      - curl
+      - wget
+      - gh
+      - git
+      - git-lfs
+      - jq
+      - htop
+      - mc
+      - rsync
+      - ncdu
+
+      - mariadb-client
+
+      - ffmpeg
+
+      - make
+      - llvm
+
+      - smartmontools
+      - nvme-cli
+      - traceroute
+
+      - xz-utils
+      - tk-dev
+
+      # Docker
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+      - docker-compose
+      - build-essential
+
+      # Libs
+      - libncursesw5-dev
+      - libxml2-dev
+      - libxmlsec1-dev
+      - libffi-dev
+      - liblzma-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libssl-dev
+      - libsqlite3-dev
+
+- name: Ensure Cert Readers group exists
+  ansible.builtin.group:
+    name: certreaders
+    state: present
+
+- name: Install ASDF Version Manager
+  include_tasks: tasks/ground-zero/asdf-vm/task.yml
+
+- name: Install Oh My Zsh
+  include_tasks: tasks/ground-zero/ohmyzsh/task.yml
+
+- name: Install Shell Setup
+  include_tasks: tasks/ground-zero/shell-setup/task.yml
+
+- name: Install Github SSH Auth
+  include_tasks: tasks/ground-zero/github-auth/task.yml
+
+#- name: Configure docker
+#  include_tasks: tasks/ground-zero/docker/task.yml
+
+- name: Install Python modules
+  include_tasks: tasks/ground-zero/python/task.yml
+
+# - name: Install Monitoring
+#   include_tasks: tasks/ground-zero/monitoring/task.yml

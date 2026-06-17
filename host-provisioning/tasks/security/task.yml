@@ -1,0 +1,8 @@
+- name: Install Packages
+  include_tasks: tasks/security/packages.yml
+
+- name: Configure Firewall
+  include_tasks: tasks/security/firewall/task.yml
+
+- name: Configure Fail2ban
+  include_tasks: tasks/security/fail2ban/task.yml

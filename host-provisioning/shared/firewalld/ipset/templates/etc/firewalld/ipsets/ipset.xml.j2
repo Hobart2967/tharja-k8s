@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <ipset type="{{ ipset.type }}">
+  <short>{{ ipset.name }}</short>
+{% for item in ipset.entries %}
+  <entry>{{ item }}</entry>
+{% endfor %}
+</ipset>

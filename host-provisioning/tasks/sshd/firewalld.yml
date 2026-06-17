@@ -1,0 +1,15 @@
+- name: Add ipset banned-ssh
+  include_tasks: shared/firewalld/ipset/task.yml
+  vars:
+    ipset: "{{ item }}"
+    reload: false
+  loop:
+    - name: banned-ssh
+      entries: []
+      type: hash:net
+
+  loop_control:
+    loop_var: "item"
+
+- name: Reload Firewalld
+  ansible.builtin.command: firewall-cmd --reload

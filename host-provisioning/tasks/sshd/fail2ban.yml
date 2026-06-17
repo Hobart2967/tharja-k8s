@@ -1,0 +1,17 @@
+# Filters
+# - None
+
+# Blacklists
+- name: Configure Fail2Ban Blacklist for IMAP
+  include_tasks: shared/fail2ban/blacklist/task.yml
+  loop:
+    - name: sshd
+      service: ssh
+      port: 22
+      filter: ssh
+      banned_ipset: banned-ssh
+  loop_control:
+    loop_var: "blacklist"
+
+# Jails
+# - None

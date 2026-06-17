@@ -1,0 +1,101 @@
+github_keys_holder: xbzljy6z5y7xiekns7p7w4cnsy
+private_key_id: ssh-privkey-sidra
+public_key_id: ssh-pubkey-sidra
+
+machine_settings:
+  banner: SIDRA
+  user: hobart
+
+mailboxes:
+  - &initial_mailbox
+    address: info@marcoklein.engineer
+    initial: true
+    aliases:
+      - postmaster@marcoklein.engineer
+
+initial_mailbox: *initial_mailbox
+
+config:
+  secret_vault: 64iqhopdnz56fpxgk5mr3uhqpe
+  grafana:
+    url: https://monitoring.codewyre.net
+    admin:
+      name: grafana_admin_name
+      mail: grafana_admin_mail
+      user: grafana_admin_user
+      password: grafana_admin_password
+
+secrets:
+  grafana_discord_webhook:
+    item: 'rqidcwg4rb4kk5ku7pm4zvgami'
+    field: password
+  grafana_admin_password:
+    item: '5cctdss53axmrc67inrtrwozw4'
+    field: password
+  grafana_admin_name:
+    item: '5cctdss53axmrc67inrtrwozw4'
+    field: name
+  grafana_admin_user:
+    item: '5cctdss53axmrc67inrtrwozw4'
+    field: username
+  grafana_admin_mail:
+    item: '5cctdss53axmrc67inrtrwozw4'
+    field: email
+  server_default_ip:
+    item: 'efquumorbkffn7j6sgatvcawge'
+    field: default_ip
+  de_avsn_maps_rcon_password:
+    item: 'm76m4hps4kzxttc6jnnojvlgvq'
+    field: password
+  cloud_codewyre_net_access_key_id:
+    item: 'sgbtrn2w7fm5sv6vqvk4mjr35m'
+    field: username
+  cloud_codewyre_net_secret_access_key:
+    item: 'sgbtrn2w7fm5sv6vqvk4mjr35m'
+    field: password
+  de_avsn_mariadb_root_password:
+    item: '44djwk4bbnnhn7b3vvngkgs34y'
+    field: password
+  de_avsn_mariadb_web1:
+    item: '2kwhr2kdmghidhbk4gcviqnt7e'
+    field: password
+  de_avsn_hark_server_password:
+    item: 'rwvbvxet7zoeodrj5pzbwhrc2a'
+    field: password
+  de_avsn_hark_admin_password:
+    item: 'rwvbvxet7zoeodrj5pzbwhrc2a'
+    field: admin_password
+mailserver:
+  hostname: mail.marcoklein.engineer
+  postmaster_address: postmaster@marcoklein.engineer
+
+  pop3: 0
+  imap: 1
+
+  log_level: info
+  supervisor_loglevel: warn
+
+  dms_vmail_uid: 5000
+  dms_vmail_gid: 5000
+  account_provisioner: FILE
+
+  enable_update_check: 1
+  update_check_interval: 1d
+
+  tls_level: modern
+  ssl_type: letsencrypt
+
+  spoof_protection: 1
+  srs: 0
+  opendkim: 1
+  opendmarc: 1
+  policyd_spf: 0
+
+  spam_subject_prefix: ""
+  spamassassin: 1
+  spamassassin_kam: 1
+  rspamd: 1
+  rspamd_learn: 1
+  rspamd_redis: 1
+
+  clam_antivirus: 1

@@ -1,0 +1,10 @@
+- name: Check wether systemd service "k3s" exists
+  become: true
+  stat:
+    path: /usr/local/bin/k3s
+  register: service_status
+
+- name: Install k3s with docker runtime configured
+  become: true
+  when: not service_status.stat.exists
+  ansible.builtin.command: sh -c "curl -sfL https://get.k3s.io | sh -s - --docker"

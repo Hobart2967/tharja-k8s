@@ -1,0 +1,39 @@
+---
+# Service can be:
+#   - apache
+#   - bots
+#   - mail
+#   - imap
+#   - ftp
+#   - ssh
+#   - voip
+
+- name: Register "{{ blacklist.name }}" Blacklist
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/fail2ban/jail.conf
+    append_newline: true
+    marker_begin: "BEGIN {{ blacklist.name }}-blacklist"
+    marker_end: "END {{ blacklist.name }}-blacklist"
+    block: |
+      [{{ blacklist.name }}-blacklist]
+      enabled = true
+      port = {{ blacklist.port }}
+      filter = {{ blacklist.filter }}
+      logpath = /var/log/blacklist-{{ blacklist.service }}.log
+      maxretry = 1
+      bantime = 86400
+      action = firewalld-ipset[ipset="{{blacklist.banned_ipset}}"]
+
+- name: Touch Log File for "{{ blacklist.service }}" Blacklist
+  file:
+    path: "/var/log/blacklist-{{ blacklist.service }}.log"
+    state: touch
+    mode: '0644'
+
+- name: Register crontab entry for refreshing the "{{ blacklist.service }}" blacklist
+  become: true
+  ansible.builtin.cron:
+    name: "refresh-{{ blacklist.service }}-blacklist"
+    minute: "0"
+    job: "/etc/fail2ban/refresh-blacklist.sh {{ blacklist.service }} {{ blacklist.name }}-blacklist {{ security.fail2ban.bantime }}"

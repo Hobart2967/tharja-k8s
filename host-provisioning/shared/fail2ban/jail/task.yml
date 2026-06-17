@@ -1,0 +1,15 @@
+- name: Register Jail "{{ jail.name }}"
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/fail2ban/jail.conf
+    block: |
+      [{{ jail.name }}]
+      enabled = true
+      action = firewalld-ipset[ipset="{{jail.banned_ipset}}"]
+      {{ jail.config }}
+
+- name: Touch Log File for "{{ jail.name }}" Jail
+  file:
+    path: "/var/log/jail-{{ jail.name }}.log"
+    state: touch
+    mode: '0644'

@@ -1,0 +1,15 @@
+
+- name: Install python3-firewall v2.3.0
+  apt:
+    deb: "{{launchpad_mirror}}pool/universe/f/firewalld/python3-firewall_2.3.0-2_all.deb"
+
+- name: Install firewalld v2.3.0
+  apt:
+    deb: "{{launchpad_mirror}}pool/universe/f/firewalld/firewalld_2.3.0-2_all.deb"
+
+- name: Install fail2ban
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - fail2ban

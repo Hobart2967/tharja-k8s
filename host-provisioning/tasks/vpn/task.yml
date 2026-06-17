@@ -1,0 +1,194 @@
+---
+- name: Enable IP forwarding for VPN
+  become: true
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+
+- name: Install strongSwan and dependencies
+  become: true
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - strongswan
+      - strongswan-pki
+      - libcharon-extra-plugins
+      - libstrongswan-extra-plugins
+
+- name: Create IPsec configuration from template
+  become: true
+  template:
+    src: tasks/vpn/templates/ipsec.conf.j2
+    dest: /etc/ipsec.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: ipsec_conf_result
+  when: vpn.ipsec is defined
+
+- name: Create IPsec secrets from template
+  become: true
+  template:
+    src: tasks/vpn/templates/ipsec.secrets.j2
+    dest: /etc/ipsec.secrets
+    owner: root
+    group: root
+    mode: "0600"
+  register: ipsec_secrets_result
+  when: vpn.ipsec is defined
+
+- name: Allow IPsec traffic through firewall (IKE)
+  ansible.posix.firewalld:
+    zone: public
+    port: 500/udp
+    permanent: true
+    state: enabled
+  when: vpn.firewall_rules | default(true)
+
+- name: Allow IPsec traffic through firewall (NAT-T)
+  ansible.posix.firewalld:
+    zone: public
+    port: 4500/udp
+    permanent: true
+    state: enabled
+  when: vpn.firewall_rules | default(true)
+
+- name: Allow IPsec traffic through firewall (ESP)
+  ansible.posix.firewalld:
+    zone: public
+    protocol: esp
+    permanent: true
+    state: enabled
+  when: vpn.firewall_rules | default(true)
+
+- name: Reload firewalld configuration
+  ansible.builtin.command: firewall-cmd --reload
+  when: vpn.firewall_rules | default(true)
+
+- name: Enable and start strongSwan service
+  become: true
+  ansible.builtin.systemd_service:
+    name: strongswan-starter
+    state: started
+    enabled: true
+
+- name: Configure strongSwan to prefer IPv4
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/strongswan.d/charon.conf
+    regexp: '^\s*# prefer_configured_address'
+    line: '        prefer_configured_address = yes'
+    insertafter: 'charon {'
+  when: vpn.force_ipv4 | default(false)
+  notify: restart strongswan if changed
+
+- name: Restart strongSwan if configuration changed
+  become: true
+  ansible.builtin.systemd_service:
+    name: strongswan-starter
+    state: restarted
+  when: (ipsec_conf_result is defined and ipsec_conf_result.changed) or (ipsec_secrets_result is defined and ipsec_secrets_result.changed)
+
+- name: Bring up VPN connections
+  become: true
+  ansible.builtin.shell: timeout 10 ipsec up {{ connection.name }} || true
+  loop: "{{ vpn.connections | default([]) }}"
+  loop_control:
+    loop_var: connection
+  async: 15
+  poll: 0
+  when:
+    - vpn.connections is defined
+    - connection.auto_start | default(false)
+  ignore_errors: true
+
+- name: Wait for VPN to establish
+  ansible.builtin.pause:
+    seconds: 5
+  when: vpn.connections is defined and (vpn.connections | selectattr('auto_start', 'defined') | selectattr('auto_start') | list | length > 0)
+
+- name: Get VPN virtual IP address dynamically
+  become: true
+  ansible.builtin.shell: |
+    set -o pipefail
+    ipsec statusall 2>&1 | grep -oP '\d+\.\d+\.\d+\.\d+(?=/32\s*===)' | head -n1
+  args:
+    executable: /bin/bash
+  register: vpn_virtual_ip
+  changed_when: false
+  when:
+    - vpn.connections is defined
+    - vpn.docker_nat | default(true)
+  ignore_errors: true
+
+- name: Add direct iptables SNAT rule for Docker containers to VPN
+  become: true
+  ansible.builtin.command:
+    cmd: firewall-cmd --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s {{ docker_subnet }} -d {{ connection.rightsubnet }} -j SNAT --to-source {{ vpn_virtual_ip.stdout }}
+  loop: "{{ vpn.connections | default([]) | product(security.firewall.docker_subnets) | list }}"
+  loop_control:
+    loop_var: item
+  vars:
+    connection: "{{ item.0 }}"
+    docker_subnet: "{{ item.1 }}"
+  when:
+    - vpn.connections is defined
+    - connection.rightsubnet is defined
+    - vpn.docker_nat | default(true)
+    - vpn_virtual_ip.stdout is defined
+    - vpn_virtual_ip.stdout != ""
+  register: direct_rule_result
+  changed_when: "'ALREADY_ENABLED' not in direct_rule_result.stderr and direct_rule_result.rc == 0"
+  failed_when: direct_rule_result.rc != 0 and 'ALREADY_ENABLED' not in direct_rule_result.stderr
+  ignore_errors: true
+
+- name: Reload firewalld to apply direct rules
+  become: true
+  ansible.builtin.systemd_service:
+    name: firewalld
+    state: reloaded
+  when:
+    - direct_rule_result is defined
+    - direct_rule_result.changed
+
+- name: Create VPN health check script
+  become: true
+  ansible.builtin.template:
+    src: tasks/vpn/templates/vpn-healthcheck.sh.j2
+    dest: /usr/local/bin/vpn-healthcheck.sh
+    owner: root
+    group: root
+    mode: '0755'
+  when:
+    - vpn.connections is defined
+    - vpn.healthcheck | default(true)
+
+- name: Create log file for VPN health checks
+  become: true
+  ansible.builtin.file:
+    path: /var/log/vpn-healthcheck.log
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - vpn.connections is defined
+    - vpn.healthcheck | default(true)
+
+- name: Set up cron job for VPN health check
+  become: true
+  ansible.builtin.cron:
+    name: "VPN Health Check"
+    minute: "*/5"
+    job: "/usr/local/bin/vpn-healthcheck.sh"
+    user: root
+    state: present
+  when:
+    - vpn.connections is defined
+    - vpn.healthcheck | default(true)
+
+

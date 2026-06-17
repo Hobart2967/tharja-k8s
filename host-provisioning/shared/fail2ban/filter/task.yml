@@ -1,0 +1,10 @@
+---
+
+- name: Configure Fail2ban Filter "docker mailserver"
+  become: true
+  ansible.builtin.template:
+    src: "{{filter.template_path}}"
+    dest: /etc/fail2ban/filter.d/{{filter.name}}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
