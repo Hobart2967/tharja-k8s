@@ -1,0 +1,111 @@
+kubeEtcd:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    shards: 1
+    retention: 7d
+    retentionSize: 10GB
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+    additionalScrapeConfigs:
+      - job_name: blackbox-kubernetes-services
+        metrics_path: /probe
+        params:
+          module:
+            - http_2xx
+        kubernetes_sd_configs:
+          - role: service
+        relabel_configs:
+          - source_labels:
+              - __meta_kubernetes_service_annotation_prometheus_io_probe
+            action: keep
+            regex: true
+          - source_labels:
+              - __address__
+            target_label: __param_target
+          - target_label: __address__
+            replacement: blackbox-exporter:9115
+          - source_labels:
+              - __param_target
+            target_label: instance
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels:
+              - __meta_kubernetes_namespace
+            target_label: kubernetes_namespace
+          - source_labels:
+              - __meta_kubernetes_service_name
+            target_label: kubernetes_name
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+
+grafana:
+  adminUser: admin
+  adminPassword: admin123
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: local-path
+    size: 2Gi
+  service:
+    type: ClusterIP
+    port: 3000
+
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi

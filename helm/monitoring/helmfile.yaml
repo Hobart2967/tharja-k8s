@@ -1,0 +1,38 @@
+---
+helmDefaults:
+  wait: true
+  timeout: 600
+  createNamespace: true
+
+repositories:
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+
+releases:
+  - name: prometheus-grafana
+    namespace: monitoring
+    chart: prometheus-community/kube-prometheus-stack
+    values:
+      - ./values/kube-prometheus-stack.yaml
+
+  - name: loki
+    namespace: monitoring
+    chart: grafana/loki
+    values:
+      - ./values/loki.yaml
+
+  - name: promtail
+    namespace: monitoring
+    chart: grafana/promtail
+    needs:
+      - monitoring/loki
+    values:
+      - ./values/promtail.yaml
+
+  - name: blackbox-exporter
+    namespace: monitoring
+    chart: prometheus-community/prometheus-blackbox-exporter
+    values:
+      - ./values/blackbox-exporter.yaml
