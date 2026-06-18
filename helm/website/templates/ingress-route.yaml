@@ -1,0 +1,69 @@
+---
+{{ $values := .Values }}
+{{ $release := .Release }}
+
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $values.namespace }}-https
+  namespace: {{ $values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ $values.namespace }}
+    app.kubernetes.io/instance: {{ $release.Name }}
+    app.kubernetes.io/managed-by: {{ $release.Service }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  {{ range $rule := $values.rules | default (list) -}}
+  - kind: Rule
+    {{ if $rule.condition -}}
+    match: "{{ $rule.condition }}"
+    {{ else if $rule.hostname -}}
+    match: Host(`{{ $rule.hostname }}`){{ range $index, $hostname := $rule.aliases }} || Host(`{{ $hostname }}`){{ end }}
+    {{ end -}}
+    middlewares:
+    - name: enforce-https
+      namespace: {{ $values.namespace }}
+    {{ range $values.aliases -}}
+    - name: redirect-from-{{ replace "." "-" . }}
+      namespace: {{ $values.namespace }}
+    {{ end -}}
+    {{ range $middleware := ($rule.middlewares | default (list)) -}}
+    - name: {{ $middleware.name }}
+      namespace: {{ $middleware.namespace | default $values.namespace }}
+    {{ end -}}
+    observability:
+      accessLogs: true
+      metrics: true
+      tracing: true
+    priority: 10
+    services:
+    {{ range $service := $rule.services -}}
+    - kind: Service
+      name: {{ $service.name }}
+      namespace: {{ $service.namespace | default $values.namespace }}
+      # Customize the connection between Traefik and the backend
+      passHostHeader: true
+      port: {{ $service.port }}
+      responseForwarding:
+        flushInterval: 1ms
+      {{ if $service.sticky -}}
+      sticky: {{ $service.sticky }}
+      {{ end -}}
+    {{ end -}}
+  {{ end }}
+  #tls:
+  #  # Generate a TLS certificate using a certificate resolver
+  #  certResolver: foo
+  #  domains:
+  #  - main: example.net
+  #    sans:
+  #    - a.example.net
+  #    - b.example.net
+  #  # Customize the TLS options
+  #  options:
+  #    name: opt
+  #    namespace: apps
+  #  # Add a TLS certificate from a Kubernetes Secret
+  #  secretName: supersecret

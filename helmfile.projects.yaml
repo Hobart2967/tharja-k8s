@@ -1,0 +1,5 @@
+---
+repositories: []
+
+helmfiles:
+  - ./helmfiles/projects/de.avsn/helmfile.yaml

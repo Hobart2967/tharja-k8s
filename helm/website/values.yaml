@@ -1,0 +1,19 @@
+# namespace: <string>
+# rules:
+#  - condition: "Host(`example.com`)"
+#    service:
+#      name: example-service
+#      port: http
+#
+webfacade:
+  image: nginx:1.31.2-alpine
+  ports:
+    - name: http
+      containerPort: 80
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi

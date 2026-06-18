@@ -8,5 +8,7 @@ releases:
     installed: true
 
 helmfiles:
-  - path: ./helm/crds-monitoring/helmfile.yaml
-  - path: ./helm/monitoring/helmfile.yaml
+  - path: ./helmfiles/crds-monitoring/helmfile.yaml
+  - path: ./helmfiles/monitoring/helmfile.yaml
+
+  - path: ./helmfiles/projects/de.avsn/helmfile.yaml

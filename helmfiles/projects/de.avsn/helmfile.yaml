@@ -1,0 +1,11 @@
+---
+releases:
+  - name: project
+    chart: ../../../helm/project
+    values:
+      - ./values/project.yaml
+
+  - name: website
+    chart: ../../../helm/website
+    values:
+      - ./values/website.yaml

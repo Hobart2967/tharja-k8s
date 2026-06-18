@@ -1,0 +1,7 @@
+namespace: project-de-avsn
+databases:
+  - name: usr_web1_1
+    users:
+      - name: web1
+        hosts:
+          - '%' # Needs to be the host from where the client logs in.

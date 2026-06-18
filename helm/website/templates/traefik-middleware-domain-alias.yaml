@@ -1,0 +1,21 @@
+{{ $values := .Values }}
+{{ $release := .Release }}
+
+{{- range $values.rules }}
+
+{{ range $alias := .aliases -}}
+
+{{ $sanitized := replace "." "-" . }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-from-{{ $sanitized }}
+  namespace: {{ $values.namespace }}
+spec:
+  redirectRegex:
+    regex: "^https://{{ . }}/(.*)"
+    replacement: "https://{{ $values.hostname }}/$1"
+{{ end }}
+
+{{ end}}

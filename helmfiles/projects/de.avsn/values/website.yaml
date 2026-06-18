@@ -1,0 +1,12 @@
+namespace: project-de-avsn
+webfacade:
+  image: hobart2967/docker-apache2-php5.6.40
+rules:
+  - hostname: www.adventurespiele.net
+    aliases:
+    - avsn.de
+    - www.avsn.de
+    - adventurespiele.net
+    services:
+      - name: website
+        port: http
