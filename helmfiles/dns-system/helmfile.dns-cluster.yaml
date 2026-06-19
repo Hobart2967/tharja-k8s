@@ -1,0 +1,7 @@
+---
+releases:
+  - name: public-dns
+    namespace: dns-system
+    chart: ../../helm/dns-cluster
+    values:
+      - ./values.yaml

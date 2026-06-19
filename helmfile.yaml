@@ -8,7 +8,14 @@ releases:
     installed: true
 
 helmfiles:
+  - path: ./helmfiles/crds-bindy/helmfile.yaml
   - path: ./helmfiles/crds-monitoring/helmfile.yaml
-  - path: ./helmfiles/monitoring/helmfile.yaml
 
+  - path: ./helmfiles/monitoring/helmfile.yaml
+  - path: ./helmfiles/dns-system/helmfile.yaml
+  - path: ./helmfiles/dns-cluste/helmfile.yaml
+
+  - path: ./helmfiles/monitoring/helmfile.yaml
+  - path: ./helmfiles/dns-zones/avsn.de/helmfile.yaml
+  - path: ./helmfiles/dns-zones/adventurespiele.net/helmfile.yaml
   - path: ./helmfiles/projects/de.avsn/helmfile.yaml

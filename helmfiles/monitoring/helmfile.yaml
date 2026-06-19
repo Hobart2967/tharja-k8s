@@ -14,18 +14,21 @@ releases:
   - name: prometheus-grafana
     namespace: monitoring
     chart: prometheus-community/kube-prometheus-stack
+    version: "86.3.2"
     values:
       - ./values/kube-prometheus-stack.yaml
 
   - name: loki
     namespace: monitoring
     chart: grafana/loki
+    version: 7.0.0
     values:
       - ./values/loki.yaml
 
   - name: promtail
     namespace: monitoring
     chart: grafana/promtail
+    version: 6.17.1
     needs:
       - monitoring/loki
     values:
@@ -34,5 +37,6 @@ releases:
   - name: blackbox-exporter
     namespace: monitoring
     chart: prometheus-community/prometheus-blackbox-exporter
+    version: 11.13.0
     values:
       - ./values/blackbox-exporter.yaml

@@ -1,0 +1,34 @@
+{{ $values := .Values }}
+{{ $release := .Release }}
+
+{{ range .Values.dnsRecords }}
+---
+apiVersion: bindy.firestoned.io/v1beta1
+{{ if eq .type "A" -}}
+kind: ARecord
+{{ else if eq .type "MX" -}}
+kind: MXRecord
+{{ else if eq .type "CNAME" -}}
+kind: CNAMERecord
+{{ else if eq .type "NS" -}}
+kind: NSRecord
+{{ end -}}
+metadata:
+  name: {{.type | lower }}-{{ .name }}-{{ replace "." "-" .zone }}
+  namespace: default # should be {{ $release.Namespace }} as soon as https://github.com/firestoned/bindy/issues/370 is fixed.
+  labels:
+    dns-zone: {{ .zone }}
+spec:
+  name: {{ .name }}
+  {{ if eq .type "A" -}}
+  ipv4Addresses:
+    - {{ .ipv4Address }}
+  {{ else if eq .type "MX" -}}
+  mailServer: {{ .mailServer }}
+  priority: {{ .priority }}
+  {{ else if eq .type "CNAME" -}}
+  canonicalName: {{ .canonicalName }}
+  {{ else if eq .type "NS" -}}
+  nameserver: {{ .nameserver }}
+  {{ end -}}
+{{ end }}

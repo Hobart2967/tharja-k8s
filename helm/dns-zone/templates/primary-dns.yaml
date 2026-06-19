@@ -1,0 +1,11 @@
+---
+apiVersion: bindy.firestoned.io/v1beta1
+kind: NSRecord
+metadata:
+  name: {{ .Release.Name }}-primary
+  namespace: {{ .Release.Namespace }}
+  labels:
+    dns-zone: {{ .Values.domainName }}
+spec:
+  name: "@"
+  nameserver: {{ .Values.primaryNameserver }}

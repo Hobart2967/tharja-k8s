@@ -1,0 +1,11 @@
+---
+repositories:
+  - name: bindy-charts
+    url: https://Hobart2967.github.io/bindy-charts
+
+releases:
+  - name: bindy-crds
+    namespace: default
+    chart: bindy-charts/bindy-crds
+    version: 0.5.2
+    installed: true

@@ -1,0 +1,9 @@
+---
+repositories:
+  - name: bindy-charts
+    url: https://Hobart2967.github.io/bindy-charts
+
+helmfiles:
+  - ./helmfile.project.yaml
+  - ./helmfile.operator.yaml
+  - ./helmfile.dns-cluster.yaml

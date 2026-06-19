@@ -1,11 +1,14 @@
 ---
 releases:
   - name: project
+    namespace: project-de-avsn
     chart: ../../../helm/project
     values:
       - ./values/project.yaml
 
   - name: website
     chart: ../../../helm/website
+    namespace: project-de-avsn
     values:
       - ./values/website.yaml
+      - ./values/dns.yaml

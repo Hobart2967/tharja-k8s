@@ -1,0 +1,29 @@
+---
+apiVersion: bindy.firestoned.io/v1beta1
+kind: Bind9Instance
+metadata:
+  annotations:
+    bindy.firestoned.io/allow-zone-namespaces: '*'
+  labels:
+    app.kubernetes.io/part-of: bindy
+    bindy.firestoned.io/cluster: public-dns
+    bindy.firestoned.io/managed-by: Bind9Cluster
+    bindy.firestoned.io/role: primary
+    dns-role: primary
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  bindcarConfig: null
+  clusterRef: public-dns
+  config:
+    allowTransfer: {{ .Values.allowedTransferServers}}
+  configMapRefs: null
+  image: null
+  primaryServers: null
+  replicas: 1
+  rndcSecretRef: null
+  role: primary
+  storage: null
+  version: "9.18"
+  volumeMounts: null
+  volumes: null

@@ -1,4 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  {{ if .Values.disablePrefix -}}
+  name: {{ .Values.namespace }}
+  {{ else -}}
   name: project-{{ .Values.namespace }}
+  {{ end }}

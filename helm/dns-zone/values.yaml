@@ -1,0 +1,4 @@
+# domainName: example.com
+# ipAddress: 1.1.1.1
+# primaryNameserver: ns1.example.com
+# secondaryNameservers: ns2.example.com

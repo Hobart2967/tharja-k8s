@@ -17,3 +17,22 @@ webfacade:
     requests:
       cpu: 50m
       memory: 64Mi
+
+dnsRecords: []
+# - zone: example.com
+#   name: example.com.
+#   type: A
+#   ipv4Address: 1.1.1.1
+# - zone: example.com
+#   name: mail
+#   type: MX
+#   mailServer: mail.example.com.
+#   priority: 10
+# - zone: example.com
+#   name: www
+#   type: CNAME
+#   canonicalName: example.com.
+# - zone: example.com
+#   name: example.com.
+#   type: NS
+#   nameserver: ns1.example.com.

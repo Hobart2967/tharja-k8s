@@ -1,0 +1,14 @@
+---
+# TODO
+
+apiVersion: bindy.firestoned.io/v1beta1
+kind: ARecord
+metadata:
+  name: {{ .Release.Name }}-ns1
+  namespace: {{ .Release.Namespace }}
+  labels:
+    dns-zone: {{ .Values.domainName }}
+spec:
+  name: ns1
+  ipv4Addresses:
+    - {{ .Values.ipAddress }}

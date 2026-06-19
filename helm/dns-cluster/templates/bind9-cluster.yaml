@@ -1,0 +1,12 @@
+---
+apiVersion: bindy.firestoned.io/v1beta1
+kind: ClusterBind9Provider
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    bindy.firestoned.io/allow-zone-namespaces: "*"
+spec:
+  namespace: {{ .Release.Namespace }}
+  primary:
+    replicas: 0 # Workaround: Manually create Bind9Instance resources to also be able to annotate them with bindy.firestoned.io/allow-zone-namespaces: "*"

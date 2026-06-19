@@ -1,29 +1,33 @@
 namespace: project-de-avsn
-domains:
-  - zone: avsn.de
-    name: avsn.de.
-    type: A
+dnsRecords:
   - zone: avsn.de
     name: mail
     type: A
-  - zone: avsn.de
-    name: avsn.de.
-    type: MX
-    value: "10 mail.avsn.de."
-  - zone: avsn.de
-    name: www
-    type: A
-  - zone: adventurespiele.net
-    name: adventurespiele.net.
-    type: A
-  - zone: adventurespiele.net
-    name: mail
-    type: A
-  - zone: adventurespiele.net
-    name: adventurespiele.net.
-    type: MX
-    value: "10 mail.adventurespiele.net."
-  - zone: adventurespiele.net
-    name: www
-    type: A
+    ipv4Address: 192.168.178.95
 
+  - zone: avsn.de
+    name: mail
+    type: MX
+    priority: "10"
+    mailServer: "mail.avsn.de."
+
+  - zone: avsn.de
+    name: www
+    type: A
+    ipv4Address: 192.168.178.95
+
+  - zone: adventurespiele.net
+    name: mail
+    type: A
+    ipv4Address: 192.168.178.95
+
+  - zone: adventurespiele.net
+    name: mail
+    type: MX
+    priority: "10"
+    mailServer: "mail.adventurespiele.net."
+
+  - zone: adventurespiele.net
+    name: www
+    type: A
+    ipv4Address: 192.168.178.95

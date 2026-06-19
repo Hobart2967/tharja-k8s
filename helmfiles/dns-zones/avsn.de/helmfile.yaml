@@ -1,0 +1,11 @@
+---
+releases:
+  - name: de-avsn
+    chart: ../../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: avsn.de
+        ipAddress: 192.168.178.95
+        primaryNameserver: ns1.first-ns.de.
+        secondaryNameserver: robotns2.second-ns.de.
+        clusterRef: public-dns

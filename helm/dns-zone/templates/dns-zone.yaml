@@ -1,0 +1,24 @@
+---
+apiVersion: bindy.firestoned.io/v1beta1
+kind: DNSZone
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  zoneName: {{ .Values.domainName }}
+  bind9InstancesFrom:
+    - selector:
+        matchLabels:
+          bindy.firestoned.io/cluster: public-dns
+  soaRecord:
+    adminEmail: admin.{{ .Values.domainName }}.
+    expire: 604800
+    negativeTtl: 7200
+    primaryNs: ns1.{{ .Values.domainName }}.
+    refresh: 7200
+    retry: 3600
+    serial: {{ now | date "20060102" }}{{ .Release.Revision }} # todo: fix revision not increasing (e.g. use seconds from date. In helm to add only  seconds of the current minute use: )
+  recordsFrom:
+    - selector:
+        matchLabels:
+          dns-zone: {{ .Values.domainName }}
