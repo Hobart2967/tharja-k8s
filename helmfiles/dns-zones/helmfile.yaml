@@ -1,0 +1,43 @@
+---
+releases:
+  - name: net-adventurespiele
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: adventurespiele.net
+      - ./values.yaml
+
+  - name: net-codewyre
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: codewyre.net
+      - ./values.yaml
+
+  - name: engineer-marcoklein
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: marcoklein.engineer
+      - ./values.yaml
+
+  - name: de-avsn
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: avsn.de
+      - ./values.yaml
+
+  - name: online-sone
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: sone.online
+      - ./values.yaml
+
+  - name: de-devforyou
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: devforyou.de
+      - ./values.yaml
