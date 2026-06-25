@@ -70,7 +70,7 @@ environments:
             namespaces:
               - project-ark
             fields:
-              - admin_password
+              #- admin_password
               - password
           home-server-bastion:
             item: null
@@ -185,7 +185,7 @@ environments:
             namespaces:
               - project-ark
             fields:
-              - admin_password
+              #- admin_password
               - password
           home-server-bastion:
             item: syywokky6f4fj7dar74pvfrwlm

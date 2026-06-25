@@ -7,8 +7,13 @@
 
 {{ range $namespace := $definition.namespaces }}
 {{- $namespaceObject := lookup "v1" "Namespace" "" $namespace -}}
-{{- if $namespaceObject -}}
+{{- if not $namespaceObject -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $namespace }}
 ---
+{{- end -}}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -33,11 +38,9 @@ data:
   {{- $fieldValue := get $fieldObj "value" -}}
   {{ $field }}: {{ $fieldValue | b64enc | quote }}
 {{ end }}
-
+---
 {{ end }}
 
 {{ end }}
 
 {{ end }}
-
-{{ end}}
