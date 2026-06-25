@@ -1,0 +1,1843 @@
+provision:
+  ground_zero: false
+  security: false
+  dns: false
+  mailserver: false
+  vhosts: false
+  grafana: true
+  vpn: false
+
+provisioned_vhosts: []
+ #- net.adventurespiele
+ #- de.avsn
+ #- online.sone
+ #- engineer.marcoklein
+ #- de.avsn.maps
+ #- de.avsn.hark
+ #- de.avsn.rimworld
+ #- net.codewyre
+ #- net.codewyre.planning
+ #- net.codewyre.monitoring
+ #- net.codewyre.cloud
+ #- de.devforyou
+ #- net.codewyre.ntfy
+ #- automation
+ #- de.avsn.satisfactory
+ #- net.codewyre.elamicha
+ #- net.codewyre.leaetienne
+
+
+launchpad_mirror: https://mirror.netcologne.de/ubuntu/
+#launchpad_mirror: https://launchpad.net/ubuntu/
+
+arch: amd64
+
+default_user: hobart
+default_user_name: Hobart2967
+default_user_email: hobart2967@outlook.com
+
+secrets: {}
+grafana:
+  imported_dashboards:
+    - name: "System"
+      source_url: https://grafana.com/api/dashboards/1860/revisions/40/download
+      dest: dashboard-system.json
+      inputs:
+        - variable: DS_PROMETHEUS
+          value: prometheus
+    - name: "SSH"
+      source_url: https://grafana.com/api/dashboards/17514/revisions/3/download
+      dest: dashboard-ssh.json
+      inputs:
+        - variable: DS_LOKI
+          value: loki
+    - name: "Certificates"
+      source_url: https://grafana.com/api/dashboards/13230/revisions/2/download
+      dest: dashboard-cert.json
+      inputs:
+        - variable: DS_PROMETHEUS
+          value: prometheus
+  contact_points:
+    - uid: 04bae0d0-2018-40d7-a3fe-3c3ec13ab2bd
+      name: Discord
+      type: discord
+      discord_url: grafana_discord_webhook
+
+asdf_vm_version: 0.16.5
+asdf_vm_plugins:
+  - name: nodejs
+    packages:
+      - name: 18.20.7
+      - name: 22.5.1
+        default: true
+
+  - name: java
+    packages:
+      - name: corretto-21.0.6.7.1
+        default: true
+      - name: corretto-11.0.26.4.1
+      - name: corretto-17.0.11.9.1
+      - name: corretto-19.0.2.7.1
+
+  - name: python
+    packages:
+      - name: 3.13.1
+        default: true
+
+  - name: awscli
+    packages:
+      - name: 2.23.13
+        default: true
+
+  - name: dotnet-core
+    packages:
+    - name: 6.0.425
+      default: true
+
+  - name: maven
+    packages:
+    - name: 3.9.6
+      default: true
+
+  - name: terraform
+    packages:
+    - name: 1.11.0
+      default: true
+
+security:
+  # Enables acquisition of certificates during provisioning. Otherwise, run `cert-renew <domain>` manually afterwards
+  renew_certs: true
+
+  fail2ban:
+    maxretry: 3
+    bantime: 43200
+    report:
+      active: false
+      #data: 'my/keepass/entry/path' # TODO: move this to 1pw or something else
+
+  firewall:
+    docker_subnets:
+      - 172.0.0.0/8
+
+    ipsets:
+      - name: banned-web
+        entries: []
+        type: hash:net
+
+    in:
+      - description: SSH
+        port: 22
+        protocol: tcp
+      - description: HTTP # Will automatically be redirected to HTTPS
+        port: 80
+        protocol: tcp
+      - description: HTTPS
+        port: 443
+        protocol: tcp
+dns:
+  disable_recursion: true
+
+vhosts:
+  - id: net.adventurespiele
+    user: avsn
+    name: Adventurespiele.net
+    certs:
+      - domain: adventurespiele.net
+        email: admin@adventurespiele.net
+        minute: "05"
+        hour: "03"
+    dns:
+      - zone: adventurespiele.net
+        properties: $TTL    7200
+        entries:
+          - name: adventurespiele.net.
+            type: SOA
+            value: |
+              ns1.adventurespiele.net. admin.adventurespiele.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.first-ns.de.
+          - name: ''
+            type: NS
+            value: robotns2.second-ns.de.
+          - name: _acme-challenge
+            type: NS
+            value: ns1.adventurespiele.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: mail
+            type: A
+            private: true
+            value: server_default_ip
+          - name: 'adventurespiele.net.'
+            type: MX
+            value: "10 mail.adventurespiele.net."
+          - name: adventurespiele.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: www
+            type: A
+            private: true
+            value: server_default_ip
+
+    files:
+      - from: vhosts/net.adventurespiele/etc/fail2ban/filter.d/postnuke-hack-attempts.conf
+        to: /etc/fail2ban/filter.d/postnuke-hack-attempts.conf
+      - from: vhosts/net.adventurespiele/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+      - from: .backupignore
+        to: /.backupignore
+    databases:
+      - host: database
+        network: deavsn_default
+        port: 3306
+        password: de_avsn_mariadb_root_password
+        name: usr_web1_1
+        users:
+          - name: web1
+            password: de_avsn_mariadb_web1
+            hosts:
+              - '%' # Needs to be the host from where the client logs in.
+    docker:
+      subnet: "172.118.0.0/24"
+      gateway: "172.118.0.1"
+      files:
+        - from: vhosts/net.adventurespiele/etc/apache2/httpd.conf.j2
+          to: /etc/apache2/httpd.conf
+        - from: vhosts/net.adventurespiele/etc/php5/php.ini.j2
+          to: /etc/php5/php.ini
+        - from: vhosts/net.adventurespiele/etc/mariadb/.env.j2
+          to: /etc/mariadb/.env
+      containers:
+        facade:
+          image: hobart2967/docker-apache2-php5.6.40
+          depends_on:
+            - database
+          volumes:
+            - ./httpdocs:/var/www/html
+            - ./etc/apache2/httpd.conf:/etc/apache2/apache2.conf
+            - ./etc/php5/php.ini:/usr/local/etc/php/php.ini
+          networks:
+            nat:
+              ipv4_address: 172.118.0.2
+        database:
+          image: mariadb
+          restart: always
+          env_file: ./etc/mariadb/.env
+          volumes:
+            - ./database:/var/lib/mysql
+          networks:
+            nat:
+              ipv4_address: 172.118.0.3
+
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_adventurespiele
+        extras: burst=30 nodelay
+      domain:
+        name: adventurespiele.net
+        aliases:
+          - www.adventurespiele.net
+
+    mailboxes: mailbox/avsn.de
+
+  - id: engineer.marcoklein
+    name: marcoklein.engineer
+    user: marco
+    certs:
+      - domain: marcoklein.engineer
+        email: admin@adventurespiele.net
+        zone_file: /var/lib/bind/zones/engineer.marcoklein/db.engineer.marcoklein
+        minute: "25"
+        hour: "03"
+    files:
+      - from: vhosts/engineer.marcoklein/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    docker:
+      subnet: "172.119.0.0/24"
+      gateway: "172.119.0.1"
+      containers:
+        facade:
+          image: nginx:latest
+          restart: unless-stopped
+          volumes:
+            - ./httpdocs:/usr/share/nginx/html
+          networks:
+            nat:
+              ipv4_address: 172.119.0.2
+    dns:
+      - zone: marcoklein.engineer
+        properties: $TTL    7200
+        entries:
+          - name: marcoklein.engineer.
+            type: SOA
+            value: |
+              ns1.marcoklein.engineer. admin.marcoklein.engineer. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.first-ns.de.
+          - name: ''
+            type: NS
+            value: robotns2.second-ns.de.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.marcoklein.engineer.
+          - name: marcoklein.engineer.
+            type: MX
+            value: "10 mail.marcoklein.engineer."
+          - name: marcoklein.engineer.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: mail
+            type: A
+            private: true
+            value: server_default_ip
+          - name: www
+            type: A
+            private: true
+            value: server_default_ip
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: engineer_marcoklein
+        extras: burst=30 nodelay
+      domain:
+        name: marcoklein.engineer
+        aliases:
+          - www.marcoklein.engineer
+    mailboxes: mailbox/marcoklein.engineer
+
+  - id: de.avsn.maps
+    name: Minecraft Server
+    user: minecraft
+    directories:
+      - path: /var/log/minecraft
+        mode: '0777'
+        owner: root
+    cron:
+      - name: "cleanup-backups"
+        minute: "0"
+        job: "usr/bin/cleanup-backups.sh"
+      - name: "check-for-backups"
+        minute: "0,30"
+        job: "usr/bin/check-for-backup.sh >> /var/log/minecraft/backup.log 2>&1"
+    certs:
+      - domain: maps.avsn.de
+        email: admin@avsn.de
+        minute: "30"
+        hour: "03"
+    dns:
+      - zone: maps.avsn.de
+        properties: $TTL    7200
+        entries:
+          - name: maps.avsn.de.
+            type: SOA
+            value: |
+              ns1.maps.avsn.de. admin.maps.avsn.de. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.avsn.de.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.maps.avsn.de.
+          - name: maps.avsn.de.
+            type: A
+            private: true
+            value: server_default_ip
+    minecraft:
+      server_name: Avsn.de Minecraft Server
+      motd: Willkommen auf dem avsn.de Minecraft Server!
+      server_port: 25565
+      query_port: 25565
+      rcon_port: 33333
+      rcon_password: de_avsn_maps_rcon_password
+      texture_pack: http\://www.adventurespiele.net/Downloads/Sonstiges/ChromaHills.zip
+      backup_modes:
+        - server-data
+        - Marktwelt
+        - flodders
+        - flodders_end
+        - flodders_nether
+        - masamaje
+        - masamaje_nether
+        - plugin-jars
+      known_players:
+        - Hobart2967
+        - avsn-Nikki
+        - Ariggeldiggel
+        - Corsazicke87
+      plugins:
+        - name: AncientGates
+          source: spigot
+          args:
+            id: 6583
+            version: 542512 # 2.7.1
+        - name: AutoBackup
+          source: spigot
+          args:
+            id: 88209
+            version: 384361 # 1.2.1
+        - name: BKCommonLib
+          source: spigot
+          args:
+            id: 39590
+            version: 559399 # 1.21.1-v1
+        - name: Brewery
+          source: spigot
+          args:
+            id: 3082
+            version: 369519 # v3.0
+        - name: Chairs
+          source: curl
+          args:
+            version: 5.1
+            url: https://dev.bukkit.org/projects/chairsreloaded/files/2725118/download
+        - name: Dynmap
+          source: curl
+          args:
+            url: https://mediafilez.forgecdn.net/files/4632/182/Dynmap-3.6-spigot.jar
+            version: v3.6-beta-2
+        - name: EssentialsX
+          source: curl
+          args:
+            version: 2.19.4
+            url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsX-2.19.4.jar
+        - name: EssentialsXAntiBuild
+          source: curl
+          args:
+            version: 2.19.4
+            url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXAntiBuild-2.19.4.jar
+        - name: EssentialsXChat
+          source: curl
+          args:
+            version: 2.19.4
+            url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXChat-2.19.4.jar
+        - name: EssentialsXSpawn
+          source: curl
+          args:
+            version: 2.19.4
+            url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXSpawn-2.19.4.jar
+        - name: floodgate-plugin
+          source: curl
+          args:
+            version: 2.2.2
+            url: https://download.geysermc.org/v2/projects/floodgate/versions/2.2.2/builds/latest/downloads/spigot
+        - name: geyser
+          source: curl
+          args:
+            version: 2.1.1
+            url: https://download.geysermc.org/v2/projects/geyser/versions/2.1.1/builds/latest/downloads/spigot
+        - name: LuckPerms
+          source: spigot
+          args:
+            id: 28140
+            version: 544174 # 5.4.131
+        - name: Minepacks
+          source: spigot
+          args:
+            id: 19286
+            version: 545752 # 2.4.31.5
+        - name: Multiverse-Core
+          source: curl
+          args:
+            version: 4.3.9
+            url: https://github.com/Multiverse/Multiverse-Core/releases/download/4.3.9/multiverse-core-4.3.9.jar
+
+        - name: Multiverse-NetherPortals
+          source: curl
+          args:
+            version: 4.2.3
+            url: https://github.com/Multiverse/Multiverse-NetherPortals/releases/download/4.2.3/multiverse-netherportals-4.2.3.jar
+        - name: Multiverse-Portals
+          source: curl
+          args:
+            version: 4.2.3
+            url: https://github.com/Multiverse/Multiverse-Portals/releases/download/4.2.3/multiverse-portals-4.2.3.jar
+        - name: PluginConstructorAPI
+          source: curl
+          args:
+            version: 1.0.52
+            url: https://github.com/ZombieStriker/PluginConstructorAPI/releases/download/v1.0.52/PluginConstructorAPI.jar
+        - name: ProtocolLib
+          source: spigot
+          args:
+            id: 1997
+            version: 496322 # 5.0.0
+        - name: ServerListPlus-3.5.0-Universal
+          source: spigot
+          args:
+            id: 241
+            version: 501840 # 3.5.0
+        - name: SignLink
+          source: spigot
+          args:
+            id: 39593
+            version: 501863 # 1.20.1-v1
+        - name: SmoothSleep
+          source: spigot
+          args:
+            id: 32043
+            version: 396611 # 2.11.2
+        - name: TpWolfv1.6
+          source: spigot
+          args:
+            id: 62355
+            version: 248200 # 1.6
+        - name: TrainCarts
+          source: spigot
+          args:
+            id: 39592
+            version: 501859 # 1.20.1-v1
+        - name: Vault
+          source: spigot
+          args:
+            id: 34315
+            version: 344916 # 1.7.3
+        - name: WorldBorder
+          source: spigot
+          args:
+            id: 60905
+            version: 240474 # 1.9.0
+        - name: WorldEdit
+          source: curl
+          args:
+            id: 7.2.15
+            url: https://dev.bukkit.org/projects/worldedit/files/4586220/download
+        - name: WorldGuardExtraFlags
+          source: spigot
+          args:
+            id: 4823
+            version: 326911 # 4.1.4
+        - name: WorldGuard
+          source: curl
+          args:
+            id: 7.0.9
+            url: https://mediafilez.forgecdn.net/files/4675/318/worldguard-bukkit-7.0.9-dist.jar
+    firewall: # TEST forward
+      ipset:
+        - name: banned-minecraft
+          entries: []
+          type: hash:net
+
+      port_forward:
+        - description: Minecraft TCP -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-minecraft"
+            port: 25565
+          to:
+            container:
+              name: gameserver
+              network: deavsnmaps_default
+            port: 25565
+          family: ipv4
+          source: ipset
+          protocol: tcp
+    files:
+      - from: vhosts/de.avsn.maps/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+      - from: vhosts/de.avsn.maps/usr/bin/cleanup-backups.sh.j2
+        to: /usr/bin/cleanup-backups.sh
+        mode: '0775'
+      - from: vhosts/de.avsn.maps/usr/bin/check-for-backup.sh.j2
+        to: /usr/bin/check-for-backup.sh
+        mode: '0775'
+      - from: vhosts/de.avsn.maps/usr/bin/rcon.sh.j2
+        to: /usr/bin/rcon.sh
+        mode: '0775'
+      - from: .backupignore
+        to: /.backupignore
+    logs:
+      - job: minecraft
+        path: /var/log/minecraft/*.log*
+    docker:
+      subnet: "172.120.0.0/24"
+      gateway: "172.120.0.1"
+      start: false
+      files:
+        - from: vhosts/de.avsn.maps/etc/minecraft/banned-ips.json.j2
+          to: /etc/minecraft/banned-ips.json
+        - from: vhosts/de.avsn.maps/etc/minecraft/banned-players.json.j2
+          to: /etc/minecraft/banned-players.json
+        - from: vhosts/de.avsn.maps/etc/minecraft/bukkit.yml.j2
+          to: /etc/minecraft/bukkit.yml
+        - from: vhosts/de.avsn.maps/etc/minecraft/commands.yml.j2
+          to: /etc/minecraft/commands.yml
+        - from: vhosts/de.avsn.maps/etc/minecraft/ops.json.j2
+          to: /etc/minecraft/ops.json
+        - from: vhosts/de.avsn.maps/etc/minecraft/permissions.yml.j2
+          to: /etc/minecraft/permissions.yml
+        - from: vhosts/de.avsn.maps/etc/minecraft/server.properties.j2
+          to: /etc/minecraft/server.properties
+        - from: vhosts/de.avsn.maps/etc/minecraft/whitelist.json.j2
+          to: /etc/minecraft/whitelist.json
+        - from: vhosts/de.avsn.maps/etc/minecraft/spigot.yml.j2
+          to: /etc/minecraft/spigot.yml
+        - from: vhosts/de.avsn.maps/usr/share/minecraft/backups/.keep-me.j2
+          to: /usr/share/minecraft/backups/.keep-me
+        - from: vhosts/de.avsn.maps/usr/share/minecraft/worlds/.keep-me.j2
+          to: /usr/share/minecraft/worlds/.keep-me
+        - from: vhosts/de.avsn.maps/usr/share/minecraft/plugins/.keep-me.j2
+          to: /usr/share/minecraft/plugins/.keep-me
+        - from: vhosts/de.avsn.maps/usr/share/minecraft/boot.sh.j2
+          to: /usr/share/minecraft/boot.sh
+          mode: '0755'
+        - from: vhosts/de.avsn.maps/etc/minecraft/plugins/.keep-me.j2
+          to: /etc/minecraft/plugins/.keep-me
+        - from: vhosts/de.avsn.maps/log/minecraft/.keep-me.j2
+          to: /log/minecraft/.keep-me
+      containers:
+        rcon_client:
+          image: hobart2967/docker-mcrcon:latest
+          entrypoint: /bin/sh
+          command: -c 'tail -f /dev/null'  # Keep container running
+          restart: unless-stopped
+          networks:
+            nat:
+              ipv4_address: 172.120.0.4
+
+        gameserver:
+          image: hobart2967/docker-spigot-mc-1.20.1:latest
+          restart: unless-stopped
+          volumes:
+            - ./etc/minecraft/banned-ips.json:/minecraft/server/banned-ips.json
+            - ./etc/minecraft/banned-players.json:/minecraft/server/banned-players.json
+            - ./etc/minecraft/bukkit.yml:/minecraft/server/bukkit.yml
+            - ./etc/minecraft/commands.yml:/minecraft/server/commands.yml
+            - ./etc/minecraft/ops.json:/minecraft/server/ops.json
+            - ./etc/minecraft/permissions.yml:/minecraft/server/permissions.yml
+            - ./etc/minecraft/server.properties:/minecraft/server/server.properties
+            - ./etc/minecraft/whitelist.json:/minecraft/server/whitelist.json
+            - ./usr/share/minecraft/worlds:/minecraft/server/worlds
+            - ./usr/share/minecraft/backups:/minecraft/server/backups
+            - ./usr/share/minecraft/boot.sh:/minecraft/server/boot.sh
+            - ./usr/share/minecraft/plugins:/minecraft/server/plugins-available
+            - /var/log/minecraft/:/minecraft/server/logs
+            - ./etc/minecraft/plugins/AncientGates:/minecraft/server/plugins/AncientGates
+            - ./etc/minecraft/plugins/AUpdater:/minecraft/server/plugins/AUpdater
+            - ./etc/minecraft/plugins/AutoBackup:/minecraft/server/plugins/AutoBackup
+            - ./etc/minecraft/plugins/BackUpPlus:/minecraft/server/plugins/BackUpPlus
+            - ./etc/minecraft/plugins/BKCommonLib:/minecraft/server/plugins/BKCommonLib
+            - ./etc/minecraft/plugins/Brewery:/minecraft/server/plugins/Brewery
+            - ./etc/minecraft/plugins/bStats:/minecraft/server/plugins/bStats
+            - ./etc/minecraft/plugins/Chairs:/minecraft/server/plugins/Chairs
+            - ./etc/minecraft/plugins/DependencyDownloader:/minecraft/server/plugins/DependencyDownloader
+            - ./etc/minecraft/plugins/disabled:/minecraft/server/plugins/disabled
+            - ./etc/minecraft/plugins/dynmap:/minecraft/server/plugins/dynmap
+            - ./etc/minecraft/plugins/Essentials:/minecraft/server/plugins/Essentials
+            - ./etc/minecraft/plugins/floodgate:/minecraft/server/plugins/floodgate
+            - ./etc/minecraft/plugins/Geyser-Spigot:/minecraft/server/plugins/Geyser-Spigot
+            - ./etc/minecraft/plugins/Jail:/minecraft/server/plugins/Jail
+            - ./etc/minecraft/plugins/LuckPerms:/minecraft/server/plugins/LuckPerms
+            - ./etc/minecraft/plugins/luckperms1:/minecraft/server/plugins/luckperms1
+            - ./etc/minecraft/plugins/LWC:/minecraft/server/plugins/LWC
+            - ./etc/minecraft/plugins/Minepacks:/minecraft/server/plugins/Minepacks
+            - ./etc/minecraft/plugins/Modifyworld:/minecraft/server/plugins/Modifyworld
+            - ./etc/minecraft/plugins/Multiverse-Core:/minecraft/server/plugins/Multiverse-Core
+            - ./etc/minecraft/plugins/Multiverse-NetherPortals:/minecraft/server/plugins/Multiverse-NetherPortals
+            - ./etc/minecraft/plugins/Multiverse-Portals:/minecraft/server/plugins/Multiverse-Portals
+            - ./etc/minecraft/plugins/PermissionsEx:/minecraft/server/plugins/PermissionsEx
+            - ./etc/minecraft/plugins/PixelPrinter:/minecraft/server/plugins/PixelPrinter
+            - ./etc/minecraft/plugins/PluginMetrics:/minecraft/server/plugins/PluginMetrics
+            - ./etc/minecraft/plugins/ProtocolLib:/minecraft/server/plugins/ProtocolLib
+            - ./etc/minecraft/plugins/RedProtect:/minecraft/server/plugins/RedProtect
+            - ./etc/minecraft/plugins/ServerListPlus:/minecraft/server/plugins/ServerListPlus
+            - ./etc/minecraft/plugins/SignLink:/minecraft/server/plugins/SignLink
+            - ./etc/minecraft/plugins/SmoothSleep:/minecraft/server/plugins/SmoothSleep
+            - ./etc/minecraft/plugins/Train_Carts:/minecraft/server/plugins/Train_Carts
+            - ./etc/minecraft/plugins/update:/minecraft/server/plugins/update
+            - ./etc/minecraft/plugins/Updater:/minecraft/server/plugins/Updater
+            - ./etc/minecraft/plugins/Vault:/minecraft/server/plugins/Vault
+            - ./etc/minecraft/plugins/WorldBorder:/minecraft/server/plugins/WorldBorder
+            - ./etc/minecraft/plugins/WorldEdit:/minecraft/server/plugins/WorldEdit
+            - ./etc/minecraft/plugins/WorldGuard:/minecraft/server/plugins/WorldGuard
+          command: /minecraft/server/boot.sh
+          networks:
+            nat:
+              ipv4_address: 172.120.0.3
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: de_avsn_maps
+        extras: burst=30 nodelay
+      domain:
+        name: maps.avsn.de
+        aliases:
+          - maps.adventurespiele.net
+
+  - id: de.avsn.hark
+    name: ARK Server
+    user: ark
+    ark:
+      session_name: HarkSurvival
+      server_map: TheIsland
+      server_password: de_avsn_hark_server_password
+      admin_password: de_avsn_hark_admin_password
+      max_players: 6
+      update_on_start: "true"
+      backup_on_stop: "false"
+      pre_update_backup: "true"
+      warn_on_stop: "true"
+      mods:
+        # Dino bars
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057
+        - id: 1618319057
+          state: game
+
+        # Spoiling bin
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 916788716
+          state: game
+
+        # Death Recovery
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 751991809
+          state: game
+
+        # Dino Tracker
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 924933745
+          state: game
+
+        # Human Stacks
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 1333158793
+          state: game
+
+        # eco's RP Decor
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 741203089
+          state: game
+
+        # GunSmoke Decor
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 1580163189
+          state: game
+
+        # Big Walls
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 541612317
+          state: game
+
+        # Mining Drill
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 1252358730
+          state: game
+
+        # Camping Decor
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 926567353
+          state: game
+
+        # Autorun mod
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 801082391
+          state: game
+
+        # Auto Poop Collector
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 2783538786
+          state: game
+
+        # Stackable Foundations
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=
+        - id: 760884349
+          state: game
+
+        # Paintable Rugs, Wall Art & Lighting
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
+        - id: 1446292779
+          state: game
+
+        # Paintable Structures and Interior Decor
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
+        - id: 1592192369
+          state: game
+
+        # Auto Trough
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=543394681
+        - id: 543394681
+          state: game
+
+        # Stuctures Plus
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=731604991
+        - id: 731604991
+          state: game
+
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
+        # Planting v1.3a (PvP friendly)
+        - id: 1115844828
+          state: game
+
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
+        # Silica Pearl Factory v2.1a
+        - id: 839984647
+          state: game
+
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=2863707757
+        # Better Map
+        - id: 2863707757
+          state: game
+
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=539464369
+        # Advanced Architecture Mod
+        - id: 539464369
+          state: disabled
+
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=544598236
+        # Planting v1.2f
+        - id: 544598236
+          state: disabled
+
+        # Poop Collector
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=1900830191
+        - id: 1900830191
+          state: disabled
+
+        # Stats bars
+        # https://steamcommunity.com/sharedfiles/filedetails/?id=737297870
+        - id: 737297870
+          state: disabled
+
+    directories:
+      - path: /var/log/ark/manager
+        mode: '0777'
+        owner: root
+      - path: /var/log/ark/gameserver
+        mode: '0777'
+        owner: root
+    files:
+      - from: .backupignore
+        to: /.backupignore
+    logs:
+    # TODO: Set write permissions for dir.
+      - job: ark-manager
+        path: /var/log/ark/manager/arkmanager.log
+      - job: ark-server
+        path: /var/log/ark/gameserver/ShooterGame*.log
+
+    firewall: # TEST forward
+      ipset:
+        - name: banned-ark
+          entries: []
+          type: hash:net
+
+      port_forward:
+        #### 27015
+        - description: ARK TCP 27015 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 27015
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 27015
+          family: ipv4
+          source: ipset
+          protocol: tcp
+        - description: ARK UDP 27015 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 27015
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 27015
+          family: ipv4
+          source: ipset
+          protocol: udp
+
+        #### 27016
+        - description: ARK TCP 27016 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 27016
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 27016
+          family: ipv4
+          source: ipset
+          protocol: tcp
+        - description: ARK UDP 27016 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 27016
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 27016
+          family: ipv4
+          source: ipset
+          protocol: udp
+
+        #### 7777
+        - description: ARK TCP 7777 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 7777
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 7777
+          family: ipv4
+          source: ipset
+          protocol: tcp
+        - description: ARK UDP 7777 -> Docker
+          zone: public
+          from:
+            source: NOT ipset="banned-ark"
+            port: 7777
+          to:
+            container:
+              name: ark
+              network: deavsnhark_nat
+            port: 7777
+          family: ipv4
+          source: ipset
+          protocol: udp
+    docker:
+      subnet: "172.121.0.0/24"
+      gateway: "172.121.0.1"
+      start: false
+      files:
+        - from: vhosts/de.avsn.hark/etc/ark/ark.env.j2
+          to: /etc/ark/ark.env
+      containers:
+        ark:
+          restart: always
+          image: hermsi/ark-server:latest
+          volumes:
+            - /var/log/ark/manager:/app/log
+            - /var/log/ark/gameserver:/app/server/ShooterGame/Saved/Logs
+            - ./usr/share/ark-server:/app
+            - ./usr/share/ark-server-backups:/home/steam/ARK-Backups
+            - ./usr/share/steam:/home/steam/Steam
+          env_file:
+            - ./etc/ark/ark.env
+          ports:
+            # Port for connections from ARK game client
+            - "7777:7777/udp"
+            # Raw UDP socket port (always Game client port +1)
+            - "7778:7778/udp"
+            # RCON management port
+            - "27020:27020/tcp"
+            # Steam's server-list port
+            - "27015:27015/udp"
+          networks:
+            nat:
+              ipv4_address: 172.121.0.2
+
+  - id: de.avsn.rimworld
+    name: RimWorld Server
+    user: rimworld
+
+    directories:
+      - path: /var/log/rimworld
+        mode: '0777'
+        owner: root
+
+    logs:
+      # TODO: Set write permissions for dir.
+      - job: rimworld-system
+        path: /var/log/rimworld/Logs/System/*.txt
+      - job: rimworld-chat
+        path: /var/log/rimworld/Logs/Chat/*.txt
+
+    firewall: # TEST forward
+      ipset:
+        - name: banned-rimworld
+          entries: []
+          type: hash:net
+
+      port_forward:
+        #### 26922
+        - description: RIMWORLD TCP 26922 -> Docker 25555
+          zone: public
+          from:
+            source: NOT ipset="banned-rimworld"
+            port: 26922
+          to:
+            container:
+              name: rimworld
+              network: deavsnrimworld_nat
+            port: 25555
+          family: ipv4
+          source: ipset
+          protocol: tcp
+    docker:
+      subnet: "172.125.0.0/24"
+      gateway: "172.125.0.1"
+      start: false
+      files: []
+      containers:
+        rimworld:
+          restart: always
+          image: ghcr.io/rimworld-together/rimworld-together:26.1.18.1
+          volumes:
+            - /var/log/rimworld:/Data/Logs
+            - ./usr/share/rimworld:/Data
+          ports:
+            # Port for connections from Rimworld game client
+            - "26922:25555/tcp"
+          networks:
+            nat:
+              ipv4_address: 172.125.0.2
+
+  - id: de.avsn.satisfactory
+    name: Satisfactory Server
+    user: satisfactory
+
+    firewall: # TEST forward
+      ipset:
+        - name: banned-satisfactory
+          entries: []
+          type: hash:net
+
+      port_forward:
+        #### 9999 tcp
+        - description: SATISFACTORY TCP 9999 -> Docker 9999
+          zone: public
+          from:
+            source: NOT ipset="banned-satisfactory"
+            port: 9999
+          to:
+            container:
+              name: satisfactory
+              network: deavsn_satisfactory_nat
+            port: 7777
+          family: ipv4
+          source: ipset
+          protocol: tcp
+        - description: SATISFACTORY UDP 9999 -> Docker 9999
+          zone: public
+          from:
+            source: NOT ipset="banned-satisfactory"
+            port: 9999
+          to:
+            container:
+              name: satisfactory
+              network: deavsn_satisfactory_nat
+            port: 7777
+          family: ipv4
+          source: ipset
+          protocol: udp
+        - description: SATISFACTORY TCP 8888 -> Docker 8888
+          zone: public
+          from:
+            source: NOT ipset="banned-satisfactory"
+            port: 8888
+          to:
+            container:
+              name: satisfactory
+              network: deavsn_satisfactory_nat
+            port: 8888
+          family: ipv4
+          source: ipset
+          protocol: tcp
+    docker:
+      subnet: "172.128.0.0/24"
+      gateway: "172.128.0.1"
+      start: false
+      files: []
+      containers:
+        satisfactory:
+          hostname: 'satisfactory-server'
+          image: 'wolveix/satisfactory-server:latest'
+          ports:
+            - '9999:7777/tcp'
+            - '9999:7777/udp'
+            - '8888:8888/tcp'
+          volumes:
+            - './etc/satisfactory:/config'
+          environment:
+            MAXPLAYERS: 4
+            PGID: 1000
+            PUID: 1000
+            STEAMBETA: false
+          restart: unless-stopped
+          deploy:
+            resources:
+              limits:
+                memory: 8G
+              reservations:
+                memory: 4G
+          networks:
+            nat:
+              ipv4_address: 172.128.0.2
+  - id: automation
+    name: Automation
+    user: automation
+
+    directories:
+      - path: /var/log/automation
+        mode: '0777'
+        owner: root
+
+    logs:
+      - job: automation
+        path: /var/log/automation/*
+
+    files:
+      - from: vhosts/automation/etc/server-wol/.env.j2
+        to: /etc/server-wol/.env
+      - from: vhosts/automation/usr/share/server-wol/entrypoint.sh
+        to: /usr/share/server-wol/entrypoint.sh
+        mode: '0755'
+      - from: vhosts/automation/usr/share/server-wol/wol-trigger.py
+        to: /usr/share/server-wol/wol-trigger.py
+        mode: '0755'
+      - from: vhosts/automation/Dockerfile
+        to: /Dockerfile
+        mode: '0755'
+      - from: vhosts/automation/automate.sh
+        to: /automate.sh
+        mode: '0777'
+    docker:
+      subnet: "172.127.0.0/24"
+      gateway: "172.127.0.1"
+      start: false
+      containers:
+        server-wol:
+          build: .
+          restart: always
+          env_file:
+            - ./etc/server-wol/.env
+          volumes:
+            - /var/log/automation:/var/log
+          networks:
+            nat:
+              ipv4_address: 172.127.0.2
+
+  - id: net.codewyre
+    user: codewyre
+    name: Codewyre Solutions
+    certs:
+      - domain: codewyre.net
+        email: admin@codewyre.net
+        minute: "35"
+        hour: "03"
+    docker:
+      subnet: "172.122.0.0/24"
+      gateway: "172.122.0.1"
+      containers:
+        facade:
+          image: nginx:latest
+          restart: unless-stopped
+          volumes:
+            - ./httpdocs:/usr/share/nginx/html
+          networks:
+            nat:
+              ipv4_address: 172.122.0.2
+    files:
+      - from: vhosts/net.codewyre/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    dns:
+      - zone: codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: codewyre.net.
+            type: SOA
+            value: |
+              ns1.codewyre.net. admin.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.first-ns.de.
+          - name: ''
+            type: NS
+            value: robotns2.second-ns.de.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.codewyre.net.
+          - name: 'monitoring'
+            type: NS
+            value: ns1.monitoring.codewyre.net.
+          - name: ns1.monitoring.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: 'ntfy'
+            type: NS
+            value: ns1.ntfy.codewyre.net.
+          - name: ns1.ntfy.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: 'elamicha'
+            type: NS
+            value: ns1.elamicha.codewyre.net.
+          - name: ns1.elamicha.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+
+          - name: 'leaetienne'
+            type: NS
+            value: ns1.leaetienne.codewyre.net.
+          - name: ns1.leaetienne.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+
+          - name: 'planning'
+            type: NS
+            value: ns1.planning.codewyre.net.
+          - name: ns1.planning.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: 'cloud'
+            type: NS
+            value: ns1.cloud.codewyre.net.
+          - name: ns1.cloud.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: mail
+            type: A
+            private: true
+            value: server_default_ip
+          - name: codewyre.net.
+            type: MX
+            value: "10 mail.codewyre.net."
+          - name: codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: www
+            type: A
+            private: true
+            value: server_default_ip
+
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre
+        extras: burst=30 nodelay
+      domain:
+        name: codewyre.net
+        aliases:
+          - www.codewyre.net
+
+  - id: net.codewyre.planning
+    user: codewyre-planning
+    name: Planning Poker
+    certs:
+      - domain: planning.codewyre.net
+        email: admin@codewyre.net
+        minute: "40"
+        hour: "03"
+    dns:
+      - zone: planning.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: planning.codewyre.net.
+            type: SOA
+            value: |
+              ns1.planning.codewyre.net. admin.planning.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.planning.codewyre.net.
+          - name: planning.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+    docker:
+      subnet: "172.123.0.0/24"
+      gateway: "172.123.0.1"
+      containers:
+        service:
+          image: duracellko/planningpoker
+          restart: unless-stopped
+          networks:
+            nat:
+              ipv4_address: 172.123.0.2
+
+    files:
+      - from: vhosts/net.codewyre.planning/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_planning
+        extras: burst=30 nodelay
+      domain:
+        name: planning.codewyre.net
+        aliases: []
+
+  - id: net.codewyre.monitoring
+    user: codewyre-monitoring
+    name: Monitoring Service Export
+    certs:
+      - domain: monitoring.codewyre.net
+        email: admin@codewyre.net
+        minute: "45"
+        hour: "03"
+    dns:
+      - zone: monitoring.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: monitoring.codewyre.net.
+            type: SOA
+            value: |
+              ns1.monitoring.codewyre.net. admin.monitoring.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.monitoring.codewyre.net.
+          - name: monitoring.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+
+    run_tasks:
+      - shared/monitoring/get-info/task.yml
+
+    files:
+      - from: vhosts/net.codewyre.monitoring/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_monitoring
+        extras: burst=30 nodelay
+
+      domain:
+        name: monitoring.codewyre.net
+        aliases: []
+
+  - id: net.codewyre.cloud
+    user: cloud
+    name: LocalStack Cloud
+    certs:
+      - domain: cloud.codewyre.net
+        email: admin@codewyre.net
+        minute: "50"
+        hour: "03"
+    localstack:
+      access_key_id: cloud_codewyre_net_access_key_id
+      secret_access_key: cloud_codewyre_net_secret_access_key
+      security:
+        log_level: debug
+    dns:
+      - zone: cloud.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: cloud.codewyre.net.
+            type: SOA
+            value: |
+              ns1.cloud.codewyre.net. admin.cloud.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.cloud.codewyre.net.
+          - name: cloud.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+    docker:
+      subnet: "172.124.0.0/24"
+      gateway: "172.124.0.1"
+      files:
+        - from: vhosts/net.codewyre.cloud/data/localstack/.keepme
+          to: /data/localstack/.keepme
+        - from: vhosts/net.codewyre.cloud/etc/localstack/config.json.j2
+          to: /etc/localstack/config.json
+        - from: vhosts/net.codewyre.cloud/etc/nginx-facade/facade.conf.j2
+          to: /etc/nginx-facade/facade.conf
+      containers:
+        facade:
+          restart: unless-stopped
+          tty: true
+          image: nginx
+          volumes:
+            - "./etc/nginx-facade/facade.conf:/etc/nginx/conf.d/proxy.conf"
+          networks:
+            nat:
+              ipv4_address: 172.124.0.2
+
+        localstack-security:
+          image: hobart2967/localstack-security # or just 'localstack-security' if built locally using `yarn build`
+          tty: true
+          restart: unless-stopped
+          volumes:
+            - "./etc/localstack/config.json:/usr/share/localstack-security/config.json" # Overwrite config as you wish.
+          networks:
+            nat:
+              ipv4_address: 172.124.0.3
+
+        localstack:
+          image: gresau/localstack-persist # instead of localstack/localstack
+          restart: unless-stopped
+          environment:
+            SKIP_SSL_CERT_DOWNLOAD: 1 # Needed for localstack instances hidden from the internet.
+            LAMBDA_EXECUTOR: docker-reuse
+            DEBUG: 1
+            LS_LOG: debug
+
+            PERSIST_CLOUDWATCH: 0 # TODO: Check if this works
+            PERSIST_LOGS: 0
+          volumes:
+            - "./data/localstack:/persisted-data"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+          networks:
+            nat:
+              ipv4_address: 172.124.0.4
+
+    files:
+      - from: vhosts/net.codewyre.cloud/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_cloud
+        extras: burst=30 nodelay
+      domain:
+        name: cloud.codewyre.net
+        aliases: []
+
+  - id: de.devforyou
+    user: marco
+    name: DevForYou.de
+    dns:
+      - zone: devforyou.de
+        properties: $TTL    7200
+        entries:
+          - name: devforyou.de.
+            type: SOA
+            value: |
+              ns1.devforyou.de. admin.devforyou.de. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.first-ns.de.
+          - name: ''
+            type: NS
+            value: robotns2.second-ns.de.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.devforyou.de.
+          - name: devforyou.de.
+            type: A
+            private: true
+            value: server_default_ip
+          - name: www
+            type: A
+            private: true
+            value: server_default_ip
+
+  - id: net.codewyre.ntfy
+    user: codewyre-ntfy
+    name: Notification Service
+    post_provisioning:
+      - 'provisioning/task.yml'
+    certs:
+      - domain: ntfy.codewyre.net
+        email: admin@codewyre.net
+        minute: "55"
+        hour: "03"
+    files:
+      - from: vhosts/net.codewyre.ntfy/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+    ntfy:
+      users:
+        - username: ntfy_hobart_user
+          password: ntfy_hobart_password
+          topics:
+            - name: server_alerts
+              level: read-only
+            - name: backups
+              level: read-only
+            - name: homeserver_alerts
+              level: read-only
+
+        - username: ntfy_grafana_user
+          password: ntfy_grafana_password
+          topics:
+            - name: server_alerts
+              level: read-write
+
+        - username: ntfy_homeserver_user
+          password: ntfy_homeserver_password
+          topics:
+            - name: backups
+              level: read-write
+            - name: homeserver_alerts
+              level: read-write
+    dns:
+      - zone: ntfy.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: ntfy.codewyre.net.
+            type: SOA
+            value: |
+              ns1.ntfy.codewyre.net. admin.ntfy.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.ntfy.codewyre.net.
+          - name: ntfy.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_ntfy
+        extras: burst=30 nodelay
+      domain:
+        name: ntfy.codewyre.net
+        aliases: []
+    docker:
+      subnet: "172.126.0.0/24"
+      gateway: "172.126.0.1"
+      containers:
+        ntfy:
+          image: binwiederhier/ntfy
+          command:
+            - serve
+          environment:
+            TZ: UTC
+            NTFY_AUTH_DEFAULT_ACCESS: deny-all
+            NTFY_BEHIND_PROXY: true
+            NTFY_AUTH_FILE: /etc/ntfy/auth.db
+            NTFY_ENABLE_LOGIN: true
+            NTFY_REQUIRE_LOGIN: true
+          volumes:
+            - /var/cache/ntfy:/var/cache/ntfy
+            - ./etc/ntfy:/etc/ntfy
+          healthcheck: # optional: remember to adapt the host:port to your environment
+              test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"]
+              interval: 60s
+              timeout: 10s
+              retries: 3
+              start_period: 40s
+          restart: unless-stopped
+          networks:
+            nat:
+              ipv4_address: 172.126.0.2
+        grafana_ntfy_proxy:
+          image: saibe1111/grafana-to-ntfy
+          restart: unless-stopped
+          environment:
+            NTFY_TOPIC: server_alerts
+            NTFY_SERVER: https://ntfy.codewyre.net
+            NTFY_TOKEN:
+              secret: ntfy_grafana_access_token
+          networks:
+            nat:
+              ipv4_address: 172.126.0.3
+
+  - id: net.codewyre.elamicha
+    user: codewyre-elamicha
+    name: Wedding Image Service for Ela and Micha
+    certs:
+      - domain: elamicha.codewyre.net
+        email: admin@codewyre.net
+        minute: "55"
+        hour: "03"
+    dns:
+      - zone: elamicha.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: elamicha.codewyre.net.
+            type: SOA
+            value: |
+              ns1.elamicha.codewyre.net. admin.elamicha.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.elamicha.codewyre.net.
+          - name: elamicha.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_elamicha
+        extras: burst=30 nodelay
+      domain:
+        name: elamicha.codewyre.net
+        aliases: []
+    docker:
+      subnet: "172.129.0.0/24"
+      gateway: "172.129.0.1"
+      files:
+      - from: vhosts/net.codewyre.elamicha/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+      - from: vhosts/net.codewyre.elamicha/etc/facade/nginx.conf.j2
+        to: /etc/facade/nginx.conf
+      - from: vhosts/net.codewyre.elamicha/etc/api/configuration.json.j2
+        to: /etc/api/configuration.json
+      - from: vhosts/net.codewyre.elamicha/data/files/.keepme
+        to: /data/files/.keepme
+      - from: vhosts/net.codewyre.elamicha/data/database/.keepme
+        to: /data/database/.keepme
+      - from: vhosts/net.codewyre.elamicha/usr/share/image-api-server/database/init.sql
+        to: /usr/share/image-api-server/database/init.sql
+      - from: vhosts/net.codewyre.elamicha/httpdocs/.keepme
+        to: /httpdocs/.keepme
+      containers:
+        facade:
+          image: nginx:latest
+          restart: unless-stopped
+          volumes:
+            - ./httpdocs:/usr/share/nginx/html
+            - ./etc/facade/nginx.conf:/etc/nginx/conf.d/default.conf
+          networks:
+            nat:
+              ipv4_address: 172.129.0.2
+
+        api:
+          image: hobart2967/event-image-upload-api
+          build:
+            context: .
+            dockerfile: Dockerfile
+          restart: always
+          volumes:
+            - ./etc/api/configuration.json:/usr/share/image-api-server/configuration.json
+            - ./data/files:/usr/share/image-api-server/.storage
+          networks:
+            nat:
+              ipv4_address: 172.129.0.3
+
+        database:
+          # TODO: Make this work with latest version (chown permission denied error)
+          # https://github.com/MariaDB/mariadb-docker/issues/95
+          image: mariadb
+          restart: always
+          #user: ${DB_UID}:${DB_GID}
+          environment:
+            MARIADB_ROOT_PASSWORD:
+              secret: net_codewyre_elamicha_db_pw
+          volumes:
+            - ./usr/share/image-api-server/database/:/docker-entrypoint-initdb.d/
+            - ./data/database:/var/lib/mysql/:Z
+          networks:
+            nat:
+              ipv4_address: 172.129.0.4
+
+  - id: net.codewyre.leaetienne
+    user: codewyre-leaetienne
+    name: Wedding Image Service for Ela and Micha
+    appconfig:
+      passcode: net_codewyre_leaetienne_app
+    certs:
+      - domain: leaetienne.codewyre.net
+        email: admin@codewyre.net
+        minute: "55"
+        hour: "03"
+    dns:
+      - zone: leaetienne.codewyre.net
+        properties: $TTL    7200
+        entries:
+          - name: leaetienne.codewyre.net.
+            type: SOA
+            value: |
+              ns1.leaetienne.codewyre.net. admin.leaetienne.codewyre.net. (
+                    {{ now().strftime('%Y%m%d') }}01      ; Serial
+                    7200            ; Refresh
+                    900            ; Retry
+                    604800          ; Expire
+                    7200)           ; NegativeCacheTTL
+          - name: ''
+            type: NS
+            value: ns1.codewyre.net.
+          - name: ns1
+            type: A
+            private: true
+            value: server_default_ip
+          - name: _acme-challenge
+            type: NS
+            value: ns1.leaetienne.codewyre.net.
+          - name: leaetienne.codewyre.net.
+            type: A
+            private: true
+            value: server_default_ip
+    web:
+      rate_limit:
+        zone_size: 10m
+        rate: 20r/s
+        zone: net_codewyre_leaetienne
+        extras: burst=30 nodelay
+      domain:
+        name: leaetienne.codewyre.net
+        aliases: []
+    docker:
+      subnet: "172.130.0.0/24"
+      gateway: "172.130.0.1"
+      files:
+      - from: vhosts/net.codewyre.leaetienne/etc/nginx/reverse-proxy.conf.j2
+        to: /etc/nginx/reverse-proxy.conf
+      - from: vhosts/net.codewyre.leaetienne/etc/facade/nginx.conf.j2
+        to: /etc/facade/nginx.conf
+      - from: vhosts/net.codewyre.leaetienne/etc/api/configuration.json.j2
+        to: /etc/api/configuration.json
+      - from: vhosts/net.codewyre.leaetienne/data/files/.keepme
+        to: /data/files/.keepme
+      - from: vhosts/net.codewyre.leaetienne/data/database/.keepme
+        to: /data/database/.keepme
+      - from: vhosts/net.codewyre.leaetienne/usr/share/image-api-server/database/init.sql
+        to: /usr/share/image-api-server/database/init.sql
+      - from: vhosts/net.codewyre.leaetienne/httpdocs/.keepme
+        to: /httpdocs/.keepme
+      containers:
+        facade:
+          image: nginx:latest
+          restart: unless-stopped
+          volumes:
+            - ./httpdocs:/usr/share/nginx/html
+            - ./etc/facade/nginx.conf:/etc/nginx/conf.d/default.conf
+          networks:
+            nat:
+              ipv4_address: 172.130.0.2
+
+        api:
+          image: hobart2967/event-image-upload-api
+          build:
+            context: .
+            dockerfile: Dockerfile
+          restart: always
+          volumes:
+            - ./etc/api/configuration.json:/usr/share/image-api-server/configuration.json
+            - ./data/files:/usr/share/image-api-server/.storage
+          networks:
+            nat:
+              ipv4_address: 172.130.0.3
+
+        database:
+          # TODO: Make this work with latest version (chown permission denied error)
+          # https://github.com/MariaDB/mariadb-docker/issues/95
+          image: mariadb
+          restart: always
+          #user: ${DB_UID}:${DB_GID}
+          environment:
+            MARIADB_ROOT_PASSWORD:
+              secret: net_codewyre_leaetienne_db_pw
+          volumes:
+            - ./usr/share/image-api-server/database/:/docker-entrypoint-initdb.d/
+            - ./data/database:/var/lib/mysql/:Z
+          networks:
+            nat:
+              ipv4_address: 172.130.0.4

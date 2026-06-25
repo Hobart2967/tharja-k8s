@@ -1,0 +1,13 @@
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  rootPasswordSecretKeyRef:
+    name: {{ .Release.Name }}-root
+    key: MARIADB_ROOT_PASSWORD
+  storage:
+    size: 1Gi
+    storageClassName: local-path

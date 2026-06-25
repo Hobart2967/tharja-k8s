@@ -1,4 +1,5 @@
 ---
+
 releases:
   - name: net-adventurespiele
     chart: ../../helm/dns-zone
@@ -6,6 +7,7 @@ releases:
     values:
       - domainName: adventurespiele.net
       - ./values.yaml
+      - ./values.yaml.gotmpl
 
   - name: net-codewyre
     chart: ../../helm/dns-zone
@@ -13,6 +15,7 @@ releases:
     values:
       - domainName: codewyre.net
       - ./values.yaml
+      - ./values.yaml.gotmpl
 
   - name: engineer-marcoklein
     chart: ../../helm/dns-zone
@@ -20,6 +23,7 @@ releases:
     values:
       - domainName: marcoklein.engineer
       - ./values.yaml
+      - ./values.yaml.gotmpl
 
   - name: de-avsn
     chart: ../../helm/dns-zone
@@ -27,6 +31,7 @@ releases:
     values:
       - domainName: avsn.de
       - ./values.yaml
+      - ./values.yaml.gotmpl
 
   - name: online-sone
     chart: ../../helm/dns-zone
@@ -34,6 +39,15 @@ releases:
     values:
       - domainName: sone.online
       - ./values.yaml
+      - ./values.yaml.gotmpl
+
+  - name: com-soneonline
+    chart: ../../helm/dns-zone
+    namespace: default
+    values:
+      - domainName: soneonline.com
+      - ./values.yaml
+      - ./values.yaml.gotmpl
 
   - name: de-devforyou
     chart: ../../helm/dns-zone
@@ -41,3 +55,4 @@ releases:
     values:
       - domainName: devforyou.de
       - ./values.yaml
+      - ./values.yaml.gotmpl

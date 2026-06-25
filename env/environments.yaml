@@ -1,0 +1,227 @@
+environments:
+  sidra:
+    values:
+      - hostIp: 192.168.178.95
+        hostNickname: sidra
+        secretVault: 64iqhopdnz56fpxgk5mr3uhqpe
+        secretsMap:
+          ntfy-grafana:
+            item: null
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+          ntfy-homeserver:
+            item: null
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+              - access_token
+          ntfy-hobart:
+            item: null
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+          grafana-discord-webhook:
+            item: rqidcwg4rb4kk5ku7pm4zvgami
+            namespaces:
+              - monitoring
+          grafana-admin:
+            item: 5cctdss53axmrc67inrtrwozw4
+            namespaces:
+              - monitoring
+            fields:
+              - password
+              #- name
+              - username
+              #- email
+          de-avsn-maps:
+            item: m76m4hps4kzxttc6jnnojvlgvq
+            namespaces:
+              - project-minecraft
+            fields:
+              - password
+          cloud-codewyre-net:
+            item: sgbtrn2w7fm5sv6vqvk4mjr35m
+            namespaces:
+              - project-localstack
+            fields:
+              - username
+              - password
+          de-avsn-mariadb-root:
+            item: 44djwk4bbnnhn7b3vvngkgs34y
+            namespaces:
+              - project-de-avsn
+            fields:
+              - password
+          de-avsn-mariadb-web1:
+            item: 2kwhr2kdmghidhbk4gcviqnt7e
+            namespaces:
+              - project-de-avsn
+            fields:
+              - password
+          de-avsn-hark:
+            item: rwvbvxet7zoeodrj5pzbwhrc2a
+            namespaces:
+              - project-ark
+            fields:
+              - admin_password
+              - password
+          home-server-bastion:
+            item: null
+            namespaces:
+              - project-backup
+            fields:
+              - ip_address
+              - username
+              - password
+          home-server:
+            item: null
+            namespaces:
+              - project-home-server
+            fields:
+              - mac_address
+          vpn:
+            item: null
+            namespaces:
+              - project-vpn
+            fields:
+              - portal
+              - ipsec_key
+              - username
+              - password
+              - ipsec_id
+          net-codewyre-ela-micha:
+            item: null
+            namespaces:
+              - project-elamicha
+            fields:
+              - password
+              - db_password
+          net-codewyre-leaetienne:
+            item: null
+            namespaces:
+              - project-leaetienne
+            fields:
+              - password
+              - db_password
+
+  tharja:
+    values:
+      - hostIp: 78.46.47.87
+        hostNickname: tharja
+        secretVault: ha34ot6ty3cy4rkp54jgvdluae
+        secretsMap:
+          ntfy-grafana:
+            item: 2mocvryly44i63iq6c2ct36tcy
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+          ntfy-homeserver:
+            item: 25he6rmdshpzetnkiggdqon6b4
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+              - access_token
+          ntfy-hobart:
+            item: wvarzykubx3z7arlc5itqx6dha
+            namespaces:
+              - project-ntfy
+            fields:
+              - username
+              - password
+          grafana-discord-webhook:
+            item: rqidcwg4rb4kk5ku7pm4zvgami
+            namespaces:
+              - monitoring
+            fields:
+              - password
+          grafana-admin:
+            item: lalvtnegadzm2la2eeulxmhdni
+            namespaces:
+              - monitoring
+            fields:
+              - password
+              - name
+              - username
+              - email
+
+          de-avsn-maps:
+            item: c5etbdq4uwawxvbinvlior5xba
+            namespaces:
+              - project-minecraft
+            fields:
+              - password
+          cloud-codewyre-net:
+            item: 22zwcewxzorho53x3tkpwe5jim
+            namespaces:
+              - project-localstack
+            fields:
+              - username
+              - password
+          de-avsn-mariadb-root:
+            item: p5ppm7v5d37qw3hsd27wwol4ee
+            namespaces:
+              - project-de-avsn
+            fields:
+              - password
+          de-avsn-mariadb-web1:
+            item: 4zscr3qhm2zfd4ol4vvosmqkiq
+            namespaces:
+              - project-de-avsn
+            fields:
+              - password
+          de-avsn-hark:
+            item: mgqe2zbksqx7trviusnl4aggty
+            namespaces:
+              - project-ark
+            fields:
+              - admin_password
+              - password
+          home-server-bastion:
+            item: syywokky6f4fj7dar74pvfrwlm
+            namespaces:
+              - project-backup
+            fields:
+              - ip_address
+              - username
+              - password
+          home-server:
+            item: syywokky6f4fj7dar74pvfrwlm
+            namespaces:
+              - project-home-server
+            fields:
+              - mac_address
+          vpn:
+            item: ma2s36bx6szayoymvyu7hzoxaa
+            namespaces:
+              - project-vpn
+            fields:
+              - portal
+              - ipsec_key
+              - username
+              - password
+              - ipsec_id
+          net-codewyre-elamicha:
+            item: ugdxxh7kjvlbzqxpwul546eqpi
+            namespaces:
+              - project-elamicha
+            fields:
+              - password
+              - db_password
+          net-codewyre-leaetienne:
+            item: ugdxxh7kjvlbzqxpwul546eqpi # TODO: Create custom PW
+            namespaces:
+              - project-leaetienne
+            fields:
+              - password
+              - db_password

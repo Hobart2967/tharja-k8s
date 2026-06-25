@@ -1,0 +1,11 @@
+---
+repositories:
+  - name: mariadb-operator-crds
+    url: https://mariadb-operator.github.io/mariadb-operator
+
+releases:
+  - name: mariadb-operator-crds
+    namespace: default
+    chart: mariadb-operator-crds/mariadb-operator-crds
+    version: "26.6.0"
+    installed: true

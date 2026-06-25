@@ -1,0 +1,12 @@
+---
+repositories:
+  - name: mariadb-operator
+    url: https://mariadb-operator.github.io/mariadb-operator
+
+releases:
+  - name: mariadb-operator
+    namespace: mariadb-system
+    createNamespace: true
+    chart: mariadb-operator/mariadb-operator
+    version: "26.6.0"
+    installed: true

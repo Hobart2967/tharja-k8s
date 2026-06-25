@@ -1,21 +1,17 @@
 ---
-repositories: []
-releases:
-  - name: prometheus-operator-crds
-    namespace: default
-    chart: prometheus-community/prometheus-operator-crds
-    version: "27.0.1"
-    installed: true
-
 helmfiles:
-  - path: ./helmfiles/crds-bindy/helmfile.yaml
-  - path: ./helmfiles/crds-monitoring/helmfile.yaml
+  # - path: ./helmfiles/crds-bindy/helmfile.yaml
+  # - path: ./helmfiles/crds-monitoring/helmfile.yaml
+  # - path: ./helmfiles/crds-mariadb/helmfile.yaml
+  # - path: ./helmfiles/crds-traefik/helmfile.yaml
 
-  - path: ./helmfiles/monitoring/helmfile.yaml
-  - path: ./helmfiles/dns-system/helmfile.yaml
-  - path: ./helmfiles/dns-cluste/helmfile.yaml
+  # - path: ./helmfiles/dns-system/helmfile.yaml
+  # - path: ./helmfiles/mariadb-system/helmfile.yaml
+  # - path: ./helmfiles/traefik-system/helmfile.yaml
 
-  - path: ./helmfiles/monitoring/helmfile.yaml
-  - path: ./helmfiles/dns-zones/avsn.de/helmfile.yaml
-  - path: ./helmfiles/dns-zones/adventurespiele.net/helmfile.yaml
+  - path: ./helmfiles/dns-zones/helmfile.yaml
+
+  #- path: ./helmfiles/monitoring/helmfile.yaml
+
   - path: ./helmfiles/projects/de.avsn/helmfile.yaml
+  - path: ./helmfiles/projects/engineer.marcoklein/helmfile.yaml

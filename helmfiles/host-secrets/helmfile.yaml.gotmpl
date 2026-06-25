@@ -1,0 +1,17 @@
+---
+bases:
+- ../../env/environments.yaml
+---
+
+{{ $secretsContent := exec "sh" (list "-c" (printf "%s%s%s" "op item list --vault " .Values.secretVault " --format=json | op item get - --format=json --reveal | jq -s '.' | jq 'map(.fields |= (map({key: .id, value: .})| from_entries)) | map({key: .id, value: .}) | from_entries'")) }}
+{{ $secrets := $secretsContent | fromJson }}
+
+releases:
+  - name: host-secrets
+    namespace: default
+    chart: ../../helm/host-secrets
+    version: 0.1.0
+    values:
+      - secrets:
+          {{ $secrets | toYaml | nindent 10 }}
+        {{ .Values | toYaml | nindent 8 }}

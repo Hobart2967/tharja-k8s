@@ -1,0 +1,56 @@
+{{ $values := .Values }}
+{{ $release := .Release }}
+{{- range $user := $values.users }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: User
+metadata:
+  name: {{ $user.name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  mariaDbRef:
+    name: {{ $release.Name }}
+  passwordSecretKeyRef:
+    name: "{{ $release.Name }}-{{ $user.name }}"
+    key: MARIADB_PASSWORD
+  host: {{ $user.host | quote }}
+  maxUserConnections: 0
+  cleanupPolicy: Delete
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $release.Name }}-{{ $user.name }}
+  labels:
+    k8s.mariadb.com/watch:
+stringData:
+  MARIADB_PASSWORD: {{ $user.initialPassword }}
+
+---
+{{ range $db := $user.databases }}
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: {{ $user.name }}-{{ replace "_" "-" $db.name}}
+  namespace: {{ $release.Namespace }}
+spec:
+  mariaDbRef:
+    name: mariadb
+  privileges:
+    - "SELECT"
+    - "INSERT"
+    - "UPDATE"
+    # - "ALL PRIVILEGES"
+  database: "{{ $db.name }}"
+  table: "*"
+  username: {{ $user.name }}
+  grantOption: true
+  host: {{ $db.host | quote }}
+  # Delete the resource in the database whenever the CR gets deleted.
+  # Alternatively, you can specify Skip in order to omit deletion.
+  cleanupPolicy: Delete
+  requeueInterval: 10h
+  retryInterval: 30s
+{{- end }}
+{{- end }}

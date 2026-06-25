@@ -2,6 +2,8 @@
 {{ $release := .Release }}
 
 {{ range .Values.dnsRecords }}
+{{ $zone := .zone }}
+{{ range .records }}
 ---
 apiVersion: bindy.firestoned.io/v1beta1
 {{ if eq .type "A" -}}
@@ -13,16 +15,22 @@ kind: CNAMERecord
 {{ else if eq .type "NS" -}}
 kind: NSRecord
 {{ end -}}
+{{ $hostIp := "512.512.512.512" }} # Placeholder IP address if ConfigMap is not found
+{{- $hostMetadataConfigRef := $values.hostMetadataConfigRef | default (dict "name" "host-metadata" "namespace" "default") }}
+{{- $configmap := (lookup "v1" "ConfigMap" $hostMetadataConfigRef.namespace $hostMetadataConfigRef.name) }}
+{{- if $configmap }}
+{{- $hostIp = get $configmap.data "hostIp" }}
+{{ end }}
 metadata:
-  name: {{.type | lower }}-{{ .name }}-{{ replace "." "-" .zone }}
+  name: {{.type | lower }}-{{ .name }}-{{ replace "." "-" $zone }}
   namespace: default # should be {{ $release.Namespace }} as soon as https://github.com/firestoned/bindy/issues/370 is fixed.
   labels:
-    dns-zone: {{ .zone }}
+    dns-zone: {{ $zone }}
 spec:
   name: {{ .name }}
   {{ if eq .type "A" -}}
   ipv4Addresses:
-    - {{ .ipv4Address }}
+    - {{ $hostIp }}
   {{ else if eq .type "MX" -}}
   mailServer: {{ .mailServer }}
   priority: {{ .priority }}
@@ -31,4 +39,5 @@ spec:
   {{ else if eq .type "NS" -}}
   nameserver: {{ .nameserver }}
   {{ end -}}
+{{ end }}
 {{ end }}

@@ -1,14 +1,16 @@
 ---
 releases:
-  - name: project
-    namespace: project-de-avsn
-    chart: ../../../helm/project
-    values:
-      - ./values/project.yaml
-
   - name: website
     chart: ../../../helm/website
     namespace: project-de-avsn
+    createNamespace: true
     values:
       - ./values/website.yaml
-      - ./values/dns.yaml
+      - ./values/dns.yaml.gotmpl
+
+  - name: database
+    chart: ../../../helm/mariadb-database
+    namespace: project-de-avsn
+    createNamespace: true
+    values:
+      - ./values/database.yaml

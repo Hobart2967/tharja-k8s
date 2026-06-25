@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: host-metadata
+  namespace: {{ .Release.Namespace }}
+data:
+  hostIp: {{ .Values.hostIp }}
+  hostNickname: {{ .Values.hostNickname }}

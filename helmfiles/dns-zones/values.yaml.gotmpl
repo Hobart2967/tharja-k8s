@@ -1,0 +1,10 @@
+{{ if index .Values "hostMetadataConfigRef" }}
+ipAddress: {{ .Values.hostMetadataConfigRef }}
+{{ else }}
+ipAddress:
+  name: host-metadata
+  namespace: default
+{{ end }}
+primaryNameserver: ns1.first-ns.de.
+secondaryNameserver: robotns2.second-ns.de.
+clusterRef: public-dns

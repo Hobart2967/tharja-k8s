@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -20,10 +20,41 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      volumes:
+      - name: {{ .Release.Name }}
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}
       containers:
+      - name: {{ .Release.Name }}-ssh
+        image: lscr.io/linuxserver/openssh-server:latest
+        env:
+        - name: USER_NAME
+          value: backup
+        - name: USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-ssh
+              key: password
+
+        - name: PUID
+          value: "1000"
+
+        - name: PGID
+          value: "1000"
+
+        ports:
+        - containerPort: 2222
+
+        volumeMounts:
+        - name: {{ .Release.Name }}
+          mountPath: /backups/httpdocs
+          readOnly: true
       - name: {{ .Release.Name }}
         image: {{ .Values.webfacade.image }}
         ports: {{ .Values.webfacade.ports | toYaml | nindent 8 }}
+        volumeMounts:
+          - name: {{ .Release.Name }}
+            mountPath: /var/www/html
         resources:
           limits:
             cpu: {{ .Values.webfacade.resources.limits.cpu }}

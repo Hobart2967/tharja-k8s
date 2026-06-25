@@ -5,10 +5,10 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ $values.namespace }}-https
-  namespace: {{ $values.namespace }}
+  name: {{ $release.Namespace }}-https
+  namespace: {{ $release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ $values.namespace }}
+    app.kubernetes.io/name: {{ $release.Namespace }}
     app.kubernetes.io/instance: {{ $release.Name }}
     app.kubernetes.io/managed-by: {{ $release.Service }}
 spec:
@@ -24,14 +24,14 @@ spec:
     {{ end -}}
     middlewares:
     - name: enforce-https
-      namespace: {{ $values.namespace }}
+      namespace: {{ $release.Namespace }}
     {{ range $values.aliases -}}
     - name: redirect-from-{{ replace "." "-" . }}
-      namespace: {{ $values.namespace }}
+      namespace: {{ $release.Namespace }}
     {{ end -}}
     {{ range $middleware := ($rule.middlewares | default (list)) -}}
     - name: {{ $middleware.name }}
-      namespace: {{ $middleware.namespace | default $values.namespace }}
+      namespace: {{ $middleware.namespace | default $release.Namespace }}
     {{ end -}}
     observability:
       accessLogs: true
@@ -42,7 +42,7 @@ spec:
     {{ range $service := $rule.services -}}
     - kind: Service
       name: {{ $service.name }}
-      namespace: {{ $service.namespace | default $values.namespace }}
+      namespace: {{ $service.namespace | default $release.Namespace }}
       # Customize the connection between Traefik and the backend
       passHostHeader: true
       port: {{ $service.port }}

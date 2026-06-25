@@ -1,0 +1,41 @@
+---
+repositories:
+  - name: traefik
+    url: https://helm.traefik.io/traefik
+
+releases:
+  - name: traefik-operator
+    namespace: traefik-system
+    createNamespace: true
+    chart: traefik/traefik
+    version: 41.0.0
+
+    values:
+      - ports:
+          web:
+            port: 8000
+            exposedPort: 80
+
+          websecure:
+            port: 8443
+            exposedPort: 443
+
+          metrics:
+            port: 9100
+            expose:
+              default: false
+
+          mysql:
+            port: 3306
+            expose:
+              default: true
+            exposedPort: 3306
+
+      - additionalArguments:
+          - "--entrypoints.metrics.address=:9100"
+          - "--entrypoints.mysql.address=:3306"
+      - providers:
+          kubernetesCRD:
+            enabled: true
+          kubernetesIngress:
+            enabled: true

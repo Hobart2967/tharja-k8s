@@ -8,7 +8,6 @@ releases:
     namespace: dns-system
     chart: bindy-charts/bindy
     version: 0.5.2
-    installed: true
+    createNamespace: true
     values:
       - namespace: dns-system
-        createNamespace: false

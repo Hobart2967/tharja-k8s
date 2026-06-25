@@ -10,5 +10,12 @@ metadata:
     dns-zone: {{ .Values.domainName }}
 spec:
   name: ns1
+  {{- $configmap := (lookup "v1" "ConfigMap" .Values.hostMetadataConfigRef.namespace .Values.hostMetadataConfigRef.name) }}
+  {{- if $configmap }}
+  {{- $hostIp := get $configmap.data "hostIp" }}
   ipv4Addresses:
-    - {{ .Values.ipAddress }}
+    - {{ $hostIp }}
+  {{- else }}
+  # If the ConfigMap is not found, you can handle it here (e.g., log a warning, set a default value, etc.).
+  # During helmfile template, this will not be rendered, but during helm install/upgrade, it will be rendered with the actual ConfigMap data.
+  {{ end }}

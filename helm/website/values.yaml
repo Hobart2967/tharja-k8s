@@ -6,6 +6,7 @@
 #      port: http
 #
 webfacade:
+  storageSize: 2Gi
   image: nginx:1.31.2-alpine
   ports:
     - name: http
@@ -22,7 +23,9 @@ dnsRecords: []
 # - zone: example.com
 #   name: example.com.
 #   type: A
-#   ipv4Address: 1.1.1.1
+#   ipv4Address:
+#      name: host-metadata
+#      namespace: default
 # - zone: example.com
 #   name: mail
 #   type: MX

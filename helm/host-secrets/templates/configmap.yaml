@@ -1,0 +1,43 @@
+{{ $values := .Values }}
+
+{{ range $secretName, $definition := .Values.secretsMap }}
+{{ $item := $definition.item }}
+
+{{ if $item }}
+
+{{ range $namespace := $definition.namespaces }}
+{{- $namespaceObject := lookup "v1" "Namespace" "" $namespace -}}
+{{- if $namespaceObject -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $secretName}}
+  namespace: {{ $namespace }}
+data:
+{{ range $field := $definition.fields }}
+  {{ if not (index $values.secrets $definition.item) }}
+    {{- fail (printf "Secret item '%s' not found in values" $definition.item) -}}
+  {{ end }}
+  {{- $secret := get $values.secrets $definition.item -}}
+
+  {{ if not (index $secret.fields $field) }}
+    {{- fail (printf "Secret field '%s' not found in secret item '%s'" $field $definition.item) -}}
+  {{ end }}
+  {{- $fieldObj := get $secret.fields $field -}}
+
+
+  {{ if not (index $fieldObj "value") }}
+    {{- fail (printf "Secret field '%s' has no value in secret item '%s'" $field $definition.item) -}}
+  {{ end }}
+  {{- $fieldValue := get $fieldObj "value" -}}
+  {{ $field }}: {{ $fieldValue | b64enc | quote }}
+{{ end }}
+
+{{ end }}
+
+{{ end }}
+
+{{ end }}
+
+{{ end}}

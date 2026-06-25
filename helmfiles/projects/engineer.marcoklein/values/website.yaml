@@ -1,0 +1,7 @@
+rules:
+  - hostname: www.marcoklein.engineer
+    aliases:
+    - marcoklein.engineer
+    services:
+      - name: website
+        port: http

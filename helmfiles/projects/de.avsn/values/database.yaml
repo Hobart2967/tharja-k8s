@@ -1,7 +1,9 @@
-namespace: project-de-avsn
 databases:
-  - name: usr_web1_1
-    users:
-      - name: web1
-        hosts:
-          - '%' # Needs to be the host from where the client logs in.
+  - resourceName: usr-web1-1
+    name: usr_web1_1
+users:
+  - name: web1
+    host: "%" # Needs to be the host from where the client logs in.
+    databases:
+      - name: usr_web1_1
+        host: "%"

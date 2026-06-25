@@ -2,7 +2,6 @@
 helmDefaults:
   wait: true
   timeout: 600
-  createNamespace: true
 
 repositories:
   - name: prometheus-community

@@ -1,0 +1,11 @@
+---
+repositories:
+  - name: traefik
+    url: https://helm.traefik.io/traefik
+
+releases:
+  - name: traefik-crds
+    namespace: default
+    chart: traefik/traefik-crds
+    version: 1.8.0
+    installed: true

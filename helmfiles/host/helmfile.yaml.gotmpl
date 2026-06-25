@@ -1,0 +1,12 @@
+---
+bases:
+- ../../env/environments.yaml
+---
+
+releases:
+  - name: host-metadata
+    namespace: default
+    chart: ../../helm/host-metadata
+    version: 0.1.0
+    values:
+      - {{ .Values }}

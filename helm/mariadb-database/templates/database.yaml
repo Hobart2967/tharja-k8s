@@ -1,0 +1,15 @@
+{{ $values := .Values }}
+{{ $release := .Release }}
+
+{{- range $db := $values.databases }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Database
+metadata:
+  name: {{ $db.resourceName | default $db.name}}
+  namespace: {{ $release.Namespace }}
+spec:
+  name: {{ $db.name }}
+  mariaDbRef:
+    name: {{ $release.Name }}
+{{- end }}

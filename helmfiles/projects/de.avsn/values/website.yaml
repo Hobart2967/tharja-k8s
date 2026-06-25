@@ -1,6 +1,6 @@
-namespace: project-de-avsn
 webfacade:
   image: hobart2967/docker-apache2-php5.6.40
+  storageSize: 500Gi
 rules:
   - hostname: www.adventurespiele.net
     aliases:

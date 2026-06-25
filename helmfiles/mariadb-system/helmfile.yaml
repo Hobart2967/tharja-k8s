@@ -1,0 +1,3 @@
+---
+helmfiles:
+  - ./helmfile.operator.yaml
