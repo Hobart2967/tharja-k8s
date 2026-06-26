@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+data:
+  ARK_SERVER_NAME: {{ .Values.serverConfig.arkServerName }}
+  SESSION_NAME: {{ .Values.serverConfig.sessionName }}
+  SERVER_MAP: {{ .Values.serverConfig.serverMap }}
+  MAX_PLAYERS: {{ .Values.serverConfig.maxPlayers }}
+  UPDATE_ON_START: {{ .Values.serverConfig.updateOnStart }}
+  BACKUP_ON_STOP: {{ .Values.serverConfig.backupOnStop }}
+  PRE_UPDATE_BACKUP: {{ .Values.serverConfig.preUpdateBackup }}
+  WARN_ON_STOP: {{ .Values.serverConfig.warnOnStop }}
+  GAME_MOD_IDS: {{range $i, $v := .Values.serverConfig.mods }}{{if $i}},{{end}}{{$v}}{{end}}

@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: "hermsi/ark-server:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: game
+              containerPort: 7777
+              protocol: UDP
+            - name: game
+              containerPort: 7778
+              protocol: UDP
+            - name: query
+              containerPort: 27015
+              protocol: UDP
+            - name: rcon
+              containerPort: 27020
+              protocol: TCP
+          env:
+            - name: ARK_SERVER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: ARK_SERVER_NAME
+            - name: ARK_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.arkServerPasswordSecretName }}
+                  key: ARK_SERVER_PASSWORD
+            - name: ARK_SERVER_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.arkServerAdminPasswordSecretName }}
+                  key: ARK_SERVER_ADMIN_PASSWORD
+
+            - name: SESSION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SESSION_NAME
+            - name: SERVER_MAP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SERVER_MAP
+            - name: MAX_PLAYERS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: MAX_PLAYERS
+            - name: UPDATE_ON_START
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: UPDATE_ON_START
+            - name: BACKUP_ON_STOP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: BACKUP_ON_STOP
+            - name: PRE_UPDATE_BACKUP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: PRE_UPDATE_BACKUP
+            - name: WARN_ON_STOP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: WARN_ON_STOP
+            - name: GAME_MOD_IDS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: GAME_MOD_IDS
+          volumeMounts:
+            - name: ark-data
+              mountPath: /ark-data
+      volumes:
+        - name: ark-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}

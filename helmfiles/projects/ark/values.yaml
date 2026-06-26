@@ -1,0 +1,97 @@
+serverConfig:
+  mods:
+    # Dino bars
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057
+    - 1618319057
+
+    # Spoiling bin
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=916788716
+    - 916788716
+
+    # Death Recovery
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=751991809
+    - 751991809
+
+    # Dino Tracker
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=924933745
+    - 924933745
+
+    # Human Stacks
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1333158793
+    - 1333158793
+
+    # eco's RP Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=741203089
+    - 741203089
+
+    # GunSmoke Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1580163189
+    - 1580163189
+
+    # Big Walls
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=541612317
+    - 541612317
+
+    # Mining Drill
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1252358730
+    - 1252358730
+
+    # Camping Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=926567353
+    - 926567353
+
+    # Autorun mod
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=801082391
+    - 801082391
+
+    # Auto Poop Collector
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=2783538786
+    - 2783538786
+
+    # Stackable Foundations
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=760884349
+    - 760884349
+
+    # Paintable Rugs, Wall Art & Lighting
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
+    - 1446292779
+
+    # Paintable Structures and Interior Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
+    - 1592192369
+
+    # Auto Trough
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=543394681
+    - 543394681
+
+    # Stuctures Plus
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=731604991
+    - 731604991
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
+    # Planting v1.3a (PvP friendly)
+    - 1115844828
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
+    # Silica Pearl Factory v2.1a
+    - 839984647
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=2863707757
+    # Better Map
+    - 2863707757
+
+    # # https://steamcommunity.com/sharedfiles/filedetails/?id=539464369
+    # # Advanced Architecture Mod
+    # - 539464369
+
+    # # https://steamcommunity.com/sharedfiles/filedetails/?id=544598236
+    # # Planting v1.2f
+    # - 544598236
+
+    # # Poop Collector
+    # # https://steamcommunity.com/sharedfiles/filedetails/?id=1900830191
+    # - 1900830191
+
+    # # Stats bars
+    # # https://steamcommunity.com/sharedfiles/filedetails/?id=737297870
+    # - 737297870

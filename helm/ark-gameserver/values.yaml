@@ -1,0 +1,15 @@
+replicaCount: 1
+arkServerPasswordSecretName: ark-server-password
+arkServerAdminPasswordSecretName: ark-server-admin-password
+serverConfig:
+  arkServerName: An Ark Server
+  sessionName: An Ark Session
+  serverMap: TheIsland
+  maxPlayers: 10
+  updateOnStart: true
+  backupOnStop: true
+  preUpdateBackup: true
+  warnOnStop: true
+  mods: []
+    # id: 1234567
+    # state: <game|disabled>
