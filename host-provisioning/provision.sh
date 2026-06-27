@@ -10,7 +10,7 @@ main () {
 
   echo "Provisioning machine '$1'"
   ssh-copy-id $2@$IP
-  ansible-playbook -i "$IP," provision-machine.yml --user $2 --diff --ask-become-pass --extra-vars "machine=$1"
+  ansible-playbook $ANSIBLE_ARGS_EXT -i "$IP," provision-machine.yml --user $2 --diff --ask-become-pass --extra-vars "machine=$1"
 }
 
 setup() {
