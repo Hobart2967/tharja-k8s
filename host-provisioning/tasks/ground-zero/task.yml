@@ -1,4 +1,14 @@
 ---
+- name: Install time packages
+  apt:
+    state: present
+    pkg:
+      - ntpsec-ntpdate
+
+- name: Update time
+  # Run sudo ntpdate pool.ntp.org
+  ansible.builtin.command: sudo ntpdate pool.ntp.org
+
 - name: Add apt repositories
   include_tasks: tasks/ground-zero/apt/task.yml
 
@@ -48,7 +58,7 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-      - docker-compose
+      #- docker-compose
       - build-essential
 
       # Libs
