@@ -10,3 +10,13 @@ releases:
     chart: mariadb-operator/mariadb-operator
     version: "26.6.0"
     installed: true
+    values:
+      - resources:
+        requests:
+          cpu: 300m
+          memory: 256Mi
+          ephemeral-storage: 100Mi
+        limits:
+          cpu: 1
+          memory: 1Gi
+          ephemeral-storage: 300Mi
