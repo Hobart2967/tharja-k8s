@@ -9,4 +9,4 @@ releases:
     chart: ../../helm/host-metadata
     version: 0.1.0
     values:
-      - {{ .Values }}
+      - {{ .Values | toYaml | nindent 8 }}

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curl-tester
+  namespace: default
+spec:
+  containers:
+    - name: curl-testerd
+      image: alpine:latest
+      tty: true
+      stdin: true
+      command:
+        - sh
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"

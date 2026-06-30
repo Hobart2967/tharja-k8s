@@ -30,3 +30,10 @@
     content: |
       disable:
         - traefik
+
+- name: Allow Metrics server
+  ansible.posix.firewalld:
+    zone: public
+    port: 10250/tcp
+    permanent: true
+    state: enabled

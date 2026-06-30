@@ -1,7 +1,7 @@
 environments:
   sidra:
     values:
-      - hostIp: 192.168.178.95
+      - hostIp: 192.168.178.100
         hostNickname: sidra
         secretVault: 64iqhopdnz56fpxgk5mr3uhqpe
         secretsMap:

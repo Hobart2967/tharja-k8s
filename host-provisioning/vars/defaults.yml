@@ -1,6 +1,6 @@
 provision:
-  ground_zero: false
-  security: false
+  ground_zero: true
+  security: true
   dns: false
   vpn: false
   k3s: true

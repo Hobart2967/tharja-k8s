@@ -1,0 +1,31 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+  identity:
+    hostname: k8s
+    username: hobart
+    password: "$6$GeekQdNFit43mQaA$iBser4evyGoL8mCD1aCL5LaJOT4FfBOiHgjqlQlHVzUDhYUYi8Ui2Qt7QfLkyZXx9YOHbuEBRSsu0migVRlaO."
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  storage:
+    layout:
+      name: direct
+
+  packages:
+    - qemu-guest-agent
+    - curl
+    - git
+
+  updates: all
+
+  late-commands:
+    - curtin in-target -- systemctl enable ssh
+    - curtin in-target -- update-alternatives --set sudo /usr/bin/sudo.ws
