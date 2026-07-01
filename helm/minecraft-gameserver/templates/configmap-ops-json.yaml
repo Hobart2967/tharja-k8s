@@ -1,0 +1,9 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-ops-json
+  namespace: {{ .Release.Namespace }}
+data:
+  content: {{ $serverConfig.ops | toJson }}

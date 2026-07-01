@@ -1,0 +1,8 @@
+---
+releases:
+  - name: avsn-minecraft
+    chart: ../../../helm/minecraft-gameserver
+    namespace: project-minecraft-avsn
+    createNamespace: true
+    values:
+      - ./values/minecraft.yaml

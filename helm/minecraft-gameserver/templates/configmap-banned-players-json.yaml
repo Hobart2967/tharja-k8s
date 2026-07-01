@@ -1,0 +1,9 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-banned-players-json
+  namespace: {{ .Release.Namespace }}
+data:
+  content: {{ $serverConfig.bannedPlayers | toJson }}

@@ -1,0 +1,73 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-server-properties
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    allow-flight=false
+    allow-nether=true
+    broadcast-console-to-ops=true
+    broadcast-rcon-to-ops=true
+    debug=false
+    difficulty=easy
+    enable-command-block=false
+    enable-jmx-monitoring=false
+    enable-query=false
+    enable-rcon=true
+    enable-status=true
+    enforce-secure-profile=true
+    enforce-whitelist=false
+    entity-broadcast-range-percentage=100
+    force-gamemode=false
+    function-permission-level=2
+    gamemode=survival
+    generate-structures=true
+    generator-settings={}
+    hardcore=false
+    hide-online-players=false
+    initial-disabled-packs=
+    initial-enabled-packs=vanilla
+    level-name=world
+    level-seed=
+    level-type=default
+    max-build-height=256
+    max-chained-neighbor-updates=1000000
+    max-players=20
+    max-tick-time=60000
+    max-world-size=29999984
+    motd={{$serverConfig.motd}}
+    network-compression-threshold=256
+    online-mode=true
+    op-permission-level=4
+    player-idle-timeout=0
+    prevent-proxy-connections=false
+    pvp=true
+    query.port={{$serverConfig.queryPort}}
+    rate-limit=0
+    {{- $secret := default (dict "data" (dict)) (lookup "v1" "Secret" .Release.Namespace $serverConfig.rconPassword.secretRef.name) }}
+    rcon.password={{$secret.data | get $serverConfig.rconPassword.secretRef.key | b64dec}}
+    rcon.port={{$serverConfig.rconPort}}
+    require-resource-pack=false
+    resource-pack-prompt=
+    resource-pack-sha1=
+    resource-pack=
+    server-ip=
+    server-name={{$serverConfig.serverName}}
+    server-port={{$serverConfig.serverPort}}
+    simulation-distance=10
+    snooper-enabled=true
+    spawn-animals=true
+    spawn-monsters=true
+    spawn-npcs=true
+    spawn-protection=16
+    sync-chunk-writes=true
+    text-filtering-config=
+    {{ if $serverConfig.texturePack }}
+    texture-pack={{$serverConfig.texturePack}}
+    {{ end }}
+    use-native-transport=true
+    view-distance=10
+    white-list=false

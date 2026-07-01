@@ -1,0 +1,15 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-boot-sh
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    #!/bin/sh
+    find /minecraft/server/plugins-available \
+      -name '*.jar' \
+      -exec sh -c 'ln -s /minecraft/server/plugins-available/$(basename {}) /minecraft/server/plugins/$(basename {})' ';' || echo "All good."
+
+    /usr/bin/java -Xmx8192M -Xms4096M -jar spigot.jar --noconsole --world-container worlds/

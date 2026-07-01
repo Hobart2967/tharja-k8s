@@ -1,5 +1,5 @@
 apiVersion: v2
-name: project
+name: website
 description: Isolate basics of a website
 type: application
 version: 0.1.0

@@ -1,0 +1,368 @@
+replicaCount: 1
+arkServerPasswordSecretName: ark-server-password
+arkServerAdminPasswordSecretName: ark-server-admin-password
+persistence:
+  worlds:
+    size: 200Gi
+  backups:
+    size: 50Gi
+  pluginsAvailable:
+    size: 10Gi
+  plugins:
+    size: 30Gi
+serverConfig:
+  motd: "Welcome to my Minecraft server!"
+  serverName: "A minecraft server"
+  serverPort: 25565
+  queryPort: 25565
+  rconPort: 33333
+  rconPassword:
+    secretRef:
+      name: minecraft-rcon-password
+      key: rconPassword
+  texturePack: null # "http://www.adventurespiele.net/Downloads/Sonstiges/ChromaHills.zip"
+  knownPlayers: []
+  bannedIps: []
+  bannedPlayers: []
+  ops: []
+  whitelist: []
+  plugins: []
+  permissions: {}
+  commands:
+    aliases:
+      icanhasbukkit:
+      - version $1-
+  spigot:
+    commands:
+      log: true
+      tab-complete: 0
+      send-namespaced: true
+      spam-exclusions:
+      - /skill
+      silent-commandblock-console: false
+      replace-commands:
+      - setblock
+      - summon
+      - testforblock
+      - tellraw
+    settings:
+      bungeecord: false
+      sample-count: 12
+      user-cache-size: 1000
+      timeout-time: 60
+      restart-on-crash: true
+      restart-script: ./start.sh
+      netty-threads: 4
+      log-villager-deaths: true
+      log-named-deaths: true
+      save-user-cache-on-stop-only: false
+      moved-wrongly-threshold: 0.0625
+      player-shuffle: 0
+      attribute:
+        maxHealth:
+          max: 2048.0
+        movementSpeed:
+          max: 2048.0
+        attackDamage:
+          max: 2048.0
+      moved-too-quickly-multiplier: 10.0
+      debug: false
+    messages:
+      restart: Server is restarting
+      whitelist: You are not whitelisted on this server!
+      unknown-command: Unknown command. Type "/help" for help.
+      server-full: The server is full!
+      outdated-client: Outdated client! Please use {0}
+      outdated-server: Outdated server! I'm still on {0}
+    world-settings:
+      default:
+        below-zero-generation-in-existing-chunks: true
+        verbose: true
+        mob-spawn-range: 6
+        dragon-death-sound-radius: 0
+        growth:
+          cactus-modifier: 100
+          cane-modifier: 100
+          melon-modifier: 100
+          mushroom-modifier: 100
+          pumpkin-modifier: 100
+          sapling-modifier: 100
+          beetroot-modifier: 100
+          carrot-modifier: 100
+          potato-modifier: 100
+          wheat-modifier: 100
+          netherwart-modifier: 100
+          vine-modifier: 100
+          cocoa-modifier: 100
+          bamboo-modifier: 100
+          sweetberry-modifier: 100
+          kelp-modifier: 100
+          twistingvines-modifier: 100
+          weepingvines-modifier: 100
+          cavevines-modifier: 100
+        entity-activation-range:
+          animals: 32
+          monsters: 32
+          raiders: 48
+          misc: 16
+          tick-inactive-villagers: true
+          ignore-spectators: false
+        entity-tracking-range:
+          players: 48
+          animals: 48
+          monsters: 48
+          misc: 32
+          display: 128
+          other: 64
+        seed-village: 10387312
+        seed-desert: 14357617
+        seed-igloo: 14357618
+        seed-jungle: 14357619
+        seed-swamp: 14357620
+        seed-monument: 10387313
+        seed-shipwreck: 165745295
+        seed-ocean: 14357621
+        seed-outpost: 165745296
+        seed-endcity: 10387313
+        seed-slime: 987234911
+        seed-nether: 30084232
+        seed-mansion: 10387319
+        seed-fossil: 14357921
+        seed-portal: 34222645
+        max-tnt-per-tick: 100
+        merge-radius:
+          exp: 3.0
+          item: 2.5
+        ticks-per:
+          hopper-transfer: 8
+          hopper-check: 1
+        hopper-amount: 1
+        hopper-can-load-chunks: false
+        hunger:
+          jump-walk-exhaustion: 0.05
+          jump-sprint-exhaustion: 0.2
+          combat-exhaustion: 0.1
+          regen-exhaustion: 6.0
+          swim-multiplier: 0.01
+          sprint-multiplier: 0.1
+          other-multiplier: 0.0
+        max-tick-time:
+          tile: 50
+          entity: 50
+        end-portal-sound-radius: 0
+        hanging-tick-frequency: 100
+        view-distance: default
+        item-despawn-rate: 6000
+        zombie-aggressive-towards-villager: true
+        simulation-distance: default
+        thunder-chance: 100000
+        arrow-despawn-rate: 1200
+        trident-despawn-rate: 1200
+        wither-spawn-sound-radius: 0
+        enable-zombie-pigmen-portal-spawns: true
+        nerf-spawner-mobs: false
+    advancements:
+      disable-saving: false
+      disabled:
+      - minecraft:story/disabled
+    players:
+      disable-saving: false
+    config-version: 12
+    stats:
+      disable-saving: false
+      forced-stats: {}
+  bukkit:
+    settings:
+      allow-end: true
+      warn-on-overload: true
+      permissions-file: permissions.yml
+      update-folder: update
+      plugin-profiling: false
+      connection-throttle: 4000
+      query-plugins: true
+      deprecated-verbose: default
+      shutdown-message: Server closed
+      minimum-api: none
+      use-map-color-cache: true
+      world-container: worlds
+    spawn-limits:
+      monsters: 70
+      animals: 10
+      water-animals: 5
+      water-ambient: 20
+      water-underground-creature: 5
+      axolotls: 5
+      ambient: 15
+    chunk-gc:
+      period-in-ticks: 600
+    ticks-per:
+      animal-spawns: 400
+      monster-spawns: 1
+      water-spawns: 1
+      water-ambient-spawns: 1
+      water-underground-creature-spawns: 1
+      axolotl-spawns: 1
+      ambient-spawns: 1
+      autosave: 6000
+    aliases: now-in-commands.yml
+  # - name: AncientGates
+  #   source: spigot
+  #   args:
+  #     id: 6583
+  #     version: 542512 # 2.7.1
+  # - name: AutoBackup
+  #   source: spigot
+  #   args:
+  #     id: 88209
+  #     version: 384361 # 1.2.1
+  # - name: BKCommonLib
+  #   source: spigot
+  #   args:
+  #     id: 39590
+  #     version: 559399 # 1.21.1-v1
+  # - name: Brewery
+  #   source: spigot
+  #   args:
+  #     id: 3082
+  #     version: 369519 # v3.0
+  # - name: Chairs
+  #   source: curl
+  #   args:
+  #     version: 5.1
+  #     url: https://dev.bukkit.org/projects/chairsreloaded/files/2725118/download
+  # - name: Dynmap
+  #   source: curl
+  #   args:
+  #     url: https://mediafilez.forgecdn.net/files/4632/182/Dynmap-3.6-spigot.jar
+  #     version: v3.6-beta-2
+  # - name: EssentialsX
+  #   source: curl
+  #   args:
+  #     version: 2.19.4
+  #     url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsX-2.19.4.jar
+  # - name: EssentialsXAntiBuild
+  #   source: curl
+  #   args:
+  #     version: 2.19.4
+  #     url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXAntiBuild-2.19.4.jar
+  # - name: EssentialsXChat
+  #   source: curl
+  #   args:
+  #     version: 2.19.4
+  #     url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXChat-2.19.4.jar
+  # - name: EssentialsXSpawn
+  #   source: curl
+  #   args:
+  #     version: 2.19.4
+  #     url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXSpawn-2.19.4.jar
+  # - name: floodgate-plugin
+  #   source: curl
+  #   args:
+  #     version: 2.2.2
+  #     url: https://download.geysermc.org/v2/projects/floodgate/versions/2.2.2/builds/latest/downloads/spigot
+  # - name: geyser
+  #   source: curl
+  #   args:
+  #     version: 2.1.1
+  #     url: https://download.geysermc.org/v2/projects/geyser/versions/2.1.1/builds/latest/downloads/spigot
+  # - name: LuckPerms
+  #   source: spigot
+  #   args:
+  #     id: 28140
+  #     version: 544174 # 5.4.131
+  # - name: Minepacks
+  #   source: spigot
+  #   args:
+  #     id: 19286
+  #     version: 545752 # 2.4.31.5
+  # - name: Multiverse-Core
+  #   source: curl
+  #   args:
+  #     version: 4.3.9
+  #     url: https://github.com/Multiverse/Multiverse-Core/releases/download/4.3.9/multiverse-core-4.3.9.jar
+
+  # - name: Multiverse-NetherPortals
+  #   source: curl
+  #   args:
+  #     version: 4.2.3
+  #     url: https://github.com/Multiverse/Multiverse-NetherPortals/releases/download/4.2.3/multiverse-netherportals-4.2.3.jar
+  # - name: Multiverse-Portals
+  #   source: curl
+  #   args:
+  #     version: 4.2.3
+  #     url: https://github.com/Multiverse/Multiverse-Portals/releases/download/4.2.3/multiverse-portals-4.2.3.jar
+  # - name: PluginConstructorAPI
+  #   source: curl
+  #   args:
+  #     version: 1.0.52
+  #     url: https://github.com/ZombieStriker/PluginConstructorAPI/releases/download/v1.0.52/PluginConstructorAPI.jar
+  # - name: ProtocolLib
+  #   source: spigot
+  #   args:
+  #     id: 1997
+  #     version: 496322 # 5.0.0
+  # - name: ServerListPlus-3.5.0-Universal
+  #   source: spigot
+  #   args:
+  #     id: 241
+  #     version: 501840 # 3.5.0
+  # - name: SignLink
+  #   source: spigot
+  #   args:
+  #     id: 39593
+  #     version: 501863 # 1.20.1-v1
+  # - name: SmoothSleep
+  #   source: spigot
+  #   args:
+  #     id: 32043
+  #     version: 396611 # 2.11.2
+  # - name: TpWolfv1.6
+  #   source: spigot
+  #   args:
+  #     id: 62355
+  #     version: 248200 # 1.6
+  # - name: TrainCarts
+  #   source: spigot
+  #   args:
+  #     id: 39592
+  #     version: 501859 # 1.20.1-v1
+  # - name: Vault
+  #   source: spigot
+  #   args:
+  #     id: 34315
+  #     version: 344916 # 1.7.3
+  # - name: WorldBorder
+  #   source: spigot
+  #   args:
+  #     id: 60905
+  #     version: 240474 # 1.9.0
+  # - name: WorldEdit
+  #   source: curl
+  #   args:
+  #     id: 7.2.15
+  #     url: https://dev.bukkit.org/projects/worldedit/files/4586220/download
+  # - name: WorldGuardExtraFlags
+  #   source: spigot
+  #   args:
+  #     id: 4823
+  #     version: 326911 # 4.1.4
+  # - name: WorldGuard
+  #   source: curl
+  #   args:
+  #     id: 7.0.9
+  #     url: https://mediafilez.forgecdn.net/files/4675/318/worldguard-bukkit-7.0.9-dist.jar
+
+# namespace: <string>
+# extraIngressRules:
+#  - condition: "Host(`example.com`)"
+#    service:
+#      name: example-service
+#      port: http
+
+dnsRecords: []
+# - zone: example.com
+#   name: example.com.
+#   type: A
+#   ipv4Address:
+#      name: host-metadata
+#      namespace: default

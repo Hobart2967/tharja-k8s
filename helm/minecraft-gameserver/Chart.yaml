@@ -1,0 +1,6 @@
+apiVersion: v2
+name: minecraft-gameserver
+description: Isolate basics of a Minecraft game server
+type: application
+version: 0.1.0
+appVersion: "1.0"
