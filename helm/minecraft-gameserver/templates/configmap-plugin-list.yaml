@@ -1,0 +1,10 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-plugin-list
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    {{ $serverConfig.plugins | toYaml | nindent 4 }}

@@ -1,3 +1,4 @@
+{{ if .Values.webfacade.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -7,7 +8,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path
+  storageClassName: local-path-projects-retained
   resources:
     requests:
       storage: {{ .Values.webfacade.storageSize }}
+{{ end }}

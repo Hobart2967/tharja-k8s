@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-bukkit-yml
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.bukkit | toYaml | nindent 4 }}
+  content: |-
+    {{ $serverConfig.bukkit | toYaml | nindent 4 }}

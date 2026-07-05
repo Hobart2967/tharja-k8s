@@ -43,7 +43,7 @@ environments:
           de-avsn-maps:
             item: m76m4hps4kzxttc6jnnojvlgvq
             namespaces:
-              - project-minecraft
+              - project-minecraft-avsn
             fields:
               - password
           cloud-codewyre-net:
@@ -158,7 +158,7 @@ environments:
           de-avsn-maps:
             item: c5etbdq4uwawxvbinvlior5xba
             namespaces:
-              - project-minecraft
+              - project-minecraft-avsn
             fields:
               - password
           cloud-codewyre-net:

@@ -1,0 +1,8 @@
+ports:
+  minecraft:
+    port: 25565
+    expose:
+      default: true
+    exposedPort: 25565
+additionalArguments:
+  - "--entrypoints.minecraft.address=:25565"

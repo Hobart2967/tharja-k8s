@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-ops-json
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.ops | toJson }}
+  content: |-
+    {{ $serverConfig.ops | toJson }}

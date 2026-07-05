@@ -1,0 +1,14 @@
+{{ $values := .Values }}
+{{- range $storageClass := .Values.extraStorageClasses }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path-{{ $storageClass.name }}
+provisioner: cluster.local/local-path-provisioner
+parameters:
+  nodePath: "{{ $storageClass.nodePath }}"
+  pathPattern: "{{ `{{ .PVC.Namespace }}` }}/{{ `{{ .PVC.Name }}` }}/"
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: {{ $storageClass.reclaimPolicy }}
+{{- end }}

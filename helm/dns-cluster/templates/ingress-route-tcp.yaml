@@ -1,0 +1,13 @@
+kind: IngressRouteTCP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - dns-tcp
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: {{ .Release.Name }}
+          port: dns-tcp

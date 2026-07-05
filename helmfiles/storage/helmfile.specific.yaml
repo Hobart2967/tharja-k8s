@@ -1,0 +1,7 @@
+releases:
+  - name: projects
+    namespace: default
+    chart: ../../helm/local-path
+    version: 0.1.0
+    values:
+      - ./values/values.yaml

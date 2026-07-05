@@ -1,7 +1,10 @@
 rules:
-  - hostname: www.marcoklein.engineer
+  - hostname:
+      name: www
+      zone: engineer-marcoklein
     aliases:
-    - marcoklein.engineer
+    - name: "@"
+      zone: engineer-marcoklein
     services:
       - name: website
         port: http

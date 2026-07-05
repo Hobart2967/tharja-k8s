@@ -2,10 +2,13 @@
 {{ $release := .Release }}
 
 {{- range $values.rules }}
-
+{{ $hostname := .hostname }}
 {{ range $alias := .aliases -}}
 
-{{ $sanitized := replace "." "-" . }}
+{{ $resolvedAlias := include "hostname-by-dns" . }}
+
+{{ $sanitized := replace "." "-" $resolvedAlias }}
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -14,8 +17,8 @@ metadata:
   namespace: {{ $values.namespace }}
 spec:
   redirectRegex:
-    regex: "^https://{{ . }}/(.*)"
-    replacement: "https://{{ $values.hostname }}/$1"
+    regex: "^https://{{ $resolvedAlias }}/(.*)"
+    replacement: "https://{{ include "hostname-by-dns" $hostname }}/$1"
 {{ end }}
 
 {{ end}}

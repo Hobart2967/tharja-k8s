@@ -10,4 +10,4 @@ spec:
     key: MARIADB_ROOT_PASSWORD
   storage:
     size: 1Gi
-    storageClassName: local-path
+    storageClassName: local-path-projects-retained

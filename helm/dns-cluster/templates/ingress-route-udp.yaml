@@ -1,0 +1,12 @@
+kind: IngressRouteUDP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - dns-udp
+  routes:
+    - services:
+      - name: {{ .Release.Name }}
+        port: dns-udp

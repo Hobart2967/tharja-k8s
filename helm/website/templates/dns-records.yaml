@@ -22,12 +22,12 @@ kind: NSRecord
 {{- $hostIp = get $configmap.data "hostIp" }}
 {{ end }}
 metadata:
-  name: {{.type | lower }}-{{ .name }}-{{ replace "." "-" $zone }}
+  name: {{.type | lower }}-{{ replace "@" "self" .name  }}-{{ replace "." "-" $zone }}
   namespace: default # should be {{ $release.Namespace }} as soon as https://github.com/firestoned/bindy/issues/370 is fixed.
   labels:
     dns-zone: {{ $zone }}
 spec:
-  name: {{ .name }}
+  name: {{ .name | quote }}
   {{ if eq .type "A" -}}
   ipv4Addresses:
     - {{ $hostIp }}

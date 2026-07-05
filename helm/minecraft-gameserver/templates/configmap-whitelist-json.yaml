@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-whitelist-json
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.whitelist | toJson }}
+  content: |-
+    {{ $serverConfig.whitelist | toJson }}

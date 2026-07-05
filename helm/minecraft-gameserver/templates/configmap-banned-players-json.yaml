@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-banned-players-json
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.bannedPlayers | toJson }}
+  content: |-
+    {{ $serverConfig.bannedPlayers | toJson }}

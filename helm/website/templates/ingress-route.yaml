@@ -1,7 +1,6 @@
 ---
-{{ $values := .Values }}
-{{ $release := .Release }}
-
+{{- $values := .Values }}
+{{- $release := .Release }}
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -20,13 +19,13 @@ spec:
     {{ if $rule.condition -}}
     match: "{{ $rule.condition }}"
     {{ else if $rule.hostname -}}
-    match: Host(`{{ $rule.hostname }}`){{ range $index, $hostname := $rule.aliases }} || Host(`{{ $hostname }}`){{ end }}
+    match: Host(`{{ include "hostname-by-dns" $rule.hostname }}`){{ range $index, $alias := $rule.aliases }} || Host(`{{ include "hostname-by-dns" $alias }}`){{ end }}
     {{ end -}}
     middlewares:
     - name: enforce-https
       namespace: {{ $release.Namespace }}
-    {{ range $values.aliases -}}
-    - name: redirect-from-{{ replace "." "-" . }}
+    {{ range $alias := $rule.aliases -}}
+    - name: redirect-from-{{ replace "." "-" (include "hostname-by-dns" $alias) }}
       namespace: {{ $release.Namespace }}
     {{ end -}}
     {{ range $middleware := ($rule.middlewares | default (list)) -}}

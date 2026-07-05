@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: maps
+      zone: de-avsn
+    services:
+      - name: avsn-minecraft
+        port: dynmap
+
+dnsRecords:
+- zone: de-avsn
+  records:
+  - name: maps
+    type: A

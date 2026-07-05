@@ -48,7 +48,7 @@ data:
     query.port={{$serverConfig.queryPort}}
     rate-limit=0
     {{- $secret := default (dict "data" (dict)) (lookup "v1" "Secret" .Release.Namespace $serverConfig.rconPassword.secretRef.name) }}
-    rcon.password={{$secret.data | get $serverConfig.rconPassword.secretRef.key | b64dec}}
+    rcon.password={{ get $secret.data $serverConfig.rconPassword.secretRef.key | b64dec}}
     rcon.port={{$serverConfig.rconPort}}
     require-resource-pack=false
     resource-pack-prompt=

@@ -1,3 +1,7 @@
+extraPorts:
+  - name: dynmap
+    port: 8123
+    targetPort: 8123
 serverConfig:
   motd: "Willkommen auf dem avsn.de Minecraft Server!"
   serverName: "Avsn.de Minecraft Server"
@@ -42,42 +46,42 @@ serverConfig:
         id: 3082
         version: 369519 # v3.0
     - name: Chairs
-      source: curl
+      source: http
       args:
         version: 5.1
-        url: https://dev.bukkit.org/projects/chairsreloaded/files/2725118/download
+        url: https://mediafilez.forgecdn.net/files/2725/118/Chairs.jar
     - name: Dynmap
-      source: curl
+      source: http
       args:
         url: https://mediafilez.forgecdn.net/files/4632/182/Dynmap-3.6-spigot.jar
         version: v3.6-beta-2
     - name: EssentialsX
-      source: curl
+      source: http
       args:
         version: 2.19.4
         url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsX-2.19.4.jar
     - name: EssentialsXAntiBuild
-      source: curl
+      source: http
       args:
         version: 2.19.4
         url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXAntiBuild-2.19.4.jar
     - name: EssentialsXChat
-      source: curl
+      source: http
       args:
         version: 2.19.4
         url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXChat-2.19.4.jar
     - name: EssentialsXSpawn
-      source: curl
+      source: http
       args:
         version: 2.19.4
         url: https://github.com/EssentialsX/Essentials/releases/download/2.19.4/EssentialsXSpawn-2.19.4.jar
     - name: floodgate-plugin
-      source: curl
+      source: http
       args:
         version: 2.2.2
         url: https://download.geysermc.org/v2/projects/floodgate/versions/2.2.2/builds/latest/downloads/spigot
     - name: geyser
-      source: curl
+      source: http
       args:
         version: 2.1.1
         url: https://download.geysermc.org/v2/projects/geyser/versions/2.1.1/builds/latest/downloads/spigot
@@ -92,22 +96,22 @@ serverConfig:
         id: 19286
         version: 545752 # 2.4.31.5
     - name: Multiverse-Core
-      source: curl
+      source: http
       args:
         version: 4.3.9
         url: https://github.com/Multiverse/Multiverse-Core/releases/download/4.3.9/multiverse-core-4.3.9.jar
     - name: Multiverse-NetherPortals
-      source: curl
+      source: http
       args:
         version: 4.2.3
         url: https://github.com/Multiverse/Multiverse-NetherPortals/releases/download/4.2.3/multiverse-netherportals-4.2.3.jar
     - name: Multiverse-Portals
-      source: curl
+      source: http
       args:
         version: 4.2.3
         url: https://github.com/Multiverse/Multiverse-Portals/releases/download/4.2.3/multiverse-portals-4.2.3.jar
     - name: PluginConstructorAPI
-      source: curl
+      source: http
       args:
         version: 1.0.52
         url: https://github.com/ZombieStriker/PluginConstructorAPI/releases/download/v1.0.52/PluginConstructorAPI.jar
@@ -152,17 +156,17 @@ serverConfig:
         id: 60905
         version: 240474 # 1.9.0
     - name: WorldEdit
-      source: curl
+      source: http
       args:
         id: 7.2.15
-        url: https://dev.bukkit.org/projects/worldedit/files/4586220/download
+        url: https://mediafilez.forgecdn.net/files/4586/220/worldedit-bukkit-7.2.15.jar
     - name: WorldGuardExtraFlags
       source: spigot
       args:
         id: 4823
         version: 326911 # 4.1.4
     - name: WorldGuard
-      source: curl
+      source: http
       args:
         id: 7.0.9
         url: https://mediafilez.forgecdn.net/files/4675/318/worldguard-bukkit-7.0.9-dist.jar

@@ -6,3 +6,10 @@ releases:
     createNamespace: true
     values:
       - ./values/minecraft.yaml
+
+  - name: dynmap
+    chart: ../../../helm/website
+    namespace: project-minecraft-avsn
+    createNamespace: true
+    values:
+      - ./values/dynmap.yaml

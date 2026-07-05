@@ -2,11 +2,16 @@ webfacade:
   image: hobart2967/docker-apache2-php5.6.40
   storageSize: 500Gi
 rules:
-  - hostname: www.adventurespiele.net
+  - hostname:
+      name: www
+      zone: net-adventurespiele
     aliases:
-    - avsn.de
-    - www.avsn.de
-    - adventurespiele.net
+    - name: "@"
+      zone: net-adventurespiele
+    - name: "@"
+      zone: de-avsn
+    - name: www
+      zone: de-avsn
     services:
       - name: website
         port: http

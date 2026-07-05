@@ -1,3 +1,4 @@
+{{- if .Values.webfacade.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -20,5 +21,4 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-
-
+{{- end }}

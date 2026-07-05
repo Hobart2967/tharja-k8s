@@ -20,20 +20,33 @@ releases:
             port: 8443
             exposedPort: 443
 
+          # Do I want to expose this?
           metrics:
             port: 9100
             expose:
               default: false
 
-          mysql:
-            port: 3306
+          {{ range .Values.extraConfigs }}
+          {{- $config := fromYaml (readFile .) }}
+          {{- range $k, $v := $config.ports }}
+          {{ $k }}:
+            port: {{ $v.port }}
             expose:
-              default: true
-            exposedPort: 3306
+              default: {{ $v.expose.default }}
+            exposedPort: {{ $v.exposedPort }}
+            protocol: {{ if hasKey $v "protocol" }}{{ index $v "protocol" }}{{ else }}TCP{{ end }}
+          {{- end }}
+          {{- end }}
+
 
       - additionalArguments:
           - "--entrypoints.metrics.address=:9100"
-          - "--entrypoints.mysql.address=:3306"
+          {{ range .Values.extraConfigs }}
+          {{- $config := fromYaml (readFile .) }}
+          {{- range $config.additionalArguments }}
+          - "{{ . }}"
+          {{- end }}
+          {{- end }}
       - providers:
           kubernetesCRD:
             enabled: true

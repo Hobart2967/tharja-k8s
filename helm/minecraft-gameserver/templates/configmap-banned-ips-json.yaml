@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-banned-ips-json
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.bannedIps | toJson }}
+  content: |-
+    {{ $serverConfig.bannedIps | toJson }}

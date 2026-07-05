@@ -1,0 +1,6 @@
+createConfigMap: true
+
+extraStorageClasses: []
+#  - name: retained
+#    reclaimPolicy: Retain
+#    nodePath: /data/

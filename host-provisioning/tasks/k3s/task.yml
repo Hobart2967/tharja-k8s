@@ -7,7 +7,7 @@
 - name: Install k3s with docker runtime configured
   become: true
   when: not service_status.stat.exists
-  ansible.builtin.command: sh -c "curl -sfL https://get.k3s.io | sh -s - --docker --disable=traefik"
+  ansible.builtin.command: sh -c "curl -sfL https://get.k3s.io | sh -s - --docker --disable=traefik --disable=local-storage"
 
 - name: Install socat to enable port forwarding
   apt:
@@ -28,8 +28,16 @@
   copy:
     dest: /etc/rancher/k3s/config.yaml.d/disable-traefik.yaml
     content: |
-      disable:
+      disable+:
         - traefik
+
+- name: "Add local storage disablement"
+  become: true
+  copy:
+    dest: /etc/rancher/k3s/config.yaml.d/disable-local-storage.yaml
+    content: |
+      disable+:
+        - local-storage
 
 - name: Allow Metrics server
   ansible.posix.firewalld:

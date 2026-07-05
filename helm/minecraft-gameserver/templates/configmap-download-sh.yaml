@@ -1,0 +1,63 @@
+---
+{{- $serverConfig := .Values.serverConfig }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-download-sh
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    #!/bin/sh
+    yq --version
+    jq --version
+    which yq
+    which jq
+    yq '.[]' /config/plugins.yaml | jq -c '.' |
+    while read -r plugin; do
+        name=$(echo "$plugin" | jq -r .name)
+        source=$(echo "$plugin" | jq -r .source)
+        id=$(echo "$plugin" | jq -r '.args.id // ""')
+        version=$(echo "$plugin" | jq -r '.args.version // ""')
+        url=$(echo "$plugin" | jq -r '.args.url // ""')
+
+        target="/plugins/${name}.jar"
+
+        echo "---- Checking plugin: $name from source: $source"
+        echo "name=[$name]"
+        echo "source=[$source]"
+        echo "id=[$id]"
+        echo "version=[$version]"
+        echo "url=[$url]"
+        [ -f "$target" ] && continue
+
+        echo "---- Downloading plugin: $name from source: $source"
+
+        case "$source" in
+            http)
+              sleep 2
+              wget \
+                -O "${target}.tmp" "$url" || exit 1
+                RESULT=$?
+                ;;
+            spigot)
+              sleep 5
+              wget \
+                -O "${target}.tmp" \
+                "https://avocado.api.spiget.org/v2/resources/${id}/versions/${version}/download/proxy" || exit 1
+                RESULT=$?
+                ;;
+            *)
+                echo "Unknown source: $source" >&2
+                exit 1
+                ;;
+        esac
+
+        if [ $RESULT -ne 0 ]; then
+            echo "Error downloading plugin: $name from source: $source" >&2
+            exit 1
+        fi
+
+
+
+        mv "${target}.tmp" "$target"
+    done

@@ -1,3 +1,4 @@
+{{ if .Values.webfacade.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -62,3 +63,4 @@ spec:
           requests:
             cpu: {{ .Values.webfacade.resources.requests.cpu }}
             memory: {{ .Values.webfacade.resources.requests.memory }}
+{{ end }}

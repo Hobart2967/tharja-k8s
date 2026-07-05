@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-commands-yml
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.commands | toYaml | nindent 4 }}
+  content: |-
+    {{ $serverConfig.commands | toYaml | nindent 4 }}

@@ -6,4 +6,5 @@ metadata:
   name: {{ .Release.Name }}-spigot-yml
   namespace: {{ .Release.Namespace }}
 data:
-  content: {{ $serverConfig.spigot | toYaml | nindent 4 }}
+  content: |-
+    {{ $serverConfig.spigot | toYaml | nindent 4 }}

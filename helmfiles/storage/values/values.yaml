@@ -1,0 +1,4 @@
+extraStorageClasses:
+- name: projects-retained
+  nodePath: /storage/projects
+  reclaimPolicy: Retain

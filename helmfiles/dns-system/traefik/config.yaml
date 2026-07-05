@@ -1,0 +1,17 @@
+ports:
+  dns-tcp:
+    port: 53
+    expose:
+      default: true
+    exposedPort: 53
+    protocol: TCP
+  dns-udp:
+    port: 53
+    expose:
+      default: true
+    exposedPort: 53
+    protocol: UDP
+
+additionalArguments:
+  - "--entrypoints.dns-tcp.address=:53/tcp"
+  - "--entrypoints.dns-udp.address=:53/udp"

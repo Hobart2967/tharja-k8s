@@ -1,0 +1,8 @@
+ports:
+  mysql:
+    port: 3306
+    expose:
+      default: true
+    exposedPort: 3306
+additionalArguments:
+  - "--entrypoints.mysql.address=:3306"

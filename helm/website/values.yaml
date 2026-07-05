@@ -5,7 +5,15 @@
 #      name: example-service
 #      port: http
 #
+#  - hostname:
+#      name: www
+#      zone: net-adventurespiele
+#    aliases:
+#    - name: "@"
+#      zone: net-adventurespiele
+#
 webfacade:
+  enabled: true
   storageSize: 2Gi
   image: nginx:1.31.2-alpine
   ports:
@@ -20,22 +28,28 @@ webfacade:
       memory: 64Mi
 
 dnsRecords: []
-# - zone: example.com
+# - zone: k8s-example-com-zone-name
 #   name: example.com.
 #   type: A
 #   ipv4Address:
 #      name: host-metadata
 #      namespace: default
-# - zone: example.com
+# - zone: k8s-example-com-zone-name
+#   name: "@"
+#   type: A
+#   ipv4Address:
+#      name: host-metadata
+#      namespace: default
+# - zone: k8s-example-com-zone-name
 #   name: mail
 #   type: MX
 #   mailServer: mail.example.com.
 #   priority: 10
-# - zone: example.com
+# - zone: k8s-example-com-zone-name
 #   name: www
 #   type: CNAME
 #   canonicalName: example.com.
-# - zone: example.com
+# - zone: k8s-example-com-zone-name
 #   name: example.com.
 #   type: NS
 #   nameserver: ns1.example.com.

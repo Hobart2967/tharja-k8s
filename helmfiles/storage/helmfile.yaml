@@ -1,0 +1,7 @@
+helmfiles:
+  - path: ../_local-path-provisioner/helmfile.yaml
+    values:
+      - ./values/values.yaml
+  - path: ./helmfile.specific.yaml
+    values:
+      - ./values/values.yaml
