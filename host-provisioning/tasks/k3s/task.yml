@@ -16,6 +16,10 @@
     pkg:
       - socat
 
+- name: Disable recursion
+  include_tasks: disable-dns-recursion.yml
+  when: dns.disable_recursion | default(false)
+
 - name: Create Directory - /etc/rancher/k3s/config.yaml.d
   become: true
   file:

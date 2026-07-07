@@ -15,6 +15,9 @@ mailboxes:
 
 initial_mailbox: *initial_mailbox
 
+dns:
+  disable_recursion: true
+
 config:
   secret_vault: 64iqhopdnz56fpxgk5mr3uhqpe
   grafana:

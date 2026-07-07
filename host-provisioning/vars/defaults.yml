@@ -112,6 +112,12 @@ security:
         port: 443
         protocol: tcp
 dns:
-  disable_recursion: true
+  disable_recursion: false
+  runtime_resolvers:
+    - 1.1.1.1
+    - 1.0.0.1
+  runtime_fallback_resolvers:
+    - 8.8.8.8
+    - 8.8.4.4
 
 vhosts: []
