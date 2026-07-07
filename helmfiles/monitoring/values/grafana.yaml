@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: monitoring
+      zone: net-codewyre
+    services:
+      - name: prometheus-grafana
+        port: http-web
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: monitoring
+    type: A

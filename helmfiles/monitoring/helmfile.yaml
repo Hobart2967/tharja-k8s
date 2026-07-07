@@ -39,3 +39,10 @@ releases:
     version: 11.13.0
     values:
       - ./values/blackbox-exporter.yaml
+
+  - name: grafana
+    chart: ../../helm/website
+    namespace: monitoring
+    createNamespace: true
+    values:
+      - ./values/grafana.yaml
