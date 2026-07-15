@@ -16,7 +16,7 @@ fi
 
 rm -rf seed.iso
 ./generate-iso.sh || exit 500
-cp seed.iso /mnt/c/VMs/ISOs/seed.iso
+cp seed.iso /mnt/c/VMs/ISOs/seed-$NAME.iso
 
 cp ./create-vm.ps1 /mnt/c/VMs/create-vm.ps1
 
