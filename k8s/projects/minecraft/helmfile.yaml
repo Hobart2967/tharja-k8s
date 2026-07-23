@@ -4,16 +4,21 @@ releases:
     namespace: project-minecraft-avsn
     createNamespace: true
     chart: ../../helm/project
+    values:
+      - memory:
+          max: 12Gi
+        cpu:
+          max: 4
 
   - name: avsn-minecraft
-    chart: ../../../helm/minecraft-gameserver
+    chart: ../../helm/minecraft-gameserver
     namespace: project-minecraft-avsn
     createNamespace: true
     values:
       - ./values/minecraft.yaml
 
   - name: dynmap
-    chart: ../../../helm/website
+    chart: ../../helm/website
     namespace: project-minecraft-avsn
     createNamespace: true
     values:

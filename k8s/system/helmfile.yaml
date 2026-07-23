@@ -5,7 +5,7 @@ helmDefaults:
   wait: true
 
 helmfiles:
-  - path: ./crds-bindy/helmfile.yaml
+  - path: ./crds-bindy/helmfile.yaml.gotmpl
   - path: ./crds-monitoring/helmfile.yaml
   - path: ./crds-mariadb/helmfile.yaml
   - path: ./crds-traefik/helmfile.yaml

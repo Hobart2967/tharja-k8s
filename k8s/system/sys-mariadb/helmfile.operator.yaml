@@ -19,11 +19,11 @@ releases:
       - resources:
           requests:
             cpu: 300m
-            memory: 256Mi
+            memory: 128Mi
             ephemeral-storage: 100Mi
           limits:
-            cpu: 1
-            memory: 1Gi
+            cpu: 500m
+            memory: 256Mi
             ephemeral-storage: 300Mi
 
       - webhook:

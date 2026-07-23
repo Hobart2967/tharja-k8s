@@ -7,7 +7,7 @@ releases:
   - name: bindy
     namespace: sys-dns
     chart: bindy-charts/bindy
-    version: 0.6.1
+    version: 0.5.2
     createNamespace: true
     values:
       - namespace: sys-dns

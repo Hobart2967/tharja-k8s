@@ -9,5 +9,5 @@ spec:
   routes:
     - match: HostSNI(`*`)
       services:
-        - name: {{ .Release.Name }}-service
+        - name: {{ .Release.Name }}
           port: {{ .Values.serverConfig.serverPort }}

@@ -6,7 +6,7 @@ releases:
     chart: ../../helm/project
 
   - name: website
-    chart: ../../../helm/website
+    chart: ../../helm/website
     namespace: project-engineer-marcoklein
     createNamespace: true
     values:
