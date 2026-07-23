@@ -1,0 +1,55 @@
+- name: Check wether systemd service "k3s" exists
+  become: true
+  stat:
+    path: /usr/local/bin/k3s
+  register: service_status
+
+- name: Install k3s with docker runtime configured
+  become: true
+  when: not service_status.stat.exists
+  ansible.builtin.command: sh -c "curl -sfL https://get.k3s.io | sh -s - --docker --disable=traefik --disable=local-storage"
+
+- name: Install socat to enable port forwarding
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - socat
+
+- name: Create Directory - /etc/rancher/k3s/config.yaml.d
+  become: true
+  file:
+    path: /etc/rancher/k3s/config.yaml.d
+    state: directory
+    mode: '0755'
+
+- name: "Add traefik installation disablement"
+  become: true
+  copy:
+    dest: /etc/rancher/k3s/config.yaml.d/disable-traefik.yaml
+    content: |
+      disable+:
+        - traefik
+
+- name: "Add local storage disablement"
+  become: true
+  copy:
+    dest: /etc/rancher/k3s/config.yaml.d/disable-local-storage.yaml
+    content: |
+      disable+:
+        - local-storage
+
+- name: "Create kubeconfig directory for user"
+  become: true
+  file:
+    path: /home/hobart/.kube
+    state: directory
+    mode: '0755'
+
+- name: "Copy k3s config to ~/.kube/config for user"
+  become: true
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "/home/hobart/.kube/config"
+    remote_src: yes
+    mode: '0644'

@@ -1,0 +1,21 @@
+---
+helmDefaults:
+  timeout: 600
+  waitForJobs: true
+  wait: true
+
+helmfiles:
+  - path: ./crds-bindy/helmfile.yaml
+  - path: ./crds-monitoring/helmfile.yaml
+  - path: ./crds-mariadb/helmfile.yaml
+  - path: ./crds-traefik/helmfile.yaml
+
+  - path: ./sys-default/helmfile.yaml
+  - path: ./sys-kube/helmfile.yaml
+  - path: ./sys-dns/helmfile.yaml
+  - path: ./sys-mariadb/helmfile.yaml
+  - path: ./sys-traefik/helmfile.yaml
+  - path: ./sys-storage/helmfile.yaml
+
+  - path: ./dns-zones/helmfile.yaml
+  - path: ./monitoring/helmfile.yaml

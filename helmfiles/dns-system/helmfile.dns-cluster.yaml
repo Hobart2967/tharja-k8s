@@ -1,8 +1,0 @@
----
-releases:
-  - name: public-dns
-    namespace: dns-system
-    createNamespace: true
-    chart: ../../helm/dns-cluster
-    values:
-      - ./values.yaml

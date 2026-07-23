@@ -1,0 +1,66 @@
+github_keys_holder: xbzljy6z5y7xiekns7p7w4cnsy
+private_key_id: ssh-privkey-sidra
+public_key_id: ssh-pubkey-sidra
+
+machine_settings:
+  banner: SIDRA
+  user: hobart
+
+mailboxes:
+  - &initial_mailbox
+    address: info@marcoklein.engineer
+    initial: true
+    aliases:
+      - postmaster@marcoklein.engineer
+
+initial_mailbox: *initial_mailbox
+
+dns:
+  disable_recursion: true
+
+config:
+  secret_vault: 64iqhopdnz56fpxgk5mr3uhqpe
+  grafana:
+    url: https://monitoring.codewyre.net
+    admin:
+      name: grafana_admin_name
+      mail: grafana_admin_mail
+      user: grafana_admin_user
+      password: grafana_admin_password
+
+secrets: {}
+
+mailserver:
+  hostname: mail.marcoklein.engineer
+  postmaster_address: postmaster@marcoklein.engineer
+
+  pop3: 0
+  imap: 1
+
+  log_level: info
+  supervisor_loglevel: warn
+
+  dms_vmail_uid: 5000
+  dms_vmail_gid: 5000
+  account_provisioner: FILE
+
+  enable_update_check: 1
+  update_check_interval: 1d
+
+  tls_level: modern
+  ssl_type: letsencrypt
+
+  spoof_protection: 1
+  srs: 0
+  opendkim: 1
+  opendmarc: 1
+  policyd_spf: 0
+
+  spam_subject_prefix: ""
+  spamassassin: 1
+  spamassassin_kam: 1
+  rspamd: 1
+  rspamd_learn: 1
+  rspamd_redis: 1
+
+  clam_antivirus: 1

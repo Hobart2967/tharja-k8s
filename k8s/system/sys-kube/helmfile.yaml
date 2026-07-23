@@ -1,0 +1,6 @@
+---
+releases:
+  - name: project
+    namespace: kube-system
+    createNamespace: true
+    chart: ../../helm/project

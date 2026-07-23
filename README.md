@@ -1,65 +1,70 @@
+# Kubernetes Setup for Tharja
+
+## (Local only) Setup HyperV machine
+
+```sh
+cd hyperv && ./create-vm.sh k8s
+```
+
+Then connect to machine and get ip
+
+## Provisioning
+
+1. Adapt `machines.json` and map "sidra": "<ip>"
+2. Run provisioning.
+
+```sh
+./provision.sh <machineName> hobart
+```
+
+
 ## After Host provisioning
 
 ### Copy config
-scp user@192.168.178.95:/etc/rancher/k3s/k3s.yaml ~/.kube/config-hostname
+
+scp hobart@192.168.178.103:/home/hobart/.kube/config ~/.kube/config-sidra
 
 
 # Machine Provisioning for avsn.de Server
 
-This ansible project is for provisioning a bare metal Debian-based box. It follows some principle of a plesk based server, while explicitly NOT using plesk.
+This project is for provisioning a bare metal Debian-based box using ansible and operating it with k8s.
+It follows some principle of a plesk based server, while explicitly NOT using plesk.
 
 It provides:
 
 - ✅ Docker Setup
-  - ✅ Including it having iptables support disabled, while allowing containers to connect to the outside
-  - ✅ Everything runs stuck behind firewall, except SSH and firewall itself.
-  - ✅ Every environment runs in it own subnet with fixed ip range and every container can be configured with a fixed IP
+- ✅ k3s Setup
 - ✅ Common things, libs, packages, CLIs
-- ✅ OhMyZsh, including my shell setup
-- ✅ ASDF Setup
-  - ✅ Java,
-  - ✅ C#,
-  - ✅ Terraform,
-  - ✅ Node,
-  - ✅ Python,
-  - ✅ Maven,
-  - ✅ awscli
-- ✅ nginx reverse proxy setup with rate limiting and HTTPS support (LetsEncrypt)
-- ✅ Dockerized Web Server Setup
-  - ✅ Supports nginx
-  - ✅ Supports a PHP armored apache instance
-- ✅ Monitoring Setup using Grafana
-  - ✅ Comes pre-configured with prometheus and loki
-  - ✅ Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
-  - ✅ Easy Contact point config in variables
-- ✅ MailServer Setup
-  - ✅ Postfix
-  - ✅ Dovecot
-  - ✅ Webmail
-  - ✅ Spam Protection
-  - ✅ Virus Protection
-  - ✅ Multi-Domain
-- ✅ UFW Firewall setup
+- ✅ Traefik reverse proxy
+    - [ ] With rate limiting
+    - [ ] HTTPS support (LetsEncrypt)
+- [ ] Monitoring Setup using Grafana
+  - [ ] Comes pre-configured with prometheus and loki
+  - [ ] Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
+  - [ ] Easy Contact point config in variables
+- [ ] MailServer Setup
+  - [ ] Postfix
+  - [ ] Dovecot
+  - [ ] Webmail
+  - [ ] Spam Protection
+  - [ ] Virus Protection
+  - [ ] Multi-Domain
+- Application firewall (Using CrowdSource?)
   - ✅ Firewall general installation
   - ✅ Systemd service for ufw.
-- ✅ Ntfy service
-- ✅ GameServers
-  - ✅ Minecraft
-    - ✅ Plugin management via ansible
-  - ✅ ARK
-    - ✅ Mod management via ansible
-- ✅ DNS via bind9
-  - ✅ Denic NAST Predelegation check compatible config samples
+- [ ] Ntfy service
+- [ ] GameServers
+  - [ ] Minecraft (WIP)
+    - ✅ Plugin management via k8s
+  - [ ] ARK
+    - [ ] Mod management via k8s
+- [ ] DNS via bind9
+  - [ ] Denic NAST Predelegation check compatible config samples
 - ✅ MariaDB Databases
-- ✅ Fail2Ban, connected to:
-  - ✅ IMAP (Dovecot)
-  - ✅ Postfix Jail
-  - Current issue: Docker internal IP is getting banned instead of the public one.
-  - ✅ UFW, the firewall configured.
 - ❌ModSecurity
-- ✅ Lets Encrypt
-- ❌VPN Client
-- ❌Sudo with TOTP: https://www.reddit.com/r/selfhosted/comments/h02wzr/how_to_adding_totp_to_sudo/?show=original
+- [ ] Lets Encrypt
+- ✅ VPN Client
+- ❌ Sudo with TOTP: https://www.reddit.com/r/selfhosted/comments/h02wzr/how_to_adding_totp_to_sudo/?show=original
 - ❌ Logrotation
 - ❌ backups
 

@@ -1,0 +1,9 @@
+---
+helmDefaults:
+  timeout: 600
+  waitForJobs: true
+  wait: true
+
+helmfiles:
+  - path: ./system/helmfile.yaml
+  - path: ./projects/helmfile.yaml

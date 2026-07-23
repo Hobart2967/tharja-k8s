@@ -1,0 +1,151 @@
+---
+{{ $release := .Release }}
+
+{{- $extraFiles := dict
+  "banned-ips-json"      "banned-ips.json"
+  "banned-players-json"  "banned-players.json"
+  "bukkit-yml"           "bukkit.yml"
+  "commands-yml"         "commands.yml"
+  "ops-json"             "ops.json"
+  "server-properties"    "server.properties"
+  "spigot-yml"           "spigot.yml"
+  "whitelist-json"       "whitelist.json"
+}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      initContainers:
+      - name: download-plugins
+        image: hobart2967/docker-browser-downloader #curlimages/curl:latest
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - /scripts/download.sh
+        volumeMounts:
+          - name: {{ .Release.Name }}-plugin-list
+            mountPath: /config/plugins.yaml
+            subPath: plugins.yaml
+            readOnly: true
+
+          - name: {{ .Release.Name }}-download-sh
+            mountPath: /scripts/download.sh
+            readOnly: true
+            subPath: download.sh
+
+          #- name: {{ .Release.Name }}-download-js
+          #  mountPath: /app/download.js
+          #  readOnly: true
+          #  subPath: download.js
+
+          - name: {{ .Release.Name }}-plugins-available
+            mountPath: /plugins
+      containers:
+        - name: {{ .Release.Name }}-rcon
+          image: "hobart2967/mcrcon:1.0.1"
+          imagePullPolicy: IfNotPresent
+          tty: true
+          stdin: true
+          env:
+            - name: MCRCON_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.serverConfig.rconPassword.secretRef.name }}
+                  key: {{ .Values.serverConfig.rconPassword.secretRef.key }}
+            - name: MCRCON_PORT
+              value: "{{.Values.serverConfig.rconPort}}"
+          command:
+            - /bin/sh
+        - name: {{ .Release.Name }}
+          image: "hobart2967/docker-spigot-mc-1.20.1:1.0.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - /minecraft/server/boot.sh
+          ports:
+            - name: game
+              containerPort: {{ .Values.serverConfig.serverPort }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Release.Name}}-worlds
+              mountPath: /minecraft/server/worlds
+            - name: {{ .Release.Name}}-backups
+              mountPath: /minecraft/server/backups
+            - name: {{ .Release.Name}}-plugins-available
+              mountPath: /minecraft/server/plugins-available
+            - name: {{ .Release.Name}}-plugins
+              mountPath: /minecraft/server/plugins
+            - name: {{ .Release.Name}}-boot-sh
+              mountPath: /minecraft/server/boot.sh
+              subPath: boot.sh
+            {{- range $name, $path := $extraFiles }}
+            - name: config-{{ $name }}
+              mountPath: /minecraft/server/{{ $path }}
+              subPath: {{ $path }}
+            {{- end }}
+      volumes:
+        - name: {{ .Release.Name}}-worlds
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-worlds
+        - name: {{ .Release.Name}}-backups
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-backups
+        - name: {{ .Release.Name}}-boot-sh
+          configMap:
+            name: {{ .Release.Name }}-boot-sh
+            items:
+            - key: "content"
+              path: "boot.sh"
+              mode: 0777
+        - name: {{ .Release.Name}}-plugins-available
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-plugins-available
+        - name: {{ .Release.Name}}-plugins
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-plugins
+
+        - name: {{ .Release.Name}}-plugin-list
+          configMap:
+            name: {{ .Release.Name}}-plugin-list
+            items:
+            - key: "content"
+              path: "plugins.yaml"
+
+        - name: {{ .Release.Name }}-download-sh
+          configMap:
+            name: {{ .Release.Name}}-download-sh
+            items:
+            - key: "content"
+              path: "download.sh"
+              mode: 0777
+
+        {{- range $name, $path := $extraFiles }}
+        - name: config-{{ $name }}
+          configMap:
+            # Provide the name of the ConfigMap you want to mount.
+            name: {{ $release.Name }}-{{ $name }}
+            # An array of keys from the ConfigMap to create as files
+            items:
+            - key: "content"
+              path: "{{ $path }}"
+        {{- end }}

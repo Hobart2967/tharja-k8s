@@ -1,0 +1,8 @@
+cpu:
+  default: 200m
+  defaultRequest: 50m
+  max: 500m
+memory:
+  default: 128Mi
+  defaultRequest: 64Mi
+  max: 256Mi

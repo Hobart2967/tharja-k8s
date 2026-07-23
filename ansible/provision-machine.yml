@@ -1,0 +1,32 @@
+---
+
+- hosts: all
+  become: true
+  become_method: sudo
+  environment:
+    PATH: "/usr/share/asdf/shims:/usr/share/asdf/bin:{{ lookup('env', 'PATH') }}"
+
+  vars_files:
+    - vars/defaults.yml
+    - vars/{{ machine }}.yml
+
+  tasks:
+    - name: "Resolve secrets"
+      include_tasks: tasks/secrets/task.yml
+      when: secrets is defined
+
+    # Debug secrets
+    - name: "Debug secrets"
+      debug:
+        msg: "{{ secret_values | default({}) }}"
+    - name: Ground Zero
+      include_tasks: tasks/ground-zero/task.yml
+      when: provision.ground_zero
+
+    - name: Configure VPN
+      when: provision.vpn
+      include_tasks: tasks/vpn/task.yml
+
+    - name: Configure K3s
+      when: provision.k3s
+      include_tasks: tasks/k3s/task.yml

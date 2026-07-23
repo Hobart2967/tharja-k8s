@@ -1,0 +1,39 @@
+storageClass:
+  create: true
+  defaultClass: true
+  name: local-path
+  reclaimPolicy: Delete
+  volumeBindingMode: WaitForFirstConsumer
+
+{{- $escs := list }}
+{{- if hasKey .Values "extraStorageClasses" }}
+{{- $escs = .Values.extraStorageClasses}}
+{{- end }}
+
+{{- $resources := dict "limits" (dict "cpu" "250m" "memory" "256Mi") "requests" (dict "cpu" "100m" "memory" "128Mi") }}
+{{- if hasKey .Values "resources" }}
+{{- $resources = .Values.resources }}
+{{- end }}
+
+resources:
+  {{ $resources | toYaml | nindent 4 }}
+
+nodePathMap:
+  - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+    paths:
+      - /var/lib/rancher/k3s/storage
+      {{- range $sc := $escs }}
+      - {{ $sc.nodePath }}
+      {{- end }}
+
+configmap:
+  name: local-path-config
+  setup: |-
+    #!/bin/sh
+    set -eu
+    mkdir -m 0777 -p "$VOL_DIR"
+    chmod 700 "${VOL_DIR}/.."
+  teardown: |-
+    #!/bin/sh
+    set -eu
+    rm -rf "$VOL_DIR"

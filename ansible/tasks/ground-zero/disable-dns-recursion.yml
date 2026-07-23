@@ -1,0 +1,60 @@
+---
+
+- name: Create Directory - /etc/systemd/resolved.conf.d
+  become: true
+  file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+    mode: '0755'
+
+- name: Configure systemd-resolved upstream DNS for runtime pulls
+  become: true
+  copy:
+    dest: /etc/systemd/resolved.conf.d/20-runtime-dns.conf
+    content: |
+      [Resolve]
+      DNS={{ dns.runtime_resolvers | default(['1.1.1.1', '1.0.0.1']) | join(' ') }}
+      FallbackDNS={{ dns.runtime_fallback_resolvers | default(['8.8.8.8', '8.8.4.4']) | join(' ') }}
+  register: runtime_dns_config
+
+- name: Force /etc/resolv.conf to non-stub systemd-resolved output
+  become: true
+  file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+    force: true
+  register: resolv_conf_link
+
+- name: Restart systemd-resolved when resolver config changed
+  become: true
+  ansible.builtin.systemd_service:
+    name: systemd-resolved
+    state: restarted
+  when: runtime_dns_config.changed or resolv_conf_link.changed
+
+- name: Gather service facts
+  become: true
+  ansible.builtin.service_facts:
+
+- name: Check if docker service exists
+  ansible.builtin.set_fact:
+    docker_service_exists: "{{ 'docker.service' in ansible_facts.services }}"
+
+- name: Restart docker when resolver config changed
+  become: true
+  ansible.builtin.systemd_service:
+    name: docker
+    state: restarted
+  when: (runtime_dns_config.changed or resolv_conf_link.changed) and docker_service_exists
+
+- name: Check if k3s service exists
+  ansible.builtin.set_fact:
+    k3s_service_exists: "{{ 'k3s.service' in ansible_facts.services }}"
+
+- name: Restart k3s when resolver config changed
+  become: true
+  ansible.builtin.systemd_service:
+    name: k3s
+    state: restarted
+  when: (runtime_dns_config.changed or resolv_conf_link.changed) and k3s_service_exists

@@ -1,0 +1,17 @@
+repositories:
+  - name: containeroo
+    url: https://charts.containeroo.ch
+
+releases:
+  - name: project
+    namespace: sys-storage
+    createNamespace: true
+    chart: ../../helm/project
+
+  - name: local-path-provisioner
+    namespace: sys-storage
+    createNamespace: true
+    chart: containeroo/local-path-provisioner
+    version: 0.0.37
+    values:
+      - ./values/local-path-provisioner.yaml.gotmpl

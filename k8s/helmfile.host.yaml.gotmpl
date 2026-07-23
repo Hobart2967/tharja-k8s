@@ -1,0 +1,7 @@
+---
+bases:
+- ./env/environments.yaml
+---
+helmfiles:
+  - path: ./system/host/helmfile.yaml.gotmpl
+  - path: ./system/host-secrets/helmfile.yaml.gotmpl

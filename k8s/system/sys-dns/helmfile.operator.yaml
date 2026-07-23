@@ -1,0 +1,13 @@
+---
+repositories:
+  - name: bindy-charts
+    url: https://Hobart2967.github.io/bindy-charts
+
+releases:
+  - name: bindy
+    namespace: sys-dns
+    chart: bindy-charts/bindy
+    version: 0.6.1
+    createNamespace: true
+    values:
+      - namespace: sys-dns

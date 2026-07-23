@@ -1,0 +1,20 @@
+---
+releases:
+  - name: project
+    namespace: project-minecraft-avsn
+    createNamespace: true
+    chart: ../../helm/project
+
+  - name: avsn-minecraft
+    chart: ../../../helm/minecraft-gameserver
+    namespace: project-minecraft-avsn
+    createNamespace: true
+    values:
+      - ./values/minecraft.yaml
+
+  - name: dynmap
+    chart: ../../../helm/website
+    namespace: project-minecraft-avsn
+    createNamespace: true
+    values:
+      - ./values/dynmap.yaml

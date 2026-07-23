@@ -1,0 +1,13 @@
+---
+releases:
+  - name: project-public-dns
+    namespace: sys-dns
+    createNamespace: true
+    chart: ../../helm/project
+
+  - name: public-dns
+    namespace: sys-dns
+    createNamespace: true
+    chart: ../../helm/dns-cluster
+    values:
+      - ./values.yaml

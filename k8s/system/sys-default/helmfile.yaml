@@ -1,0 +1,6 @@
+---
+releases:
+  - name: project
+    namespace: default
+    createNamespace: true
+    chart: ../../helm/project

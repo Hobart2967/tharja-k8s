@@ -1,0 +1,14 @@
+---
+
+- name: Add docker apt gpg key
+  become: true
+  ansible.builtin.command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+- name: Add docker apt key
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable"
+    state: present
+
+- name: apt update
+  ansible.builtin.apt:
+    update_cache: yes

@@ -1,0 +1,10 @@
+---
+helmDefaults:
+  timeout: 600
+  waitForJobs: true
+  wait: true
+
+helmfiles:
+  - path: ./de.avsn/helmfile.yaml
+  - path: ./engineer.marcoklein/helmfile.yaml
+  - path: ./minecraft/helmfile.yaml

@@ -1,0 +1,6 @@
+- name: Uninstall UFW
+  apt:
+    state: absent
+    purge: true
+    pkg:
+      - ufw

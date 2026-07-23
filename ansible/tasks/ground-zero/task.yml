@@ -1,0 +1,80 @@
+---
+
+- name: Disable DNS recursion
+  include_tasks: disable-dns-recursion.yml
+  when: dns.disable_recursion | default(false)
+
+- name: Install time packages
+  apt:
+    state: present
+    pkg:
+      - ntpsec-ntpdate
+
+- name: Update time
+  # Run sudo ntpdate pool.ntp.org
+  ansible.builtin.command: sudo ntpdate pool.ntp.org
+
+- name: Add apt repositories
+  include_tasks: tasks/ground-zero/apt/task.yml
+
+- name: Install basic packages
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - zsh
+
+      - openssh-server
+
+      # Common Tools
+      - acl # Required for this ansible project
+      - net-tools
+      - ethtool
+      - trash-cli
+      - nano
+      - curl
+      - wget
+      - gh
+      - git
+      - git-lfs
+      - jq
+      - htop
+      - mc
+      - rsync
+      - ncdu
+
+      - make
+      - llvm
+
+      - smartmontools
+      - nvme-cli
+      - traceroute
+
+      - xz-utils
+      - tk-dev
+
+      # Docker
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+      #- docker-compose
+      - build-essential
+
+      # Libs
+      - libncursesw5-dev
+      - libxml2-dev
+      - libxmlsec1-dev
+      - libffi-dev
+      - liblzma-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libssl-dev
+      - libsqlite3-dev
+
+- name: Ensure Cert Readers group exists
+  ansible.builtin.group:
+    name: certreaders
+    state: present

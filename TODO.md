@@ -1,3 +1,9 @@
 - disable IPv6 for dns?! bogus etc.
 - Refactor IP Address somehow, so server IP is existing only one time
 - Secrets from one password?
+- mariadb-instances
+- traefik-operator
+- local-path-provisioner
+- grafana-kube-state-metrics
+- grafana-kube-pr-operator
+-

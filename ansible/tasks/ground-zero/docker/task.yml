@@ -1,0 +1,7 @@
+---
+
+- name: Copy docker-tool-list-nics from ./docker-tool-list-nics.sh to /usr/bin/docker-tool-list-nics
+  ansible.builtin.copy:
+    src: ./docker-tool-list-nics.sh
+    dest: /usr/bin/docker-tool-list-nics
+    mode: '0777'

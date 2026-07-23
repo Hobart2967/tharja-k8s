@@ -1,0 +1,8 @@
+---
+helmfiles:
+  - path: ./helmfile.operator.yaml.gotmpl
+    values:
+      - extraConfigs:
+          - ../sys-mariadb/traefik/config.yaml
+          - ../sys-dns/traefik/config.yaml
+          - ../../projects/minecraft/traefik/config.yaml
