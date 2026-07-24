@@ -1,0 +1,13 @@
+---
+releases:
+  - name: project
+    namespace: sys-acme
+    createNamespace: true
+    chart: ../../helm/project
+
+  - name: acme-pebble
+    namespace: sys-acme
+    createNamespace: true
+    chart: ../../helm/acme-pebble
+    values:
+      - ./values.yaml

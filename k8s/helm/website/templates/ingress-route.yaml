@@ -53,17 +53,5 @@ spec:
       {{ end -}}
     {{ end -}}
   {{ end }}
-  #tls:
-  #  # Generate a TLS certificate using a certificate resolver
-  #  certResolver: foo
-  #  domains:
-  #  - main: example.net
-  #    sans:
-  #    - a.example.net
-  #    - b.example.net
-  #  # Customize the TLS options
-  #  options:
-  #    name: opt
-  #    namespace: apps
-  #  # Add a TLS certificate from a Kubernetes Secret
-  #  secretName: supersecret
+  tls:
+    certResolver: internal-acme

@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/letsencrypt/pebble
+  tag: 2.10.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  acmePort: 14000
+  managementPort: 15000
+
+pebble:
+  listenAddress: 0.0.0.0:14000
+  managementListenAddress: 0.0.0.0:15000
+  httpPort: 5002
+  tlsPort: 5001
+  vaNoSleep: "1"
+  vaAlwaysValid: "1"
+  wfeNonceReject: "0"
+
+tlsSecretName: acme-pebble-tls
+tlsSecretCertKey: crt
+tlsSecretKeyKey: key
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

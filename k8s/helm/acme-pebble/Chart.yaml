@@ -1,0 +1,6 @@
+apiVersion: v2
+name: acme-pebble
+description: Tiny internal ACME server for Traefik integration
+type: application
+version: 0.1.0
+appVersion: "2.8.0"

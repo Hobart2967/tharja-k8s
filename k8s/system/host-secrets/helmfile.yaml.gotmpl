@@ -2,7 +2,7 @@
 bases:
 - ../../env/environments.yaml
 ---
-{{ $secretsContent := exec "sh" (list "-c" (printf "%s%s%s" "op item list --vault " .Values.secretVault " --format=json | op item get - --format=json --reveal | jq -s '.' | jq 'map(.fields |= (map({key: .id, value: .})| from_entries)) | map({key: .id, value: .}) | from_entries'")) }}
+{{ $secretsContent := exec "sh" (list "-c" (printf "%s%s%s" "op item list --vault " .Values.secretVault " --format=json | op item get - --format=json --reveal | jq -s '.' | jq 'map(.fields |= (map({key: (.label // .id), value: .})| from_entries)) | map({key: .id, value: .}) | from_entries'")) }}
 {{ $secrets := $secretsContent | fromJson }}
 
 releases:

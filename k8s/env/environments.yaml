@@ -5,6 +5,19 @@ environments:
         hostNickname: sidra
         secretVault: 64iqhopdnz56fpxgk5mr3uhqpe
         secretsMap:
+          acme-pebble-tls:
+            item: mboadzgvwvch6pwjs7vokhrrc4
+            fields:
+              - crt
+              - key
+            namespaces:
+              - sys-acme
+          acme-pebble-ca:
+            item: mboadzgvwvch6pwjs7vokhrrc4
+            fields:
+              - crt
+            namespaces:
+              - sys-traefik
           ntfy-grafana:
             item: null
             namespaces:

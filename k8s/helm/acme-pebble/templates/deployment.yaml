@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: pebble
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          args:
+            - -config
+            - /etc/pebble/pebble-config.json
+          env:
+            - name: PEBBLE_VA_NOSLEEP
+              value: {{ .Values.pebble.vaNoSleep | quote }}
+            - name: PEBBLE_VA_ALWAYS_VALID
+              value: {{ .Values.pebble.vaAlwaysValid | quote }}
+            - name: PEBBLE_WFE_NONCEREJECT
+              value: {{ .Values.pebble.wfeNonceReject | quote }}
+          ports:
+            - name: acme
+              containerPort: {{ .Values.service.acmePort }}
+              protocol: TCP
+            - name: management
+              containerPort: {{ .Values.service.managementPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: pebble-config
+              mountPath: /etc/pebble/pebble-config.json
+              subPath: pebble-config.json
+              readOnly: true
+            - name: pebble-tls
+              mountPath: /etc/pebble/tls
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: pebble-config
+          configMap:
+            name: {{ .Release.Name }}-config
+        - name: pebble-tls
+          secret:
+            secretName: {{ .Values.tlsSecretName }}
+            items:
+              - key: {{ .Values.tlsSecretCertKey }}
+                path: tls.crt
+              - key: {{ .Values.tlsSecretKeyKey }}
+                path: tls.key
