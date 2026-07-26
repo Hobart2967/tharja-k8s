@@ -1,0 +1,21 @@
+---
+repositories:
+  - name: docker-mailserver
+    url: https://docker-mailserver.github.io/docker-mailserver-helm/
+
+releases:
+  - name: sys-mail
+    namespace: sys-mail
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 2Gi
+        cpu:
+          max: 2
+
+  - name: mail
+    namespace: sys-mail
+    createNamespace: true
+    chart: docker-mailserver/docker-mailserver
+    version: 5.1.1
