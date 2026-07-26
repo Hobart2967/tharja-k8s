@@ -11,3 +11,30 @@ releases:
     chart: ../../helm/acme-pebble
     values:
       - ./values.yaml
+
+  - name: acme-traefik-config
+    chart: ../../helm/traefik-config
+    namespace: sys-traefik
+    createNamespace: true
+    values:
+      - name: acme-pebble-resolver
+        config: |
+          additionalArguments:
+            - "--entrypoints.websecure.http.tls.certresolver=internal-acme"
+            - "--certificatesresolvers.internal-acme.acme.email=admin@example.invalid"
+            - "--certificatesresolvers.internal-acme.acme.storage=/data/acme.json"
+            - "--certificatesresolvers.internal-acme.acme.caserver=https://acme-pebble.sys-acme.svc.cluster.local:14000/dir"
+            - "--certificatesresolvers.internal-acme.acme.httpchallenge=true"
+            - "--certificatesresolvers.internal-acme.acme.httpchallenge.entrypoint=web"
+          env:
+            - name: LEGO_CA_CERTIFICATES
+              value: /etc/ssl/custom/acme-pebble-ca/crt
+          persistence:
+            enabled: true
+            path: /data
+            size: 128Mi
+          volumes:
+            - name: acme-pebble-ca
+              mountPath: /etc/ssl/custom/acme-pebble-ca
+              type: secret
+

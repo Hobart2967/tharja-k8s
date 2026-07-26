@@ -1,0 +1,20 @@
+{{ $release := .Release }}
+{{ $values := .Values }}
+{{- range $endpoint := $values.endpoints }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $endpoint.name }}
+  namespace: {{ (index $values "traefikNamespace") | default "sys-traefik" }}
+  annotations:
+    hobart2967.github.io/traefik-endpoint: "true"
+data:
+  endpoint: |-
+    port: {{ $endpoint.port }}
+    expose:
+      default: true
+    exposedPort: {{ $endpoint.port }}
+    protocol: {{ if hasKey $endpoint "protocol" }}{{ index $endpoint "protocol" }}{{ else }}TCP{{ end }}
+
+{{ end }}

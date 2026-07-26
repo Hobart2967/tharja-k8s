@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ (index .Values "traefikNamespace") | default "sys-traefik" }}
+  annotations:
+    hobart2967.github.io/traefik-config: "true"
+data:
+  config: |-
+{{ .Values.config | nindent 4 }}

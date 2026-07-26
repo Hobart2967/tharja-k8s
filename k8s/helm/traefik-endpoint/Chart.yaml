@@ -1,0 +1,6 @@
+apiVersion: v2
+name: traefik-endpoint
+description: Helm chart for Traefik endpoint configmaps
+type: application
+version: 0.1.0
+appVersion: "1.0"

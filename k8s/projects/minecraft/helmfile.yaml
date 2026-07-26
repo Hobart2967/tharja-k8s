@@ -10,6 +10,16 @@ releases:
         cpu:
           max: 4
 
+  - name: traefik-endpoint
+    chart: ../../helm/traefik-endpoint
+    namespace: sys-traefik
+    createNamespace: true
+    values:
+      - endpoints:
+          - name: minecraft
+            port: 25565
+            protocol: TCP
+
   - name: avsn-minecraft
     chart: ../../helm/minecraft-gameserver
     namespace: project-minecraft-avsn

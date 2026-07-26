@@ -1,2 +1,4 @@
 seed.iso
 utilities/cert
+k8s/helm/**/charts
+.tmp
