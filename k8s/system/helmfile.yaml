@@ -17,6 +17,7 @@ helmfiles:
   - path: ./sys-acme/helmfile.yaml.gotmpl
   - path: ./sys-traefik/helmfile.yaml
   - path: ./sys-storage/helmfile.yaml
+  - path: ./sys-ntfy/helmfile.yaml
 
   - path: ./dns-zones/helmfile.yaml
   - path: ./monitoring/helmfile.yaml

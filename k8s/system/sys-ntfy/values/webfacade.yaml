@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: ntfy
+      zone: net-codewyre
+    services:
+      - name: ntfy-ntfy
+        port: http
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: ntfy
+    type: A

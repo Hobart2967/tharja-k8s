@@ -19,31 +19,47 @@ environments:
             namespaces:
               - sys-traefik
           ntfy-grafana:
-            item: null
+            item: ny72nqjed4wz6rfflxj2ihi7ym
             namespaces:
-              - project-ntfy
+              - sys-ntfy
+              - monitoring
             fields:
               - username
               - password
+              - role
+              - access_token
+            extras:
+              topics:
+                - server_alerts:rw
+            annotations:
+              hobart2967.github.io/ntfy-token: "true"
+              hobart2967.github.io/ntfy-user: "true"
           ntfy-homeserver:
-            item: null
+            item: ppn6pbuljlrsslxzr3a4v57x2a
             namespaces:
-              - project-ntfy
+              - sys-ntfy
             fields:
               - username
               - password
               - access_token
+              - role
+            extras:
+              topics:
+                - backups:rw
+                - homeserver-alerts:rw
+            annotations:
+              hobart2967.github.io/ntfy-token: "true"
+              hobart2967.github.io/ntfy-user: "true"
           ntfy-hobart:
-            item: null
+            item: udy2dgh2pr2otc5ov5nqq5q3pi
             namespaces:
-              - project-ntfy
+              - sys-ntfy
             fields:
               - username
               - password
-          grafana-discord-webhook:
-            item: rqidcwg4rb4kk5ku7pm4zvgami
-            namespaces:
-              - monitoring
+              - role
+            annotations:
+              hobart2967.github.io/ntfy-user: "true"
           grafana-admin:
             item: 5cctdss53axmrc67inrtrwozw4
             namespaces:

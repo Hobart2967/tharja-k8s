@@ -1,0 +1,50 @@
+{{ $users := readFile "../.tmp/users.yaml" | fromYaml }}
+{{ $tokens := readFile "../.tmp/tokens.yaml" | fromYaml }}
+
+ntfy:
+  baseUrl: 'https://ntfy.codewyre.net'
+  behindProxy: true
+  authDefaultAccess: deny-all
+  extraConfig: |
+    auth-file: /var/cache/ntfy/user.db
+    {{- if $users }}
+    auth-users:
+    {{- range $user := $users }}
+    - "{{ $user.name }}:{{ index (splitList ":" (htpasswd $user.name ($user.password | b64dec))) 1 }}:{{$user.role}}"
+    {{- end }}
+    {{- $atLeastOneAccessSet := false }}
+    {{- range $user := $users }}
+    {{- if $user.extras }}
+    {{- $extras := fromJson ($user.extras | b64dec) }}
+    {{- if $extras.topics }}
+    {{- if not $atLeastOneAccessSet }}
+    auth-access:
+    {{- $atLeastOneAccessSet = true }}
+    {{- end }}
+    {{- range $topic := $extras.topics }}
+    - "{{ $user.name }}:{{ $topic }}"
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if $tokens }}
+    auth-tokens:
+    {{- range $token := $tokens }}
+    - "{{ $token.name }}:{{ $token.accessToken | b64dec }}"
+    {{- end }}
+    {{- end }}
+  # Expose metrics on a separate port to avoid routing /metrics via Ingress
+  metricsListenHttp: ':9090'
+
+metrics:
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+ingress:
+  enabled: false # done via ingressroute

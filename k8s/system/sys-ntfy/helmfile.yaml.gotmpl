@@ -1,0 +1,41 @@
+---
+repositories:
+  - name: helmforge
+    url: https://repo.helmforge.dev
+
+releases:
+  - name: sys-ntfy
+    namespace: sys-ntfy
+    createNamespace: true
+    chart: ../../helm/project
+
+  - name: ntfy
+    namespace: sys-ntfy
+    createNamespace: true
+    chart: helmforge/ntfy
+    version: 1.1.12
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./tokens.sh "{{`{{.Release.Namespace}}`}}"
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./users.sh "{{`{{.Release.Namespace}}`}}"
+    values:
+      - ./values/ntfy.yaml.gotmpl
+
+  - name: webfacade
+    chart: ../../helm/website
+    namespace: sys-ntfy
+    createNamespace: true
+    values:
+      - ./values/webfacade.yaml
+
