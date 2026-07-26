@@ -1,18 +1,23 @@
 ---
+{{- $hostNickname := exec "sh" (list "-c" "kubectl -n default get configmap host-metadata -o jsonpath=\"{.data.hostNickname}\" 2>/dev/null || true") | trim }}
+
 releases:
   - name: project
     namespace: sys-acme
+    installed: {{ ne $hostNickname "tharja" }}
     createNamespace: true
     chart: ../../helm/project
 
   - name: acme-pebble
     namespace: sys-acme
+    installed: {{ ne $hostNickname "tharja" }}
     createNamespace: true
     chart: ../../helm/acme-pebble
     values:
       - ./values.yaml
 
   - name: acme-traefik-config
+    installed: {{ ne $hostNickname "tharja" }}
     chart: ../../helm/traefik-config
     namespace: sys-traefik
     createNamespace: true
@@ -37,4 +42,3 @@ releases:
             - name: acme-pebble-ca
               mountPath: /etc/ssl/custom/acme-pebble-ca
               type: secret
-

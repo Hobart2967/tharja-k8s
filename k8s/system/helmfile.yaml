@@ -14,7 +14,7 @@ helmfiles:
   - path: ./sys-kube/helmfile.yaml
   - path: ./sys-dns/helmfile.yaml
   - path: ./sys-mariadb/helmfile.yaml
-  - path: ./sys-acme/helmfile.yaml
+  - path: ./sys-acme/helmfile.yaml.gotmpl
   - path: ./sys-traefik/helmfile.yaml
   - path: ./sys-storage/helmfile.yaml
 
