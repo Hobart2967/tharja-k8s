@@ -52,7 +52,7 @@ It provides:
 - Application firewall (Using CrowdSource?)
   - ✅ Firewall general installation
   - ✅ Systemd service for ufw.
-- [ ] Ntfy service
+- ✅ Ntfy service
 - [ ] GameServers
   - ✅ Minecraft
     - ✅ Plugin management via k8s
