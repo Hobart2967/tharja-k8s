@@ -5,6 +5,19 @@ releases:
     createNamespace: true
     chart: ../../helm/project
 
+  - name: dns-traefik-endpoint
+    chart: ../../helm/traefik-endpoint
+    namespace: sys-traefik
+    createNamespace: true
+    values:
+      - endpoints:
+          - name: dns-udp
+            port: 53
+            protocol: UDP
+          - name: dns-tcp
+            port: 53
+            protocol: TCP
+
   - name: public-dns
     namespace: sys-dns
     createNamespace: true

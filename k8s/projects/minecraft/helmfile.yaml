@@ -10,7 +10,7 @@ releases:
         cpu:
           max: 4
 
-  - name: traefik-endpoint
+  - name: minecraft-traefik-endpoint
     chart: ../../helm/traefik-endpoint
     namespace: sys-traefik
     createNamespace: true
