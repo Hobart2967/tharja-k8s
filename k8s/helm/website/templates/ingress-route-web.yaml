@@ -1,0 +1,54 @@
+---
+{{- $values := .Values }}
+{{- $release := .Release }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $release.Namespace }}-http
+  namespace: {{ $release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ $release.Namespace }}
+    app.kubernetes.io/instance: {{ $release.Name }}
+    app.kubernetes.io/managed-by: {{ $release.Service }}
+spec:
+  entryPoints:
+    - web
+  routes:
+  {{ range $rule := $values.rules | default (list) -}}
+  - kind: Rule
+    {{ if $rule.condition -}}
+    match: "{{ $rule.condition }}"
+    {{ else if $rule.hostname -}}
+    match: Host(`{{ include "hostname-by-dns" $rule.hostname }}`){{ range $index, $alias := $rule.aliases }} || Host(`{{ include "hostname-by-dns" $alias }}`){{ end }}
+    {{ end -}}
+    middlewares:
+    - name: enforce-https
+      namespace: {{ $release.Namespace }}
+    {{ range $alias := $rule.aliases -}}
+    - name: redirect-from-{{ replace "." "-" (include "hostname-by-dns" $alias) }}
+      namespace: {{ $release.Namespace }}
+    {{ end -}}
+    {{ range $middleware := ($rule.middlewares | default (list)) -}}
+    - name: {{ $middleware.name }}
+      namespace: {{ $middleware.namespace | default $release.Namespace }}
+    {{ end -}}
+    observability:
+      accessLogs: true
+      metrics: true
+      tracing: true
+    priority: 10
+    services:
+    {{ range $service := $rule.services -}}
+    - kind: Service
+      name: {{ $service.name }}
+      namespace: {{ $service.namespace | default $release.Namespace }}
+      # Customize the connection between Traefik and the backend
+      passHostHeader: true
+      port: {{ $service.port }}
+      responseForwarding:
+        flushInterval: 1ms
+      {{ if $service.sticky -}}
+      sticky: {{ $service.sticky }}
+      {{ end -}}
+    {{ end -}}
+  {{ end }}
