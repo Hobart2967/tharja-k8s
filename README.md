@@ -37,7 +37,7 @@ It provides:
 - ✅ Common things, libs, packages, CLIs
 - ✅ Traefik reverse proxy
     - [ ] With rate limiting
-    - [ ] HTTPS support (LetsEncrypt)
+    - ✅ HTTPS support (LetsEncrypt)
 - [ ] Monitoring Setup using Grafana
   - [ ] Comes pre-configured with prometheus and loki
   - [ ] Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
@@ -58,11 +58,11 @@ It provides:
     - ✅ Plugin management via k8s
   - [ ] ARK
     - [ ] Mod management via k8s
-- [ ] DNS via bind9
+- ✅ DNS via bind9
   - [ ] Denic NAST Predelegation check compatible config samples
 - ✅ MariaDB Databases
 - ❌ModSecurity
-- [ ] Lets Encrypt
+- ✅ Lets Encrypt / ACME Pebble (Local with self signed CA)
 - ✅ VPN Client
 - ❌ Sudo with TOTP: https://www.reddit.com/r/selfhosted/comments/h02wzr/how_to_adding_totp_to_sudo/?show=original
 - ❌ Logrotation
