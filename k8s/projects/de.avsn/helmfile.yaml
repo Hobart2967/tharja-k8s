@@ -4,6 +4,9 @@ releases:
     namespace: project-de-avsn
     createNamespace: true
     chart: ../../helm/project
+    values:
+      - memory:
+          max: 512Mi
 
   - name: website
     chart: ../../helm/website

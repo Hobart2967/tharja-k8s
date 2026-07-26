@@ -54,7 +54,7 @@ It provides:
   - ✅ Systemd service for ufw.
 - [ ] Ntfy service
 - [ ] GameServers
-  - [ ] Minecraft (WIP)
+  - ✅ Minecraft
     - ✅ Plugin management via k8s
   - [ ] ARK
     - [ ] Mod management via k8s
