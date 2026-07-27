@@ -1,0 +1,25 @@
+---
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+
+releases:
+  - name: sys-cert-manager
+    namespace: sys-cert-manager
+    createNamespace: true
+    chart: ../../helm/project
+    #values:
+    #  - memory:
+    #      max: 2Gi
+    #    cpu:
+    #      max: 2
+
+  - name: cert-manager
+    namespace: sys-cert-manager
+    createNamespace: true
+    chart: jetstack/cert-manager
+
+  - name: cert-issuer
+    namespace: sys-cert-manager
+    createNamespace: true
+    chart: ../../helm/cert-issuer

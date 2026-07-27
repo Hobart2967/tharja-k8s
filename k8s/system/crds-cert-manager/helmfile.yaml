@@ -1,0 +1,17 @@
+repositories:
+  - name: bedag
+    url: https://bedag.github.io/helm-charts/
+releases:
+  - name: cert-manager-crds
+    # Points to a valid Helm URL layout pattern to pass parsing
+    chart: bedag/raw
+    # Tells Helmfile to skip manifest rendering and validation
+    disableValidation: true
+    namespace: default
+    hooks:
+      - events: ["prepare"]
+        showlogs: true
+        command: "sh"
+        args:
+          - "-c"
+          - "curl -sL https://github.com/cert-manager/cert-manager/releases/download/v1.21.0/cert-manager.crds.yaml | kubectl apply -f -"
