@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  {{- $values := .Values }}
+  {{- $upstreamServers := .Values.upstreamServers | default (list) }}
+  {{- if eq (len $upstreamServers) 0 }}
+  {{- $upstreamServiceName := .Values.upstreamService.name | default "public-dns" }}
+  {{- $upstreamServiceNamespace := .Values.upstreamService.namespace | default "sys-dns" }}
+  {{- $upstreamService := lookup "v1" "Service" $upstreamServiceNamespace $upstreamServiceName }}
+  {{- if and $upstreamService $upstreamService.spec $upstreamService.spec.clusterIP }}
+  {{- $upstreamServers = list $upstreamService.spec.clusterIP }}
+  {{- else }}
+  {{- $upstreamServers = list (printf "%s.%s.svc.cluster.local" $upstreamServiceName $upstreamServiceNamespace) }}
+  {{- end }}
+  {{- end }}
+  {{- $forwardUpstreams := join " " $upstreamServers }}
+  {{- range $domain := $values.domains }}
+  {{- $stageDomain := include "stageDomain" (dict "DomainName" $domain) }}
+  {{ $stageDomain }}.server: |
+    {{ $stageDomain }}:53 {
+      errors
+      cache 30
+      forward . {{ $forwardUpstreams }}
+    }
+  {{- end }}
+  {{- range $key, $value := .Values.extraConfig }}
+  {{ $key }}: {{ $value | toYaml | nindent 4 }}
+  {{- end }}
