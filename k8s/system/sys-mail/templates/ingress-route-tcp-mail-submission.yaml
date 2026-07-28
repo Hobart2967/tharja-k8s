@@ -1,0 +1,14 @@
+---
+kind: IngressRouteTCP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-mail-submission
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - ml-sub
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mail-docker-mailserver
+          port: submission

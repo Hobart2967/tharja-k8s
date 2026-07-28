@@ -1,0 +1,14 @@
+---
+kind: IngressRouteTCP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-mail-smtp
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - ml-smtp
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: mail-docker-mailserver
+          port: smtp

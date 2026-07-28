@@ -1,0 +1,95 @@
+---
+repositories:
+  - name: docker-mailserver
+    url: https://docker-mailserver.github.io/docker-mailserver-helm/
+  - name: bedag
+    url: https://bedag.github.io/helm-charts/
+
+releases:
+  - name: sys-mail
+    namespace: sys-mail
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 2Gi
+        cpu:
+          max: 2
+
+  - name: marcoklein-engineer-mail
+    namespace: sys-mail
+    createNamespace: true
+    chart: ../../helm/cert-request
+    values:
+      - dnsNames:
+          - marcoklein.engineer
+
+  - name: mail
+    namespace: sys-mail
+    createNamespace: true
+    chart: docker-mailserver/docker-mailserver
+    version: 5.1.1
+    needs:
+      - sys-mail/marcoklein-engineer-mail
+    values:
+      - certificate: marcoklein-engineer-mail-certificate
+        deployment:
+          env:
+            OVERRIDE_HOSTNAME: marcoklein.engineer
+
+  - name: mail-accounts
+    namespace: sys-mail
+    createNamespace: true
+    chart: ../../helm/mail-accounts
+    needs:
+      - sys-mail/mail
+    values:
+      - ./.tmp/users.yaml
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./mailaccounts.sh "sys-mail"
+
+  - name: mail-traefik-endpoint
+    chart: ../../helm/traefik-endpoint
+    namespace: sys-traefik
+    createNamespace: true
+    values:
+      - endpoints:
+          - name: ml-smtp
+            port: 25
+            protocol: TCP
+          - name: ml-imap
+            port: 143
+            protocol: TCP
+          - name: ml-imap-secure
+            port: 993
+            protocol: TCP
+          - name: ml-sub
+            port: 587
+            protocol: TCP
+          - name: ml-sub-secure
+            port: 465
+            protocol: TCP
+
+  - name: mail-ingress
+    chart: bedag/raw
+    namespace: sys-mail
+    createNamespace: true
+    values:
+      - templates:
+        - |
+          {{ (readFile "./templates/ingress-route-tcp-mail-smtp.yaml") | nindent 10 }}
+        - |
+          {{ (readFile "./templates/ingress-route-tcp-mail-imap.yaml") | nindent 10 }}
+        - |
+          {{ (readFile "./templates/ingress-route-tcp-mail-imap-secure.yaml") | nindent 10 }}
+        - |
+          {{ (readFile "./templates/ingress-route-tcp-mail-submission-secure.yaml") | nindent 10 }}
+        - |
+          {{ (readFile "./templates/ingress-route-tcp-mail-submission.yaml") | nindent 10 }}
+
