@@ -1,0 +1,84 @@
+{{- $mailboxes := .Values.mailboxes | default (list) }}
+{{- if gt (len $mailboxes) 0 }}
+{{- range $mailbox := $mailboxes }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-mailbox-{{ $mailbox.username | replace "@" "-" | replace "." "-" }}
+  namespace: {{ $.Release.Namespace }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      serviceAccountName: mailaccounts-job
+      restartPolicy: Never
+      containers:
+        - name: setup-mailbox
+          image: {{ $.Values.kubectl.image | quote }}
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              echo "Waiting for docker-mailserver pod to reach Running"
+              timeout_seconds=120
+              while [ "$timeout_seconds" -gt 0 ]; do
+                POD_PHASE="$(kubectl -n {{ $.Release.Namespace }} get pods -l {{ $.Values.mailserver.podSelector | quote }} -o jsonpath='{.items[0].status.phase}' 2>/dev/null || true)"
+                if [ "$POD_PHASE" = "Running" ]; then
+                  break
+                fi
+
+                sleep 2
+                timeout_seconds=$((timeout_seconds - 2))
+              done
+
+              if [ "$POD_PHASE" != "Running" ]; then
+                echo "docker-mailserver pod did not reach Running state in time"
+                exit 1
+              fi
+
+              POD_NAME="$(kubectl -n {{ $.Release.Namespace }} get pods -l {{ $.Values.mailserver.podSelector | quote }} -o jsonpath='{.items[0].metadata.name}')"
+              if [ -z "$POD_NAME" ]; then
+                echo "No docker-mailserver pod found for selector {{ $.Values.mailserver.podSelector }}"
+                exit 1
+              fi
+
+              set +e
+              ADD_OUTPUT="$(kubectl -n {{ $.Release.Namespace }} exec "$POD_NAME" -- setup email add {{ $mailbox.username | quote }} {{ $mailbox.password | b64dec | quote }} 2>&1)"
+              ADD_EXIT_CODE=$?
+              set -e
+
+              printf '%s\n' "$ADD_OUTPUT"
+              if [ "$ADD_EXIT_CODE" != 0 ]; then
+                HAS_ALREADY_EXISTS="$(printf '%s\n' "$ADD_OUTPUT" | grep -q 'already exists' && echo 1 || echo 0)"
+                if [ "$HAS_ALREADY_EXISTS" -eq 0 ]; then
+                  echo "Encountered an error, $HAS_ALREADY_EXISTS, exiting."
+                  exit $ADD_EXIT_CODE
+                fi
+              fi
+
+              {{- range $mailbox.aliases }}
+              set +e
+              ALIAS_OUTPUT="$(kubectl -n {{ $.Release.Namespace }} exec "$POD_NAME" -- setup alias add {{ . | quote }} {{ $mailbox.username | quote }} 2>&1)"
+              ALIAS_EXIT_CODE=$?
+              set -e
+
+              printf '%s\n' "$ALIAS_OUTPUT"
+              if [ "$ALIAS_EXIT_CODE" != 0 ]; then
+                HAS_ALREADY_EXISTS="$(printf '%s\n' "$ALIAS_OUTPUT" | grep -q 'is already an alias for recipient' && echo 1 || echo 0)"
+                if [ "$HAS_ALREADY_EXISTS" -eq 0 ]; then
+                  echo "Encountered an error, $HAS_ALREADY_EXISTS, exiting."
+                  exit $ALIAS_EXIT_CODE
+                fi
+              fi
+
+              exit 0
+              {{- end }}
+{{- end }}
+{{- end }}
+
+

@@ -1,0 +1,25 @@
+{{- $hostNickname := include "hostNickname" (dict "Namespace" "default" "Name" "host-metadata") }}
+{{ $isProduction := false }}
+{{- if eq $hostNickname "tharja" }}
+{{- $isProduction = true -}}
+{{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: default-issuer
+spec:
+  acme:
+    {{- if $isProduction }}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: marco.kl@outlook.com
+    {{- else }}
+    server: https://acme-pebble.sys-acme.svc.cluster.local:14000/dir
+    skipTLSVerify: true
+    {{- end }}
+    privateKeySecretRef:
+      name: acme-server-account-key
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: traefik-operator

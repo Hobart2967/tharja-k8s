@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-certificate
+  namespace: {{ .Release.Namespace }}
+spec:
+  secretName: {{ .Release.Name }}-certificate
+  dnsNames:
+    {{- range $domain := .Values.dnsNames }}
+    {{- $stageDomain := include "stageDomain" (dict "DomainName" $domain) }}
+    - {{ $stageDomain }}
+    {{- end }}
+  issuerRef:
+    name: default-issuer
+    kind: ClusterIssuer

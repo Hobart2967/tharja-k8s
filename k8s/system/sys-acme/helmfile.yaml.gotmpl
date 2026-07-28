@@ -29,8 +29,7 @@ releases:
             - "--certificatesresolvers.internal-acme.acme.email=admin@example.invalid"
             - "--certificatesresolvers.internal-acme.acme.storage=/data/acme.json"
             - "--certificatesresolvers.internal-acme.acme.caserver=https://acme-pebble.sys-acme.svc.cluster.local:14000/dir"
-            - "--certificatesresolvers.internal-acme.acme.httpchallenge=true"
-            - "--certificatesresolvers.internal-acme.acme.httpchallenge.entrypoint=web"
+            - "--certificatesresolvers.internal-acme.acme.tlschallenge=true"
           env:
             - name: LEGO_CA_CERTIFICATES
               value: /etc/ssl/custom/acme-pebble-ca/crt

@@ -1,0 +1,6 @@
+domains: []
+upstreamServers: []
+upstreamService:
+  name: public-dns
+  namespace: sys-dns
+extraConfig: {}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: MailaccountProvisioning
+description: Provisions mail accounts in the mail server.
+type: application
+version: 0.1.0
+appVersion: "1.0"

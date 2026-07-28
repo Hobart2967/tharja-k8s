@@ -1,0 +1,20 @@
+---
+repositories:
+  - name: docker-mailserver
+    url: https://docker-mailserver.github.io/docker-mailserver-helm/
+
+releases:
+  - name: mail-accounts
+    namespace: sys-mail
+    createNamespace: true
+    chart: ../../helm/mailaccounts
+    values:
+      - ./.tmp/users.yaml
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./mailaccounts.sh "sys-mail"

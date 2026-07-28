@@ -56,3 +56,16 @@ releases:
       - domainName: devforyou.de
       - ./values.yaml
       - ./values.yaml.gotmpl
+
+  - name: coredns-customization
+    chart: ../../helm/coredns-customization
+    namespace: kube-system
+    values:
+      - domains:
+        - marcoklein.engineer
+        - avsn.de
+        - adventurespiele.net
+        - codewyre.net
+        - sone.online
+        - soneonline.com
+        - devforyou.de

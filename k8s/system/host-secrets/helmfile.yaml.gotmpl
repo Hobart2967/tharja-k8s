@@ -14,3 +14,13 @@ releases:
       - secrets:
           {{ $secrets | toYaml | nindent 10 }}
         {{ .Values | toYaml | nindent 8 }}
+
+  - name: mailboxes
+    namespace: sys-mail
+    chart: ../../helm/mailboxes
+    version: 0.1.0
+    values:
+      - secrets:
+          {{ $secrets | toYaml | nindent 10 }}
+        {{ .Values | toYaml | nindent 8 }}
+
