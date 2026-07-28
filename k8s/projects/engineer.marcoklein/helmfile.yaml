@@ -1,4 +1,4 @@
 ---
 helmfiles:
   - path: helmfile.website.yaml
-  - path: helmfile.webmail.yaml
+  - path: helmfile.webmail.yaml.gotmpl

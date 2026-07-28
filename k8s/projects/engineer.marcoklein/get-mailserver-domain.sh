@@ -24,8 +24,11 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
   cat <<EOF > .tmp/domain.yaml
 imap:
   host: ${STAGE_DOMAIN}
+  port: 143
+  encryption: starttls
 smtp:
   host: ${STAGE_DOMAIN}
+
 EOF
 else
   echo "This script requires mikefarah yq for parsing config YAML strings"

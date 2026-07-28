@@ -8,3 +8,6 @@ users:
     databases:
       - name: roundcube
         host: "%"
+        privileges:
+        - "ALL PRIVILEGES"
+
