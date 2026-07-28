@@ -12,20 +12,10 @@ spec:
     name: {{ $release.Name }}
   passwordSecretKeyRef:
     name: "{{ $release.Name }}-{{ $user.name }}"
-    key: MARIADB_PASSWORD
+    key: password
   host: {{ $user.host | quote }}
   maxUserConnections: 0
   cleanupPolicy: Delete
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ $release.Name }}-{{ $user.name }}
-  labels:
-    k8s.mariadb.com/watch:
-stringData:
-  MARIADB_PASSWORD: {{ $user.initialPassword }}
 
 ---
 {{ range $db := $user.databases }}

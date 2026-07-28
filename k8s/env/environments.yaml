@@ -5,6 +5,12 @@ environments:
         hostNickname: sidra
         secretVault: 64iqhopdnz56fpxgk5mr3uhqpe
         secretsMap:
+          roundcube-db-roundcube:
+            item: lihea4hqnnqbyics2kcizfrabm
+            namespaces:
+              - project-engineer-marcoklein
+            fields:
+              - password
           acme-pebble-tls:
             item: mboadzgvwvch6pwjs7vokhrrc4
             fields:

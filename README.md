@@ -42,13 +42,13 @@ It provides:
   - [ ] Comes pre-configured with prometheus and loki
   - [ ] Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
   - [ ] Easy Contact point config in variables
-- [ ] MailServer Setup
-  - [ ] Postfix
-  - [ ] Dovecot
+- ✅ MailServer Setup
+  - ✅ Postfix
+  - ✅ Dovecot
   - [ ] Webmail
-  - [ ] Spam Protection
-  - [ ] Virus Protection
-  - [ ] Multi-Domain
+  - ✅ Spam Protection
+  - ✅ Virus Protection
+  - ✅ Multi-Domain
 - Application firewall (Using CrowdSource?)
   - ✅ Firewall general installation
   - ✅ Systemd service for ufw.

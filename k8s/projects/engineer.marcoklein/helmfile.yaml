@@ -1,14 +1,4 @@
 ---
-releases:
-  - name: project
-    namespace: project-engineer-marcoklein
-    createNamespace: true
-    chart: ../../helm/project
-
-  - name: website
-    chart: ../../helm/website
-    namespace: project-engineer-marcoklein
-    createNamespace: true
-    values:
-      - ./values/website.yaml
-      - ./values/dns.yaml.gotmpl
+helmfiles:
+  - path: helmfile.website.yaml
+  - path: helmfile.webmail.yaml

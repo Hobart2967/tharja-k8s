@@ -1,0 +1,41 @@
+---
+{{ $roundcubePasswordSecret := (exec "sh" (list "-c" "kubectl -n project-engineer-marcoklein get secret roundcube-db-roundcube -o json")) | fromJson}}
+{{ $roundcubePassword := $roundcubePasswordSecret.data.password | b64dec }}
+
+repositories:
+  - name: mlohr
+    url: https://helm-charts.mlohr.com/
+
+releases:
+  - name: webmail
+    chart: mlohr/roundcube
+    namespace: project-engineer-marcoklein
+    createNamespace: true
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./get-mailserver-domain.sh "marcoklein.engineer"
+    values:
+      - ./.tmp/domain.yaml
+      - ingress:
+          enabled: false
+          host: null
+        deployment:
+          replicas: 1
+        externalDatabase:
+          type: mysql
+          host: roundcube-db.project-engineer-marcoklein.svc.cluster.local
+          name: roundcube
+          user: roundcube
+          password: {{ $roundcubePassword }}
+
+  - name: roundcube-db
+    chart: ../../helm/mariadb-database
+    namespace: project-engineer-marcoklein
+    createNamespace: true
+    values:
+      - ./values/database.yaml
