@@ -45,7 +45,7 @@ It provides:
 - ✅ MailServer Setup
   - ✅ Postfix
   - ✅ Dovecot
-  - [ ] Webmail
+  - ✅ Webmail
   - ✅ Spam Protection
   - ✅ Virus Protection
   - ✅ Multi-Domain
