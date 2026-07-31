@@ -24,8 +24,12 @@ spec:
     match: Host(`{{ include "hostname-by-dns" $rule.hostname }}`){{ range $index, $alias := $rule.aliases }} || Host(`{{ include "hostname-by-dns" $alias }}`){{ end }}
     {{- end }}
     middlewares:
-    - name: enforce-https
+    - name: {{ $release.Name }}-enforce-https
       namespace: {{ $release.Namespace }}
+    {{- if $values.rateLimit.enabled }}
+    - name: {{ $release.Name }}-rate-limit
+      namespace: {{ $release.Namespace }}
+    {{- end }}
     {{ range $alias := $rule.aliases -}}
     - name: redirect-from-{{ replace "." "-" (include "hostname-by-dns" $alias) }}
       namespace: {{ $release.Namespace }}

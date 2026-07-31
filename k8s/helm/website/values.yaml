@@ -12,6 +12,12 @@
 #    - name: "@"
 #      zone: net-adventurespiele
 #
+rateLimit:
+  enabled: true
+  average: 20   # sustained requests per second, per client IP
+  burst: 80     # short spike allowance
+  period: 1s
+
 webfacade:
   enabled: true
   storageSize: 2Gi

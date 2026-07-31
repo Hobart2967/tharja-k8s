@@ -36,7 +36,7 @@ It provides:
 - ✅ k3s Setup
 - ✅ Common things, libs, packages, CLIs
 - ✅ Traefik reverse proxy
-    - [ ] With rate limiting
+    - ✅ With rate limiting
     - ✅ HTTPS support (LetsEncrypt)
 - 🚧 Monitoring Setup using Grafana
   - ✅ Comes pre-configured with prometheus and loki
@@ -67,9 +67,6 @@ It provides:
 - ✅ VPN Client
 - ✅ LocalStack Platform
   - ✅ with Security layer
-- ❌ Sudo with TOTP: https://www.reddit.com/r/selfhosted/comments/h02wzr/how_to_adding_totp_to_sudo/?show=original
-- ❌ Logrotation
-- ❌ backups
 
 ## Requires
 
