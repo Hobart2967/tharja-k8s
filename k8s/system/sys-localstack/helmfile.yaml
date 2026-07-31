@@ -1,0 +1,23 @@
+releases:
+  - name: sys-localstack
+    namespace: sys-localstack
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - cpu:
+          max: "1"
+        memory:
+          max: "1Gi"
+
+  - name: localstack
+    namespace: sys-localstack
+    chart: ../../helm/localstack
+    values:
+      - ./values/values.yaml
+
+  - name: webfacade
+    chart: ../../helm/website
+    namespace: sys-localstack
+    createNamespace: true
+    values:
+      - ./values/webfacade.yaml

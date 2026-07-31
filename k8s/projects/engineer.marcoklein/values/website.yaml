@@ -1,10 +1,16 @@
 rules:
-  - hostname:
-      name: www
-      zone: engineer-marcoklein
-    aliases:
-    - name: "@"
-      zone: engineer-marcoklein
-    services:
-      - name: website
-        port: http
+- hostname:
+    name: www
+    zone: engineer-marcoklein
+  aliases:
+  - name: "@"
+    zone: engineer-marcoklein
+  services:
+    - name: website
+      port: http
+- hostname:
+    name: mail
+    zone: engineer-marcoklein
+  services:
+    - name: webmail-roundcube
+      port: http

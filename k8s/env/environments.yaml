@@ -5,6 +5,12 @@ environments:
         hostNickname: sidra
         secretVault: 64iqhopdnz56fpxgk5mr3uhqpe
         secretsMap:
+          roundcube-db-roundcube:
+            item: lihea4hqnnqbyics2kcizfrabm
+            namespaces:
+              - project-engineer-marcoklein
+            fields:
+              - password
           acme-pebble-tls:
             item: mboadzgvwvch6pwjs7vokhrrc4
             fields:
@@ -78,7 +84,7 @@ environments:
           cloud-codewyre-net:
             item: sgbtrn2w7fm5sv6vqvk4mjr35m
             namespaces:
-              - project-localstack
+              - sys-localstack
             fields:
               - username
               - password
@@ -193,7 +199,7 @@ environments:
           cloud-codewyre-net:
             item: 22zwcewxzorho53x3tkpwe5jim
             namespaces:
-              - project-localstack
+              - sys-localstack
             fields:
               - username
               - password

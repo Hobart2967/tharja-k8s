@@ -1,0 +1,35 @@
+# Only used if environment != "tharja"
+config:
+  customPhpConfig: |
+    openssl.cafile=/etc/roundcube-trust/ca-bundle.pem
+    curl.cainfo=/etc/roundcube-trust/ca-bundle.pem
+deployment:
+  initContainers:
+    - name: merge-ca-bundle
+      image: roundcube/roundcubemail:1.6.9-fpm-alpine
+      command: ["/bin/sh", "-ec"]
+      args:
+        - |
+          cp /etc/ssl/certs/ca-certificates.crt /work/ca-bundle.pem
+          cat /mail/pebble-root-ca.crt >> /work/ca-bundle.pem
+      volumeMounts:
+        - name: mailserver-ca
+          mountPath: /mail
+          readOnly: true
+        - name: roundcube-trust
+          mountPath: /work
+  additionalVolumes:
+    - name: mailserver-ca
+      secret:
+        secretName: webmail-mailserver-ca
+    - name: roundcube-trust
+      emptyDir: {}
+  additionalVolumeMounts:
+    - name: roundcube-trust
+      mountPath: /etc/roundcube-trust
+      readOnly: true
+  additionalEnv:
+    - name: SSL_CERT_FILE
+      value: /etc/roundcube-trust/ca-bundle.pem
+    - name: CURL_CA_BUNDLE
+      value: /etc/roundcube-trust/ca-bundle.pem

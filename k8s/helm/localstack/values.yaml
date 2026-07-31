@@ -1,0 +1,25 @@
+localstack:
+  persistence:
+    size: "1Gi"
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  lambdaCallbackHostPort:
+    enabled: true
+    hostIP: "172.17.0.1"
+    port: 4566
+security:
+  logLevel: "INFO"
+  accessKeysSecretRefs:
+    - name: "localstack-security-access-keys"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"

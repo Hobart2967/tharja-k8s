@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Release.Name }}-localstack-security
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-localstack-security
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-localstack-security
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: hobart2967/localstack-security
+          ports:
+            - containerPort: 4387
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/localstack-security/config.json
+              subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-security-config
+            items:
+              - key: "config.json"
+                path: "config.json"
+                mode: 0777

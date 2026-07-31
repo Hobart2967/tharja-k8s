@@ -10,6 +10,13 @@ kubeScheduler:
 kubeProxy:
   enabled: false
 
+defaultRules:
+  rules:
+    kubeApiserverAvailability: false
+    kubeApiserverBurnrate: false
+    kubeApiserverHistogram: false
+    kubeApiserverSlos: false
+
 prometheus:
   prometheusSpec:
     replicas: 1
@@ -131,11 +138,11 @@ grafana:
             value: prometheus
   resources:
     requests:
-      cpu: 50m
+      cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 700m
+      memory: 512Mi
   persistence:
     enabled: true
     type: pvc

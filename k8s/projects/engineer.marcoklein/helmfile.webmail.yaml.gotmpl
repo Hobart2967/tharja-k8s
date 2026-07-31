@@ -1,0 +1,63 @@
+---
+{{ $roundcubePasswordSecret := (exec "sh" (list "-c" "kubectl -n project-engineer-marcoklein get secret roundcube-db-roundcube -o json")) | fromJson}}
+{{ $hostNickname := (exec "sh" (list "-c" "kubectl -n default get configmap host-metadata -o yaml | yq eval '.data.hostNickname'")) | trim }}
+{{ $roundcubePassword := $roundcubePasswordSecret.data.password | b64dec }}
+
+repositories:
+  - name: mlohr
+    url: https://helm-charts.mlohr.com/
+
+releases:
+  - name: webmail
+    chart: mlohr/roundcube
+    namespace: project-engineer-marcoklein
+    createNamespace: true
+    needs:
+      - project-engineer-marcoklein/roundcube-db
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./get-mailserver-domain.sh "marcoklein.engineer"
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            TMP_CERT="$(mktemp)"
+            kubectl get --raw '/api/v1/namespaces/sys-acme/services/https:acme-pebble:15000/proxy/roots/0' > "$TMP_CERT"
+            kubectl -n project-engineer-marcoklein create secret generic webmail-mailserver-ca \
+              --from-file=pebble-root-ca.crt="$TMP_CERT" \
+              --dry-run=client -o yaml | kubectl apply -f -
+            rm -f "$TMP_CERT"
+    values:
+      - ./.tmp/domain.yaml
+      {{- if not (eq $hostNickname "tharja") }}
+      - ./values/custom-ca.yaml
+      {{- end }}
+      - ingress:
+          enabled: false
+          host: null
+        deployment:
+          replicas: 1
+          strategy:
+            type: Recreate
+          podAntiAffinityPreset: ""
+        externalDatabase:
+          type: mysql
+          host: roundcube-db.project-engineer-marcoklein.svc.cluster.local
+          port: 3306
+          name: roundcube
+          user: roundcube
+          password: {{ $roundcubePassword }}
+
+  - name: roundcube-db
+    chart: ../../helm/mariadb-database
+    namespace: project-engineer-marcoklein
+    createNamespace: true
+    values:
+      - ./values/database.yaml

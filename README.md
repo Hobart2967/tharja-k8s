@@ -38,17 +38,18 @@ It provides:
 - ✅ Traefik reverse proxy
     - [ ] With rate limiting
     - ✅ HTTPS support (LetsEncrypt)
-- [ ] Monitoring Setup using Grafana
-  - [ ] Comes pre-configured with prometheus and loki
-  - [ ] Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
+- 🚧 Monitoring Setup using Grafana
+  - ✅ Comes pre-configured with prometheus and loki
+  - ✅ Dashboard import support for dashboards from https://grafana.com/grafana/dashboards/
+  - 🚧 Not running stable yet
   - [ ] Easy Contact point config in variables
-- [ ] MailServer Setup
-  - [ ] Postfix
-  - [ ] Dovecot
-  - [ ] Webmail
-  - [ ] Spam Protection
-  - [ ] Virus Protection
-  - [ ] Multi-Domain
+- ✅ MailServer Setup
+  - ✅ Postfix
+  - ✅ Dovecot
+  - ✅ Webmail
+  - ✅ Spam Protection
+  - ✅ Virus Protection
+  - ✅ Multi-Domain
 - Application firewall (Using CrowdSource?)
   - ✅ Firewall general installation
   - ✅ Systemd service for ufw.
@@ -64,6 +65,8 @@ It provides:
 - ❌ModSecurity
 - ✅ Lets Encrypt / ACME Pebble (Local with self signed CA)
 - ✅ VPN Client
+- ✅ LocalStack Platform
+  - ✅ with Security layer
 - ❌ Sudo with TOTP: https://www.reddit.com/r/selfhosted/comments/h02wzr/how_to_adding_totp_to_sudo/?show=original
 - ❌ Logrotation
 - ❌ backups
@@ -156,3 +159,31 @@ sudo chmod 0777 /storage/vhosts/de.avsn/httpdocs/pnTemp/Xanthia_compiled
 
 Asdf is preconfigured and preinstalled with the plugins listed in the ansible playbook variables.
 It is configured in a way that only root/sudoers can install plugins and versions, while users can use the installed things.
+
+## Tests
+
+### Lambda deployment to localstack
+
+```sh
+# Download and trust Intermediate CA
+./utilities/trust-current-pebble.sh
+
+# Make aws cli use it
+aws configure set default.ca_bundle /etc/ssl/certs/ca-certificates.crt
+aws configure set default.region eu-central-1
+
+export AWS_ACCESS_KEY_ID=<key_id> && export AWS_SECRET_ACCESS_KEY=<access_key>
+
+# inside tests/lambda-deployment
+terraform apply
+
+# List Lambda functions
+aws --endpoint-url=https://cloud.sidra.codewyre.net lambda list-functions
+aws --endpoint-url=https://cloud.sidra.codewyre.net \
+  lambda invoke \
+  --function-name arn:aws:lambda:eu-central-1:000000000042:function:hello-terraform-lambda \
+  --cli-binary-format raw-in-base64-out \
+  --payload '{}' \
+  response.json
+
+```

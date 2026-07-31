@@ -1,0 +1,13 @@
+databases:
+  - resourceName: roundcube
+    name: roundcube
+
+users:
+  - name: roundcube
+    host: "%"
+    databases:
+      - name: roundcube
+        host: "%"
+        privileges:
+        - "ALL PRIVILEGES"
+

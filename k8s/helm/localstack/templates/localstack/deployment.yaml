@@ -1,0 +1,55 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Release.Name }}-localstack
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-localstack
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-localstack
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: gresau/localstack-persist:latest # todo pin version
+          ports:
+            - containerPort: 4566
+              name: http
+              {{- if .Values.localstack.lambdaCallbackHostPort.enabled }}
+              hostPort: {{ .Values.localstack.lambdaCallbackHostPort.port }}
+              hostIP: {{ .Values.localstack.lambdaCallbackHostPort.hostIP | quote }}
+              {{- end }}
+          env:
+            - name: SKIP_SSL_CERT_DOWNLOAD
+              value: "1" # Needed for localstack instances hidden from the internet.
+            - name: LAMBDA_EXECUTOR
+              value: "docker-reuse"
+            - name: DEBUG
+              value: "1"
+            - name: LS_LOG
+              value: "debug"
+            - name: PERSIST_CLOUDWATCH
+              value: "0" # TODO: Check if this works
+            - name: PERSIST_LOGS
+              value: "0"
+          volumeMounts:
+            - name: localstack-persisted-data
+              mountPath: /persisted-data
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+          resources: {{ .Values.localstack.resources | toYaml | nindent 12 }}
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: localstack-persisted-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}
+      #volumes:
+      #  - "./data/localstack:/persisted-data"
+      #  - "/var/run/docker.sock:/var/run/docker.sock"

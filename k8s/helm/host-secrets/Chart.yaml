@@ -1,6 +1,6 @@
 apiVersion: v2
-name: host-metadata
-description: Basic Hostname Metadata
+name: localstack
+description: LocalStack deployment with LocalStack Security layer
 type: application
 version: 0.1.0
 appVersion: "1.0"
