@@ -60,7 +60,7 @@ It provides:
   - [ ] ARK
     - [ ] Mod management via k8s
 - ✅ DNS via bind9
-  - [ ] Denic NAST Predelegation check compatible config samples
+  - ✅ Denic NAST Predelegation check compatible default config
 - ✅ MariaDB Databases
 - ❌ModSecurity
 - ✅ Lets Encrypt / ACME Pebble (Local with self signed CA)
