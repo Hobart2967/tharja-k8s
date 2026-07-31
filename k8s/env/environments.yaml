@@ -84,7 +84,7 @@ environments:
           cloud-codewyre-net:
             item: sgbtrn2w7fm5sv6vqvk4mjr35m
             namespaces:
-              - project-localstack
+              - sys-localstack
             fields:
               - username
               - password
@@ -199,7 +199,7 @@ environments:
           cloud-codewyre-net:
             item: 22zwcewxzorho53x3tkpwe5jim
             namespaces:
-              - project-localstack
+              - sys-localstack
             fields:
               - username
               - password

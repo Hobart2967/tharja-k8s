@@ -1,0 +1,4 @@
+security:
+  logLevel: "INFO"
+  accessKeysSecretRefs:
+    - name: "cloud-codewyre-net"

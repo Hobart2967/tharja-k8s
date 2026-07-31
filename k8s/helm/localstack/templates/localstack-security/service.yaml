@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-localstack-security
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: {{ .Release.Name }}-localstack-security
+  ports:
+    - protocol: TCP
+      port: 4387
+      targetPort: 4387
+      name: http

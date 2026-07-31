@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: localstack-lambda-bridge
+  namespace: sys-localstack
+spec:
+  selector:
+    matchLabels:
+      app: localstack-lambda-bridge
+  template:
+    metadata:
+      labels:
+        app: localstack-lambda-bridge
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: iptables
+          image: alpine:3.21
+          securityContext:
+            privileged: true
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apk add --no-cache iptables
+              while true; do
+                # Docker drops packets addressed to a container IP when they
+                # arrive from outside docker0. Allow only LocalStack's runtime
+                # callback traffic before Docker's raw-table drop rule.
+                iptables -t raw -C PREROUTING \
+                  -i cni0 -s 10.42.0.0/16 -d 172.17.0.0/16 \
+                  -p tcp --dport 9563 -j ACCEPT \
+                  || iptables -t raw -I PREROUTING 1 \
+                    -i cni0 -s 10.42.0.0/16 -d 172.17.0.0/16 \
+                    -p tcp --dport 9563 -j ACCEPT
+
+                # kube-router evaluates its chain before FORWARD. Keep the
+                # callback flow out of its pod-specific firewall chains.
+                iptables -C KUBE-ROUTER-FORWARD \
+                  -s 10.42.0.0/16 -d 172.17.0.0/16 \
+                  -p tcp --dport 9563 -j ACCEPT \
+                  || iptables -I KUBE-ROUTER-FORWARD 1 \
+                    -s 10.42.0.0/16 -d 172.17.0.0/16 \
+                    -p tcp --dport 9563 -j ACCEPT
+                iptables -C KUBE-ROUTER-FORWARD \
+                  -s 172.17.0.0/16 -d 10.42.0.0/16 \
+                  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT \
+                  || iptables -I KUBE-ROUTER-FORWARD 1 \
+                    -s 172.17.0.0/16 -d 10.42.0.0/16 \
+                    -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+                iptables -C FORWARD -s 10.42.0.0/16 -d 172.17.0.0/16 -j ACCEPT \
+                  || iptables -I FORWARD 1 -s 10.42.0.0/16 -d 172.17.0.0/16 -j ACCEPT
+                iptables -C FORWARD -s 172.17.0.0/16 -d 10.42.0.0/16 -j ACCEPT \
+                  || iptables -I FORWARD 1 -s 172.17.0.0/16 -d 10.42.0.0/16 -j ACCEPT
+                iptables -t nat -C POSTROUTING -s 10.42.0.0/16 -d 172.17.0.0/16 -j MASQUERADE \
+                  || iptables -t nat -I POSTROUTING 1 -s 10.42.0.0/16 -d 172.17.0.0/16 -j MASQUERADE
+                sleep 30
+              done

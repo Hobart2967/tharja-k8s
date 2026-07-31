@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: cloud
+      zone: net-codewyre
+    services:
+      - name: localstack-localstack-security
+        port: http
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: cloud
+    type: A

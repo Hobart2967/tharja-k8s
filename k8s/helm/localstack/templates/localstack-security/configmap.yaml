@@ -1,0 +1,30 @@
+{{- $release := .Release }}
+{{- $values := .Values }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-security-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.json: |
+    {
+      "logLevel": "{{ $values.security.logLevel }}",
+      "port": 4387,
+      "localStackUri": "http://{{ $release.Name }}-localstack.{{ $release.Namespace }}.svc.cluster.local:4566",
+      "whitelistedUris": [
+        "/_localstack/health/.*",
+        "/restapis/[a-z0-9]+/[a-z0-9]+/_user_request_/.*"
+      ],
+      "accessKeys": {
+        {{- range $index, $secretRef := $values.security.accessKeysSecretRefs }}
+          {{- $accessKeyMap := lookup "v1" "Secret" $release.Namespace $secretRef.name }}
+          {{- if not $accessKeyMap }}
+            {{- fail (printf "Secrets not found for %s in namespace %s" $release.Name $release.Namespace) }}
+          {{- end }}
+          {{ $accessKeyMap.data.username | b64dec | toJson }}: {{ $accessKeyMap.data.password | b64dec | toJson }}{{ if not (eq (add $index 1) (len $values.security.accessKeysSecretRefs)) }},{{ end }}
+        {{- end }}
+      },
+      "requestMappers": []
+    }
+
