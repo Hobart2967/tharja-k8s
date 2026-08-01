@@ -42,6 +42,11 @@ agent:
       podName: prometheus-grafana-*
       program: grafana
 
+    # ntfy notification server
+    - namespace: sys-ntfy
+      podName: ntfy-*
+      program: ntfy
+
   env:
     - name: COLLECTIONS
       value: >-
@@ -51,6 +56,7 @@ agent:
         crowdsecurity/dovecot
         crowdsecurity/bind9
         LePresidente/grafana
+        Jgigantino31/ntfy
 
   resources:
     requests:
