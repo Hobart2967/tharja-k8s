@@ -1,15 +1,50 @@
 container_runtime: containerd
 
 agent:
-  # Acquire Traefik access logs from running Traefik pods for threat detection
+  # Acquire logs from running pods for threat detection
   acquisition:
     - namespace: sys-traefik
       podName: traefik-operator-*
       program: traefik
 
+    # Minecraft game server
+    - namespace: project-minecraft-avsn
+      podName: avsn-minecraft-*
+      program: minecraft
+
+    # ARK game servers
+    - namespace: project-ark
+      podName: ark-*
+      program: syslog
+
+    # LocalStack security proxy
+    - namespace: sys-localstack
+      podName: localstack-localstack-security-*
+      program: syslog
+
+    # DNS / bind9 (bindy-managed Bind9Instance)
+    - namespace: sys-dns
+      podName: public-dns-*
+      program: named
+
+    # Mail server – postfix
+    - namespace: sys-mail
+      podName: mail-*
+      program: postfix
+
+    # Mail server – dovecot
+    - namespace: sys-mail
+      podName: mail-*
+      program: dovecot
+
   env:
     - name: COLLECTIONS
-      value: "crowdsecurity/traefik crowdsecurity/linux"
+      value: >-
+        crowdsecurity/traefik
+        crowdsecurity/linux
+        crowdsecurity/postfix
+        crowdsecurity/dovecot
+        crowdsecurity/bind9
 
   resources:
     requests:
