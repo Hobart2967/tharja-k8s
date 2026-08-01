@@ -18,6 +18,12 @@ rateLimit:
   burst: 80     # short spike allowance
   period: 1s
 
+crowdsec:
+  enabled: false
+  middleware:
+    name: crowdsec-bouncer
+    namespace: sys-crowdsec
+
 webfacade:
   enabled: true
   storageSize: 2Gi

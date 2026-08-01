@@ -30,6 +30,10 @@ spec:
     - name: {{ $release.Name }}-rate-limit
       namespace: {{ $release.Namespace }}
     {{- end }}
+    {{- if $values.crowdsec.enabled }}
+    - name: {{ $values.crowdsec.middleware.name }}
+      namespace: {{ $values.crowdsec.middleware.namespace }}
+    {{- end }}
     {{ range $alias := $rule.aliases -}}
     - name: redirect-from-{{ replace "." "-" (include "hostname-by-dns" $alias) }}
       namespace: {{ $release.Namespace }}

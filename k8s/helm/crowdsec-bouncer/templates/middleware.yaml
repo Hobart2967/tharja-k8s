@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-bouncer
+  namespace: {{ .Release.Namespace }}
+spec:
+  plugin:
+    crowdsec-bouncer-traefik-plugin:
+      enabled: true
+      crowdSecLapiKey: {{ .Values.apiKey | required "apiKey is required – populate via bouncer-key.sh" | quote }}
+      crowdSecLapiHost: {{ .Values.lapiHost | quote }}
+      crowdSecLapiPort: {{ .Values.lapiPort | quote }}
+      crowdSecLapiScheme: {{ .Values.lapiScheme | quote }}
+      crowdSecMode: {{ .Values.mode | quote }}

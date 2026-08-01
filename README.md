@@ -50,9 +50,13 @@ It provides:
   - ✅ Spam Protection
   - ✅ Virus Protection
   - ✅ Multi-Domain
-- Application firewall (Using CrowdSource?)
+- 🚧 Application firewall using CrowdSec
   - ✅ Firewall general installation
-  - ✅ Systemd service for ufw.
+  - ✅ Systemd service for ufw
+  - ✅ CrowdSec agent + LAPI deployed in `sys-crowdsec` namespace
+  - ✅ Traefik bouncer plugin integration (`crowdsec-bouncer-traefik-plugin`)
+  - ✅ Per-site opt-in via `crowdsec.enabled` in website chart
+  - [ ] `crowdsec-bouncer-key` secret provisioned via host-secrets (1Password)
 - ✅ Ntfy service
 - [ ] GameServers
   - ✅ Minecraft

@@ -1,0 +1,12 @@
+# API key used by the Traefik plugin to authenticate with CrowdSec LAPI.
+# Must match the bouncer key registered in CrowdSec.
+# Populated at deploy time via bouncer-key.sh from the crowdsec-bouncer-key K8s secret.
+apiKey: ""
+
+# CrowdSec LAPI connection settings
+lapiHost: crowdsec-service.sys-crowdsec.svc.cluster.local
+lapiPort: "8080"
+lapiScheme: http
+
+# Ban mode: "ban" blocks IPs, "captcha" serves a captcha page
+mode: ban
