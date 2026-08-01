@@ -1,6 +1,6 @@
 replicaCount: 1
 arkServerPasswordSecretName: ark-server-password
-arkServerAdminPasswordSecretName: ark-server-admin-password
+arkServerAdminPasswordSecretName: ark-server-password
 serverConfig:
   arkServerName: An Ark Server
   sessionName: An Ark Session
@@ -13,3 +13,17 @@ serverConfig:
   mods: []
     # id: 1234567
     # state: <game|disabled>
+persistence:
+  size: 10Gi
+ports:
+  rcon: 27020
+  query: 27015
+  game: 7777
+  gameExt: 7778
+resources:
+  requests:
+    memory: 4Gi
+    cpu: 2
+  limits:
+    memory: 8Gi
+    cpu: 4

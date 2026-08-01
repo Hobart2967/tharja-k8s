@@ -1,0 +1,14 @@
+---
+kind: IngressRouteTCP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-rcon
+  namespace: {{ .Release.Namespace }}
+spec:
+  entryPoints:
+    - ark-rcon
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: {{ .Release.Name }}
+          port: {{ .Values.ports.rcon}}
