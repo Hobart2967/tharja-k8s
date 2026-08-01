@@ -37,6 +37,11 @@ agent:
       podName: mail-*
       program: dovecot
 
+    # Grafana (kube-prometheus-stack)
+    - namespace: monitoring
+      podName: prometheus-grafana-*
+      program: grafana
+
   env:
     - name: COLLECTIONS
       value: >-
@@ -45,6 +50,7 @@ agent:
         crowdsecurity/postfix
         crowdsecurity/dovecot
         crowdsecurity/bind9
+        LePresidente/grafana
 
   resources:
     requests:
