@@ -100,12 +100,12 @@ environments:
               - project-de-avsn
             fields:
               - password
-          de-avsn-hark:
+          ark-server-password:
             item: rwvbvxet7zoeodrj5pzbwhrc2a
             namespaces:
               - project-ark
             fields:
-              #- admin_password
+              - admin_password
               - password
           home-server-bastion:
             item: null
@@ -215,12 +215,12 @@ environments:
               - project-de-avsn
             fields:
               - password
-          de-avsn-hark:
+          ark-server-password:
             item: mgqe2zbksqx7trviusnl4aggty
             namespaces:
               - project-ark
             fields:
-              #- admin_password
+              - admin_password
               - password
           home-server-bastion:
             item: syywokky6f4fj7dar74pvfrwlm

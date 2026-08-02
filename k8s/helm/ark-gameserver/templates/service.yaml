@@ -1,0 +1,24 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: ark-game
+      port: {{ .Values.ports.game }}
+      targetPort: {{ .Values.ports.game }}
+    - name: ark-game-ext
+      port: {{ .Values.ports.gameExt }}
+      targetPort: {{ .Values.ports.gameExt }}
+    - name: ark-query
+      port: {{ .Values.ports.query }}
+      targetPort: {{ .Values.ports.query }}
+    - name: ark-rcon
+      port: {{ .Values.ports.rcon }}
+      targetPort: {{ .Values.ports.rcon }}

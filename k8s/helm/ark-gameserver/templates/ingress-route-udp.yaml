@@ -1,0 +1,18 @@
+{{- $portsList := dict "query" .Values.ports.query "game" .Values.ports.game "game-ext" .Values.ports.gameExt }}
+{{- $release := .Release }}
+
+{{- range $index, $port := $portsList }}
+---
+kind: IngressRouteUDP
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: {{ $release.Name }}-{{ $index }}
+  namespace: {{ $release.Namespace }}
+spec:
+  entryPoints:
+    - ark-{{ $index }}
+  routes:
+    - services:
+        - name: {{ $release.Name }}
+          port: {{ $port }}
+{{- end }}

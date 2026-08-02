@@ -19,11 +19,22 @@ spec:
         - name: {{ .Release.Name }}
           image: "hermsi/ark-server:latest"
           imagePullPolicy: IfNotPresent
+          #command:
+          #  - /bin/bash
+          #  - -lc
+          #args:
+          #  - >-
+          #    mkdir -p /ark-app/server /ark-app/staging /app/arkmanager/instances &&
+          #    chown -R steam:steam /app/arkmanager &&
+          #    rm -rf /app/server /app/staging &&
+          #    ln -s /ark-app/server /app/server &&
+          #    ln -s /ark-app/staging /app/staging &&
+          #    exec /usr/sbin/gosu steam /steam-entrypoint.sh
           ports:
             - name: game
               containerPort: 7777
               protocol: UDP
-            - name: game
+            - name: game-ext
               containerPort: 7778
               protocol: UDP
             - name: query
@@ -33,22 +44,23 @@ spec:
               containerPort: 27020
               protocol: TCP
           env:
-            - name: ARK_SERVER_NAME
+            - name: ARK_SERVER_VOLUME
+              value: /app
+            - name: SERVER_NAME
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Release.Name }}
                   key: ARK_SERVER_NAME
-            - name: ARK_SERVER_PASSWORD
+            - name: SERVER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.arkServerPasswordSecretName }}
-                  key: ARK_SERVER_PASSWORD
-            - name: ARK_SERVER_ADMIN_PASSWORD
+                  key: password
+            - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.arkServerAdminPasswordSecretName }}
-                  key: ARK_SERVER_ADMIN_PASSWORD
-
+                  key: admin_password
             - name: SESSION_NAME
               valueFrom:
                 configMapKeyRef:
@@ -92,7 +104,24 @@ spec:
           volumeMounts:
             - name: ark-data
               mountPath: /ark-data
+            - name: ark-app
+              mountPath: /app
+            - name: ark-backup
+              mountPath: /app/backup
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
       volumes:
         - name: ark-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}
+            claimName: {{ .Release.Name }}-data
+        - name: ark-app
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-app
+        - name: ark-backup
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-backup
