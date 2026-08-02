@@ -103,7 +103,6 @@ grafana:
   sidecar:
     datasources:
       name: prometheus
-      uid: prometheus
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
@@ -141,7 +140,7 @@ grafana:
       cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 700m
+      cpu: 500m
       memory: 512Mi
   persistence:
     enabled: true
