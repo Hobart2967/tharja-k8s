@@ -24,6 +24,12 @@ environments:
               - crt
             namespaces:
               - sys-traefik
+          crowdsec-bouncer-key:
+            item: tejriu4qqc7lpvgnyrcthe3r2y
+            namespaces:
+              - sys-crowdsec
+            fields:
+              - api-key
           ntfy-grafana:
             item: ny72nqjed4wz6rfflxj2ihi7ym
             namespaces:

@@ -1,7 +1,9 @@
 # API key used by the Traefik plugin to authenticate with CrowdSec LAPI.
 # Must match the bouncer key registered in CrowdSec.
 # Populated at deploy time via bouncer-key.sh from the crowdsec-bouncer-key K8s secret.
-apiKey: ""
+apiKeySecretRef:
+  name: crowdsec-bouncer-key
+  key: api-key
 
 # CrowdSec LAPI connection settings
 lapiHost: crowdsec-service.sys-crowdsec.svc.cluster.local
