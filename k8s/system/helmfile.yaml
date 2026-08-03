@@ -17,6 +17,7 @@ helmfiles:
   - path: ./sys-acme/helmfile.yaml.gotmpl
   - path: ./sys-cert-manager/helmfile.yaml
   - path: ./sys-traefik/helmfile.yaml
+  - path: ./sys-crowdsec/helmfile.yaml
   - path: ./sys-storage/helmfile.yaml
   - path: ./sys-ntfy/helmfile.yaml
 

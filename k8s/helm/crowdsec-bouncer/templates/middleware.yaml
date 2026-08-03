@@ -1,0 +1,16 @@
+{{ $apiKeySecretRef := .Values.apiKeySecretRef | default (dict "name" (printf "%s-crowdsec-bouncer" .Release.Name) "key" "api-key") }}
+{{ $apiKeySecret := lookup "v1" "Secret" .Release.Namespace $apiKeySecretRef.name }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-bouncer
+  namespace: {{ .Release.Namespace }}
+spec:
+  plugin:
+    crowdsec-bouncer-traefik-plugin:
+      enabled: true
+      crowdSecLapiKey: {{ (index $apiKeySecret.data $apiKeySecretRef.key) | b64dec | quote }}
+      crowdSecLapiHost: {{ .Values.lapiHost | quote }}
+      crowdSecLapiPort: {{ .Values.lapiPort | quote }}
+      crowdSecLapiScheme: {{ .Values.lapiScheme | quote }}
+      crowdSecMode: {{ .Values.mode | quote }}

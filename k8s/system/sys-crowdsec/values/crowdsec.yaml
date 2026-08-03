@@ -1,0 +1,110 @@
+container_runtime: containerd
+
+agent:
+  # Acquire logs from running pods for threat detection
+  acquisition:
+    - namespace: sys-traefik
+      podName: traefik-operator-*
+      program: traefik
+
+    # Minecraft game server
+    - namespace: project-minecraft-avsn
+      podName: avsn-minecraft-*
+      program: minecraft
+
+    # ARK game servers
+    - namespace: project-ark
+      podName: ark-*
+      program: syslog
+
+    # LocalStack security proxy
+    - namespace: sys-localstack
+      podName: localstack-localstack-security-*
+      program: syslog
+
+    # DNS / bind9 (bindy-managed Bind9Instance)
+    - namespace: sys-dns
+      podName: public-dns-*
+      program: named
+
+    # Mail server – postfix
+    - namespace: sys-mail
+      podName: mail-*
+      program: postfix
+
+    # Mail server – dovecot
+    - namespace: sys-mail
+      podName: mail-*
+      program: dovecot
+
+    # Grafana (kube-prometheus-stack)
+    - namespace: monitoring
+      podName: prometheus-grafana-*
+      program: grafana
+
+    # ntfy notification server
+    - namespace: sys-ntfy
+      podName: ntfy-*
+      program: ntfy
+
+  env:
+    - name: COLLECTIONS
+      value: >-
+        crowdsecurity/traefik
+        crowdsecurity/linux
+        crowdsecurity/postfix
+        crowdsecurity/dovecot
+        crowdsecurity/bind9
+        LePresidente/grafana
+        Jgigantino31/ntfy
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+lapi:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  # The Traefik bouncer key is stored in the crowdsec-bouncer-key K8s secret.
+  # The secret must be pre-created via host-secrets (1Password vault entry:
+  # "crowdsec-bouncer-key" with field "api-key").
+  env:
+    - name: BOUNCER_KEY_TRAEFIK
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-bouncer-key
+          key: api-key
+
+  # Register the Traefik bouncer on LAPI startup using the predefined key
+  lifecycle:
+    postStart:
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - |
+            until cscli lapi status > /dev/null 2>&1; do
+              echo "Waiting for CrowdSec LAPI..."
+              sleep 2
+            done
+            cscli bouncers delete traefik-bouncer 2>/dev/null || true
+            cscli bouncers add traefik-bouncer --key "${BOUNCER_KEY_TRAEFIK}"
+            echo "Traefik bouncer registered"
+
+  persistentVolume:
+    data:
+      enabled: true
+      size: 1Gi
+    config:
+      enabled: true
+      size: 100Mi
