@@ -51,8 +51,6 @@ It provides:
   - ✅ Virus Protection
   - ✅ Multi-Domain
 - 🚧 Application firewall using CrowdSec
-  - ✅ Firewall general installation
-  - ✅ Systemd service for ufw
   - ✅ CrowdSec agent + LAPI deployed in `sys-crowdsec` namespace
   - ✅ Traefik bouncer plugin integration (`crowdsec-bouncer-traefik-plugin`)
   - ✅ Per-site opt-out via `crowdsec.enabled` in website chart
@@ -60,12 +58,11 @@ It provides:
 - [ ] GameServers
   - ✅ Minecraft
     - ✅ Plugin management via k8s
-  - [ ] ARK
-    - [ ] Mod management via k8s
+  - ✅ ARK
+    - ✅ Mod management via k8s
 - ✅ DNS via bind9
   - [ ] Denic NAST Predelegation check compatible config samples
 - ✅ MariaDB Databases
-- ❌ModSecurity
 - ✅ Lets Encrypt / ACME Pebble (Local with self signed CA)
 - ✅ VPN Client
 - ✅ LocalStack Platform
