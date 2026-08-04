@@ -19,7 +19,7 @@ rateLimit:
   period: 1s
 
 crowdsec:
-  enabled: false
+  enabled: true
   middleware:
     name: crowdsec-bouncer
     namespace: sys-crowdsec

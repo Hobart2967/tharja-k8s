@@ -55,8 +55,7 @@ It provides:
   - ✅ Systemd service for ufw
   - ✅ CrowdSec agent + LAPI deployed in `sys-crowdsec` namespace
   - ✅ Traefik bouncer plugin integration (`crowdsec-bouncer-traefik-plugin`)
-  - ✅ Per-site opt-in via `crowdsec.enabled` in website chart
-  - [ ] `crowdsec-bouncer-key` secret provisioned via host-secrets (1Password)
+  - ✅ Per-site opt-out via `crowdsec.enabled` in website chart
 - ✅ Ntfy service
 - [ ] GameServers
   - ✅ Minecraft
