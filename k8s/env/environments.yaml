@@ -166,6 +166,14 @@ environments:
         hostNickname: tharja
         secretVault: ha34ot6ty3cy4rkp54jgvdluae
         secretsMap:
+          storage-box-1:
+            item: grlxfena23vjbdmdtepx7uik6e
+            fields:
+              - username
+              - password
+              - domain
+            namespaces:
+              - kube-system
           ntfy-grafana:
             item: 2mocvryly44i63iq6c2ct36tcy
             namespaces:
