@@ -1,0 +1,19 @@
+# install https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
+repositories:
+  - name: csi-driver-smb
+    url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
+
+releases:
+  - name: csi-driver-smb
+    namespace: kube-system
+    chart: csi-driver-smb/csi-driver-smb
+    hooks:
+      - events: ["prepare", "presync"]
+        showlogs: true
+        command: sh
+        args:
+          - -ec
+          - |
+            ./read-storage-box-link.sh "{{`{{.Release.Namespace}}`}}" "storage-box-1"
+    values:
+      - ./.tmp/values.yaml

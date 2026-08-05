@@ -4,3 +4,6 @@ releases:
     namespace: kube-system
     createNamespace: true
     chart: ../../helm/project
+    values:
+      - memory:
+          max: 512Mi

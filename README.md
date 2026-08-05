@@ -60,6 +60,8 @@ It provides:
     - ✅ Plugin management via k8s
   - ✅ ARK
     - ✅ Mod management via k8s
+- ✅ CSI SMB Driver
+  - (e.g.) to connect to Hetzner Storage Box
 - ✅ DNS via bind9
   - [ ] Denic NAST Predelegation check compatible config samples
 - ✅ MariaDB Databases

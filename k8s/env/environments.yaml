@@ -24,6 +24,14 @@ environments:
               - crt
             namespaces:
               - sys-traefik
+          storage-box-1:
+            item: abx7ycy2tfb7ppeeqnknatgfsy
+            fields:
+              - username
+              - password
+              - domain
+            namespaces:
+              - kube-system
           crowdsec-bouncer-key:
             item: tejriu4qqc7lpvgnyrcthe3r2y
             namespaces:

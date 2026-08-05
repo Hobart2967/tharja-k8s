@@ -15,6 +15,16 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
     | map({"key": .metadata.name, "value": (.data.endpoint | from_yaml)})
     | from_entries
     | {"ports": .}' -)
+
+  cat <<EOF > .tmp/domain.yaml
+imap:
+  host: ${STAGE_DOMAIN}
+  port: 143
+  encryption: starttls
+smtp:
+  host: ${STAGE_DOMAIN}
+
+EOF
 else
   echo "This script requires mikefarah yq for parsing endpoint YAML strings"
   exit 1
