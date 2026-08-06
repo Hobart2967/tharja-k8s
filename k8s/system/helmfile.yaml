@@ -19,7 +19,7 @@ helmfiles:
   - path: ./sys-traefik/helmfile.yaml
   - path: ./sys-crowdsec/helmfile.yaml
   - path: ./sys-storage/helmfile.yaml
-  - path: ./sys-ntfy/helmfile.yaml
+  - path: ./sys-ntfy/helmfile.yaml.gotmpl
 
   - path: ./dns-zones/helmfile.yaml
   - path: ./monitoring/helmfile.yaml
