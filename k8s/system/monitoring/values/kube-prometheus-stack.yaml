@@ -92,6 +92,11 @@ alertmanager:
 grafana:
   adminUser: admin
   adminPassword: admin123
+  envValueFrom:
+    NTFY_GRAFANA_TOKEN:
+      secretKeyRef:
+        name: ntfy-grafana
+        key: access_token
   additionalDataSources:
     - name: loki
       uid: loki
@@ -150,6 +155,21 @@ grafana:
   service:
     type: ClusterIP
     port: 3000
+  alerting:
+    contactpoints.yaml:
+      apiVersion: 1
+      contactPoints:
+        - orgId: 1
+          name: ntfy
+          receivers:
+            - uid: ntfy-server-alerts
+              type: webhook
+              disableResolveMessage: true
+              settings:
+                url: http://ntfy-ntfy.sys-ntfy.svc.cluster.local:80/server_alerts
+                httpMethod: POST
+                authorization_scheme: Bearer
+                authorization_credentials: $NTFY_GRAFANA_TOKEN
 
 prometheus-node-exporter:
   resources:
