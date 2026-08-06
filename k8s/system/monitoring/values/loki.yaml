@@ -4,6 +4,9 @@ deploymentMode: SingleBinary
 
 loki:
   auth_enabled: false
+  readinessProbe:
+    timeoutSeconds: 5
+    failureThreshold: 6
   commonConfig:
     replication_factor: 1
     ring:
@@ -42,11 +45,11 @@ singleBinary:
   replicas: 1
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 250m
+      memory: 512Mi
     limits:
-      cpu: 300m
-      memory: 256Mi
+      cpu: 1000m
+      memory: 1Gi
   persistence:
     enabled: true
     storageClass: local-path

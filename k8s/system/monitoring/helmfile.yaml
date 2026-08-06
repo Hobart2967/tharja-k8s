@@ -16,7 +16,7 @@ releases:
     chart: ../../helm/project
     values:
       - memory:
-          max: 512Mi
+          max: 1Gi
 
   - name: prometheus-grafana
     namespace: monitoring
