@@ -10,5 +10,13 @@ lapiHost: crowdsec-service.sys-crowdsec.svc.cluster.local
 lapiPort: "8080"
 lapiScheme: http
 
-# Ban mode: "ban" blocks IPs, "captcha" serves a captcha page
-mode: ban
+# Use stream mode so the bouncer consumes decisions incrementally
+# instead of querying LAPI alerts on every request.
+mode: stream
+
+# Stream resilience: don't fail closed if LAPI sync temporarily fails.
+updateMaxFailure: -1
+streamStartupBlock: false
+
+# Clients/subnets that bypass bouncer checks (useful behind NAT/LB).
+clientTrustedIPs: []

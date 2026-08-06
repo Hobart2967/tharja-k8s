@@ -1,5 +1,9 @@
 {{ $apiKeySecretRef := .Values.apiKeySecretRef | default (dict "name" (printf "%s-crowdsec-bouncer" .Release.Name) "key" "api-key") }}
 {{ $apiKeySecret := lookup "v1" "Secret" .Release.Namespace $apiKeySecretRef.name }}
+{{- $lapiHost := .Values.lapiHost -}}
+{{- if and .Values.lapiPort (not (regexMatch ":[0-9]+$" $lapiHost)) -}}
+{{- $lapiHost = printf "%s:%s" $lapiHost .Values.lapiPort -}}
+{{- end -}}
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -10,7 +14,18 @@ spec:
     crowdsec-bouncer-traefik-plugin:
       enabled: true
       crowdSecLapiKey: {{ (index $apiKeySecret.data $apiKeySecretRef.key) | b64dec | quote }}
-      crowdSecLapiHost: {{ .Values.lapiHost | quote }}
-      crowdSecLapiPort: {{ .Values.lapiPort | quote }}
+      crowdSecLapiHost: {{ $lapiHost | quote }}
       crowdSecLapiScheme: {{ .Values.lapiScheme | quote }}
       crowdSecMode: {{ .Values.mode | quote }}
+      {{- if hasKey .Values "updateMaxFailure" }}
+      updateMaxFailure: {{ .Values.updateMaxFailure }}
+      {{- end }}
+      {{- if hasKey .Values "streamStartupBlock" }}
+      streamStartupBlock: {{ .Values.streamStartupBlock }}
+      {{- end }}
+      {{- if .Values.clientTrustedIPs }}
+      clientTrustedIPs:
+      {{- range $ip := .Values.clientTrustedIPs }}
+        - {{ $ip | quote }}
+      {{- end }}
+      {{- end }}
