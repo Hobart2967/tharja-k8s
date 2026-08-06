@@ -54,9 +54,9 @@ agent:
         crowdsecurity/linux
         crowdsecurity/postfix
         crowdsecurity/dovecot
-        crowdsecurity/bind9
+        mstilkerich/bind9
         LePresidente/grafana
-        Jgigantino31/ntfy
+      # Jgigantino31/ntfy
 
   resources:
     requests:
