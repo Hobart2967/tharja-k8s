@@ -29,4 +29,8 @@ releases:
       - lapiHost: crowdsec-service.sys-crowdsec.svc.cluster.local
         lapiPort: "8080"
         lapiScheme: http
-        mode: ban
+        mode: stream
+        updateMaxFailure: -1
+        streamStartupBlock: false
+        clientTrustedIPs:
+          - 10.42.0.1/32
