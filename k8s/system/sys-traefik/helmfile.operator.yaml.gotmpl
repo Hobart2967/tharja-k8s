@@ -18,6 +18,7 @@ releases:
         config: |
           additionalArguments:
             - "--entrypoints.metrics.address=:9100"
+            - "--providers.kubernetescrd.allowCrossNamespace=true"
 
           providers:
             kubernetesCRD:
