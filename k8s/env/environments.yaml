@@ -166,6 +166,12 @@ environments:
         hostNickname: tharja
         secretVault: ha34ot6ty3cy4rkp54jgvdluae
         secretsMap:
+          roundcube-db-roundcube:
+            item: ws3w6g5bii4ajcd6hif7se2zay
+            namespaces:
+              - project-engineer-marcoklein
+            fields:
+              - password
           storage-box-1:
             item: grlxfena23vjbdmdtepx7uik6e
             fields:
@@ -174,44 +180,58 @@ environments:
               - domain
             namespaces:
               - kube-system
+          crowdsec-bouncer-key:
+            item: lvhm6np2blx7l322efwetpapxi
+            namespaces:
+              - sys-crowdsec
+            fields:
+              - api-key
           ntfy-grafana:
             item: 2mocvryly44i63iq6c2ct36tcy
             namespaces:
-              - project-ntfy
+              - sys-ntfy
+              - monitoring
             fields:
               - username
               - password
+              - role
+              - access_token
+            extras:
+              topics:
+                - server_alerts:rw
           ntfy-homeserver:
             item: 25he6rmdshpzetnkiggdqon6b4
             namespaces:
-              - project-ntfy
+              - sys-ntfy
             fields:
               - username
               - password
               - access_token
+              - role
+            extras:
+              topics:
+                - backups:rw
+                - homeserver-alerts:rw
+            annotations:
+              hobart2967.github.io/ntfy-token: "true"
+              hobart2967.github.io/ntfy-user: "true"
           ntfy-hobart:
             item: wvarzykubx3z7arlc5itqx6dha
             namespaces:
-              - project-ntfy
+              - sys-ntfy
             fields:
               - username
               - password
-          grafana-discord-webhook:
-            item: rqidcwg4rb4kk5ku7pm4zvgami
-            namespaces:
-              - monitoring
-            fields:
-              - password
+              - role
+            annotations:
+              hobart2967.github.io/ntfy-user: "true"
           grafana-admin:
             item: lalvtnegadzm2la2eeulxmhdni
             namespaces:
               - monitoring
             fields:
               - password
-              - name
               - username
-              - email
-
           de-avsn-maps:
             item: c5etbdq4uwawxvbinvlior5xba
             namespaces:
