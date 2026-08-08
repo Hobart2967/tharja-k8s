@@ -1,11 +1,12 @@
 databases:
-  - resourceName: usr-web1-1
-    name: usr_web1_1
+  - resourceName: wedding-db
+    name: wedding_db
 users:
-  - name: web1
+  - name: leaetienne
     host: "%" # Needs to be the host from where the client logs in.
     databases:
-      - name: usr_web1_1
+      - name: wedding_db
         host: "%"
         privileges:
         - "ALL PRIVILEGES"
+

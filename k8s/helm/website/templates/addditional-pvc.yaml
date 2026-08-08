@@ -1,0 +1,18 @@
+{{- if .Values.webfacade.additionalPvcs }}
+{{ $release := .Release }}
+{{- range $pvc := .Values.webfacade.additionalPvcs }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $release.Name }}-{{ $pvc.name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ $pvc.storageClass }}
+  resources:
+    requests:
+      storage: {{ $pvc.size }}
+{{- end }}
+{{- end }}

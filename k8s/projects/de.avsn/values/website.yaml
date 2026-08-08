@@ -1,6 +1,91 @@
 webfacade:
   image: hobart2967/docker-apache2-php5.6.40
-  storageSize: 500Gi
+  storageSize: 25Gi
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+  additionalPvcs:
+    - name: website-storage
+      storageClass: local-path-projects-retained
+      size: 400Gi
+  extraMounts:
+    - name: config-php
+      mountPath: /var/www/html/config.php
+      sourcePath: config.php
+      configMap:
+        name: postnuke-config-php
+        items:
+        - key: "content"
+          path: "config.php"
+          mode: 0755
+    - name: php-ini
+      mountPath: /usr/local/etc/php/php.ini
+      sourcePath: php.ini
+      configMap:
+        name: php-ini
+        items:
+        - key: "content"
+          path: "php.ini"
+          mode: 0644
+
+    - name: httpd-conf
+      mountPath: /etc/apache2/apache2.conf
+      sourcePath: httpd.conf
+      configMap:
+        name: httpd-conf
+        items:
+        - key: "content"
+          path: "httpd.conf"
+          mode: 0644
+
+    - name: apache-remoteip-load
+      mountPath: /etc/apache2/mods-enabled/remoteip.load
+      sourcePath: remoteip.load
+      configMap:
+        name: website-apache-remoteip
+        items:
+        - key: "remoteip.load"
+          path: "remoteip.load"
+          mode: 0644
+
+    - name: apache-remoteip-conf
+      mountPath: /etc/apache2/mods-enabled/remoteip.conf
+      sourcePath: remoteip.conf
+      configMap:
+        name: website-apache-remoteip
+        items:
+        - key: "remoteip.conf"
+          path: "remoteip.conf"
+          mode: 0644
+    - name: website-bilder
+      mountPath: /var/www/html/Bilder
+      sourcePath: Bilder
+      persistentVolumeClaim:
+        claimName: website-website-storage
+    - name: website-downloads
+      mountPath: /var/www/html/Downloads
+      sourcePath: Downloads
+      persistentVolumeClaim:
+        claimName: website-website-storage
+    - name: website-gallery
+      mountPath: /var/www/html/modules/My_eGallery/gallery
+      sourcePath: modules/My_eGallery/gallery
+      persistentVolumeClaim:
+        claimName: website-website-storage
+    - name: website-walkthroughs
+      mountPath: /var/www/html/9891
+      sourcePath: "./9891"
+      persistentVolumeClaim:
+        claimName: website-website-storage
+  caches:
+    - name: pn-temp
+      path: ./pnTemp
+    - name: cache
+      path: ./cache
 rules:
   - hostname:
       name: www

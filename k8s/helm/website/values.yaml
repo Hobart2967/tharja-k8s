@@ -27,10 +27,16 @@ crowdsec:
 webfacade:
   enabled: true
   storageSize: 2Gi
+  storage:
+    mountPath: /var/www/html
+
   image: nginx:1.31.2-alpine
+  imagePullPolicy: IfNotPresent
   ports:
     - name: http
       containerPort: 80
+  additionalPvcs: []
+  extraMounts: []
   resources:
     limits:
       cpu: 100m

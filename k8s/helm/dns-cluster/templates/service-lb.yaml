@@ -1,0 +1,30 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-lb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}-lb
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/component: dns-server
+    app.kubernetes.io/instance: public-dns
+    app.kubernetes.io/managed-by: Bind9Cluster
+    app.kubernetes.io/name: bind9
+    app.kubernetes.io/part-of: bindy
+    app: bind9
+    bindy.firestoned.io/role: primary
+    instance: public-dns
+  ports:
+    - name: dns-tcp
+      protocol: TCP
+      port: 53
+      targetPort: 5353
+    - name: dns-udp
+      protocol: UDP
+      port: 53
+      targetPort: 5353

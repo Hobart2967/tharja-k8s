@@ -59,6 +59,26 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
       - mfsymlinks
       - cache=strict
       - noserverino  # required to prevent data corruption
+  - name: smb-csi-retain-readcache
+    parameters:
+      source: "//${DOMAIN}/backup/${HOST_NICKNAME}"
+      # if csi.storage.k8s.io/provisioner-secret is provided, will create a sub directory
+      # with PV name under source
+      csi.storage.k8s.io/provisioner-secret-name: $2
+      csi.storage.k8s.io/provisioner-secret-namespace: $1
+      csi.storage.k8s.io/node-stage-secret-name: $2
+      csi.storage.k8s.io/node-stage-secret-namespace: $1
+    reclaimPolicy: Retain
+    volumeBindingMode: Immediate
+    allowVolumeExpansion: true
+    mountOptions:
+      - dir_mode=0777
+      - file_mode=0777
+      - noperm
+      - mfsymlinks
+      - cache=loose
+      - actimeo=30
+      - noserverino  # keep inode behavior consistent with the strict classes
 EOF
 else
   echo "This script requires mikefarah yq for parsing config YAML strings"

@@ -4,6 +4,6 @@ metadata:
   name: {{ .Release.Name }}-enforce-https
   namespace: {{ .Release.Namespace }}
 spec:
-  redirectScheme:
-    scheme: https
-    permanent: true
+  redirectRegex:
+    regex: "^http://(.*)"
+    replacement: "https://$1"

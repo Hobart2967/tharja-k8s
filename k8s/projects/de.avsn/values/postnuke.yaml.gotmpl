@@ -1,0 +1,8 @@
+{{ $passwordSecret := (exec "sh" (list "-c" "kubectl -n project-de-avsn get secret database-web1 -o json")) | fromJson}}
+{{ $password := $passwordSecret.data.password }}
+
+database:
+  name: usr_web1_1
+  host: database.project-de-avsn.svc.cluster.local
+  user: web1
+  password: {{ $password | b64dec | quote }}

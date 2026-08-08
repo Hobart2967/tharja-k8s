@@ -1,0 +1,10 @@
+templates:
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: php-ini
+      namespace: project-de-avsn
+    data:
+      content: |
+{{ readFile "./php.ini" | indent 8 }}

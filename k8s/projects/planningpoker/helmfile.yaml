@@ -1,0 +1,17 @@
+---
+releases:
+  - name: project
+    namespace: project-planningpoker
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 128Mi
+
+  - name: website
+    chart: ../../helm/website
+    namespace: project-planningpoker
+    createNamespace: true
+    values:
+      - ./values/website.yaml
+      - ./values/dns.yaml.gotmpl

@@ -19,6 +19,12 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
     STAGE_DOMAIN=$DOMAIN
   else
     STAGE_DOMAIN="${HOST_NICKNAME}.${DOMAIN}"
+    TMP_CERT="$(mktemp)"
+    kubectl get --raw '/api/v1/namespaces/sys-acme/services/https:acme-pebble:15000/proxy/roots/0' > "$TMP_CERT"
+    kubectl -n project-engineer-marcoklein create secret generic webmail-mailserver-ca \
+      --from-file=pebble-root-ca.crt="$TMP_CERT" \
+      --dry-run=client -o yaml | kubectl apply -f -
+    rm -f "$TMP_CERT"
   fi
   rm -rf .tmp/domain.yaml
   cat <<EOF > .tmp/domain.yaml

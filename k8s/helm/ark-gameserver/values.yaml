@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 0
 arkServerPasswordSecretName: ark-server-password
 arkServerAdminPasswordSecretName: ark-server-password
 serverConfig:

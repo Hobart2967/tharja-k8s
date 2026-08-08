@@ -1,0 +1,14 @@
+webfacade:
+  image: duracellko/planningpoker
+  storageSize: 10Mi
+  ports:
+    - name: http
+      containerPort: 8080
+
+rules:
+  - hostname:
+      name: planning
+      zone: net-codewyre
+    services:
+      - name: website
+        port: http

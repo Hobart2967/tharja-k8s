@@ -15,7 +15,9 @@ releases:
     createNamespace: true
     chart: ../../helm/project
     values:
-      - memory:
+      - cpu:
+          max: 1
+        memory:
           max: 1Gi
 
   - name: prometheus-grafana

@@ -22,18 +22,7 @@ releases:
           - -ec
           - |
             ./get-mailserver-domain.sh "marcoklein.engineer"
-      - events: ["prepare", "presync"]
-        showlogs: true
-        command: sh
-        args:
-          - -ec
-          - |
-            TMP_CERT="$(mktemp)"
-            kubectl get --raw '/api/v1/namespaces/sys-acme/services/https:acme-pebble:15000/proxy/roots/0' > "$TMP_CERT"
-            kubectl -n project-engineer-marcoklein create secret generic webmail-mailserver-ca \
-              --from-file=pebble-root-ca.crt="$TMP_CERT" \
-              --dry-run=client -o yaml | kubectl apply -f -
-            rm -f "$TMP_CERT"
+
     values:
       - ./.tmp/domain.yaml
       {{- if not (eq $hostNickname "tharja") }}
@@ -53,7 +42,7 @@ releases:
           port: 3306
           name: roundcube
           user: roundcube
-          password: {{ $roundcubePassword }}
+          password: {{ $roundcubePassword | quote }}
 
   - name: roundcube-db
     chart: ../../helm/mariadb-database

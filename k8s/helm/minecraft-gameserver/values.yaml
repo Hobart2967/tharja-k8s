@@ -1,6 +1,4 @@
-replicaCount: 1
-arkServerPasswordSecretName: ark-server-password
-arkServerAdminPasswordSecretName: ark-server-admin-password
+replicaCount: 0
 persistence:
   worlds:
     size: 200Gi

@@ -108,7 +108,7 @@ environments:
               - project-de-avsn
             fields:
               - password
-          de-avsn-mariadb-web1:
+          database-web1:
             item: 2kwhr2kdmghidhbk4gcviqnt7e
             namespaces:
               - project-de-avsn
@@ -155,10 +155,15 @@ environments:
           net-codewyre-leaetienne:
             item: null
             namespaces:
-              - project-leaetienne
+              - project-wedding-leaetienne
             fields:
               - password
-              - db_password
+          database-leaetienne:
+            item: null
+            namespaces:
+              - project-wedding-leaetienne
+            fields:
+              - password
 
   tharja:
     values:
@@ -251,7 +256,7 @@ environments:
               - project-de-avsn
             fields:
               - password
-          de-avsn-mariadb-web1:
+          database-web1:
             item: 4zscr3qhm2zfd4ol4vvosmqkiq
             namespaces:
               - project-de-avsn
@@ -296,9 +301,14 @@ environments:
               - password
               - db_password
           net-codewyre-leaetienne:
-            item: ugdxxh7kjvlbzqxpwul546eqpi # TODO: Create custom PW
+            item: 7pioejaidd7bfcshg2kltqzc7e
             namespaces:
-              - project-leaetienne
+              - project-wedding-leaetienne
             fields:
               - password
-              - db_password
+          database-leaetienne:
+            item: orhmtwr5e4xviedkvreuqbdivq
+            namespaces:
+              - project-wedding-leaetienne
+            fields:
+              - password

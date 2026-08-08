@@ -1,4 +1,5 @@
 ---
+{{- $hostNickname := exec "sh" (list "-c" "kubectl -n default get configmap host-metadata -o jsonpath=\"{.data.hostNickname}\" 2>/dev/null || true") | trim }}
 repositories:
   - name: traefik
     url: https://helm.traefik.io/traefik
@@ -8,6 +9,26 @@ releases:
     namespace: sys-traefik
     createNamespace: true
     chart: ../../helm/project
+
+  - name: letsencrypt-traefik-config
+    installed: {{ eq $hostNickname "tharja" }}
+    chart: ../../helm/traefik-config
+    namespace: sys-traefik
+    createNamespace: true
+    values:
+      - name: letsencrypt-resolver
+        config: |
+          additionalArguments:
+            - "--entrypoints.websecure.http.tls.certresolver=internal-acme"
+            - "--certificatesresolvers.internal-acme.acme.email=admin@marcoklein.engineer"
+            - "--certificatesresolvers.internal-acme.acme.storage=/data/acme.json"
+            - "--certificatesresolvers.internal-acme.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+            - "--certificatesresolvers.internal-acme.acme.tlschallenge=true"
+          persistence:
+            enabled: true
+            path: /data
+            size: 128Mi
+            storageClass: local-path-projects-retained
 
   - name: traefik-config
     namespace: sys-traefik
@@ -19,6 +40,10 @@ releases:
           additionalArguments:
             - "--entrypoints.metrics.address=:9100"
             - "--providers.kubernetescrd.allowCrossNamespace=true"
+            - "--entrypoints.web.forwardedheaders.insecure=true"
+            - "--entrypoints.websecure.forwardedheaders.insecure=true"
+            - "--accesslog.format=json"
+            - "--accesslog=true"
 
           providers:
             kubernetesCRD:
@@ -31,6 +56,7 @@ releases:
     createNamespace: true
     needs:
       - traefik-config
+      - letsencrypt-traefik-config
     chart: traefik/traefik
     version: 41.0.0
     hooks:
@@ -62,7 +88,7 @@ releases:
 
           # Do I want to expose this?
           metrics:
-            port: 9100
+            port: 39100 # 9100
             expose:
               default: false
 
@@ -73,6 +99,10 @@ releases:
           limits:
             cpu: 500m
             memory: 256Mi
+
+      - service:
+          spec:
+            externalTrafficPolicy: Local
 
       - experimental:
           plugins:

@@ -1,0 +1,13 @@
+webfacade:
+  image: hobart2967/lea-etienne-photos-web:latest
+  storageSize: 10Mi
+  storage:
+    mountPath: /var/www/html
+rules:
+  - name: website
+    hostname:
+      name: leaetienne
+      zone: net-codewyre
+    services:
+      - name: website
+        port: http

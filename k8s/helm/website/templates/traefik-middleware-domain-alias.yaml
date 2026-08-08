@@ -17,8 +17,8 @@ metadata:
   namespace: {{ $values.namespace }}
 spec:
   redirectRegex:
-    regex: "^https://{{ $resolvedAlias }}/(.*)"
-    replacement: "https://{{ include "hostname-by-dns" $hostname }}/$1"
+    regex: "^https://{{ $resolvedAlias }}(:?\\d*)/(.*)"
+    replacement: "https://{{ include "hostname-by-dns" $hostname }}$1/$2"
 {{ end }}
 
 {{ end}}

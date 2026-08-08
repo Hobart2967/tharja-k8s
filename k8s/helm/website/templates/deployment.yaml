@@ -25,9 +25,25 @@ spec:
       - name: {{ .Release.Name }}
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}
+      {{- range $mount := .Values.webfacade.extraMounts }}
+      - name: {{ $mount.name }}
+        {{- if $mount.persistentVolumeClaim }}
+        persistentVolumeClaim:
+          {{ $mount.persistentVolumeClaim | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if $mount.configMap }}
+        configMap:
+          {{ $mount.configMap | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- range $cache := .Values.webfacade.caches }}
+      - name: {{ $cache.name }}
+        emptyDir: {}
+      {{- end }}
       containers:
       - name: {{ .Release.Name }}-ssh
         image: lscr.io/linuxserver/openssh-server:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: USER_NAME
           value: backup
@@ -50,12 +66,23 @@ spec:
         - name: {{ .Release.Name }}
           mountPath: /backups/httpdocs
           readOnly: true
+
       - name: {{ .Release.Name }}
         image: {{ .Values.webfacade.image }}
+        imagePullPolicy: {{ .Values.webfacade.imagePullPolicy | default "IfNotPresent" }}
         ports: {{ .Values.webfacade.ports | toYaml | nindent 8 }}
         volumeMounts:
           - name: {{ .Release.Name }}
-            mountPath: /var/www/html
+            mountPath: {{ .Values.webfacade.storage.mountPath }}
+          {{- range $mount := .Values.webfacade.extraMounts }}
+          - name: {{ $mount.name }}
+            mountPath: {{ $mount.mountPath }}
+            subPath: {{ $mount.sourcePath }}
+          {{- end }}
+          {{- range $cache := .Values.webfacade.caches }}
+          - name: {{ $cache.name }}
+            mountPath: {{ $cache.path }}
+          {{- end }}
         resources:
           limits:
             cpu: {{ .Values.webfacade.resources.limits.cpu }}

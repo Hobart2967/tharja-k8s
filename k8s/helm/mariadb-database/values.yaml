@@ -10,3 +10,15 @@ resources:
   requests:
     cpu: 250m
     memory: 256Mi
+
+sqlJobs: []
+# - name: init-schema
+#   username: root
+#   passwordSecretKeyRef:
+#     name: database-root
+#     key: MARIADB_ROOT_PASSWORD
+#   database: my_db
+#   sql: |
+#     CREATE TABLE IF NOT EXISTS demo (
+#       id INT PRIMARY KEY
+#     );

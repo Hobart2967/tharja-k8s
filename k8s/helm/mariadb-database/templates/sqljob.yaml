@@ -1,0 +1,21 @@
+{{ $release := .Release }}
+{{- range $job := (.Values.sqlJobs | default (list)) }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: SqlJob
+metadata:
+  name: {{ $job.name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  mariaDbRef:
+    name: {{ $release.Name }}
+  username: {{ $job.username | quote }}
+  passwordSecretKeyRef:
+    name: {{ $job.passwordSecretKeyRef.name | quote }}
+    key: {{ $job.passwordSecretKeyRef.key | quote }}
+  {{- if $job.database }}
+  database: {{ $job.database | quote }}
+  {{- end }}
+  sql: |-
+{{ $job.sql | nindent 4 }}
+{{- end }}

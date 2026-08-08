@@ -1,0 +1,21 @@
+# Mysql Client pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-tester
+  namespace: project-de-avsn
+spec:
+  containers:
+    - name: mysql-tester
+      image: mysql:8.0
+      tty: true
+      stdin: true
+      command:
+        - sh
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"

@@ -1,12 +1,12 @@
 {{- $values := .Values }}
 {{- $release := .Release }}
 {{ range $rule := (.Values.rules | default (list)) }}
-{{ $sanitizedRuleName := replace "." "-" (include "hostname-by-dns" $rule.hostname) }}
+{{ $sanitizedRuleName := $rule.name }}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: "{{ $release.Namespace }}-{{ $sanitizedRuleName }}-http"
+  name: "{{ $release.Namespace }}-{{ $release.Name }}-{{ $sanitizedRuleName }}-http"
   namespace: {{ $release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ $release.Namespace }}

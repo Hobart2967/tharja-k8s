@@ -1,0 +1,25 @@
+webfacade:
+  image: hobart2967/lea-etienne-photos-api:latest
+  storageSize: 40Gi
+  storage:
+    mountPath: /usr/share/image-api-server/.storage
+  extraMounts:
+    - name: configuration-json
+      mountPath: /usr/share/image-api-server/configuration.json
+      sourcePath: configuration.json
+      configMap:
+        name: configuration-json
+        items:
+        - key: "content"
+          path: "configuration.json"
+          mode: 0644
+  extraPorts:
+    - name: api
+      port: 4711
+      targetPort: 4711
+rules:
+  - name: api
+    condition: "Host(`leaetienne.codewyre.net`) && PathPrefix(`/api`)"
+    services:
+      - name: api
+        port: api

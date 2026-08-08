@@ -1,0 +1,6 @@
+apiVersion: v2
+name: postnuke
+description: Postnuke basics like config.php
+type: application
+version: 0.1.0
+appVersion: "1.0"

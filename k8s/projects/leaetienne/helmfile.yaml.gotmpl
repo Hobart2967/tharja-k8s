@@ -1,0 +1,97 @@
+---
+{{ $passwordSecret := (exec "sh" (list "-c" "kubectl -n project-wedding-leaetienne get secret net-codewyre-leaetienne -o json")) | fromJson }}
+{{ $password := $passwordSecret.data.password }}
+
+{{ $dbSecret := (exec "sh" (list "-c" "kubectl -n project-wedding-leaetienne get secret database-leaetienne -o json")) | fromJson }}
+{{ $dbPassword := $dbSecret.data.password }}
+
+releases:
+  - name: project
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 512Mi
+
+  - name: website
+    chart: ../../helm/website
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    values:
+      - ./values/website.yaml
+      - ./values/dns.yaml.gotmpl
+
+  - name: database
+    chart: ../../helm/mariadb-database
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    values:
+      - ./values/database.yaml
+      - sqlJobs:
+          - name: init-schema
+            username: root
+            passwordSecretKeyRef:
+              name: database-root
+              key: MARIADB_ROOT_PASSWORD
+            database: wedding_db
+            sql: |
+              CREATE TABLE IF NOT EXISTS `user` (
+                `id` VARCHAR(36) NOT NULL,
+                `name` VARCHAR(36) NOT NULL,
+                `token` VARCHAR(100) NOT NULL,
+                `secret` VARCHAR(100) NOT NULL,
+                PRIMARY KEY (`id`)
+              );
+              CREATE TABLE IF NOT EXISTS `media` (
+                `id` VARCHAR(36) NOT NULL,
+                `createdBy` VARCHAR(36) NOT NULL,
+                `type` VARCHAR(100) NOT NULL,
+                `originalFileName` VARCHAR(1000) NOT NULL,
+                `created` DATETIME NOT NULL,
+                PRIMARY KEY (`id`),
+                FOREIGN KEY (`createdBy`) REFERENCES `user`(`id`) ON DELETE CASCADE
+              );
+              CREATE TABLE IF NOT EXISTS `media_stats` (
+                `id` VARCHAR(36) NOT NULL,
+                `type` VARCHAR(36) NOT NULL,
+                `size` BIGINT NOT NULL,
+                `width` BIGINT NOT NULL,
+                `height` BIGINT NOT NULL,
+                PRIMARY KEY (`id`, `type`),
+                FOREIGN KEY (`id`) REFERENCES `media`(`id`) ON DELETE CASCADE
+              );
+
+  - name: api-config
+    chart: bedag/raw
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    values:
+      - templates:
+        - |
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: configuration-json
+            namespace: project-wedding-leaetienne
+          data:
+            content: |
+              {
+                "storage": "/usr/share/image-api-server/.storage",
+                "port": 80,
+                "passcode": "{{ $password | b64dec }}",
+                "mysqlConnectionConfig": {
+                  "host": "database.project-wedding-leaetienne.svc.cluster.local",
+                  "port": "3306",
+                  "database": "wedding_db",
+                  "user": "leaetienne",
+                  "insecureAuth": true,
+                  "password": "{{ $dbPassword | b64dec }}"
+                }
+              }
+  - name: api
+    chart: ../../helm/website
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    values:
+      - ./values/api.yaml
