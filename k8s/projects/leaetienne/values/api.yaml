@@ -4,22 +4,31 @@ webfacade:
   storage:
     mountPath: /usr/share/image-api-server/.storage
   extraMounts:
-    - name: configuration-json
+    - name: api-configuration-json
       mountPath: /usr/share/image-api-server/configuration.json
       sourcePath: configuration.json
       configMap:
-        name: configuration-json
+        name: api-configuration-json
         items:
         - key: "content"
           path: "configuration.json"
           mode: 0644
-  extraPorts:
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  ports:
     - name: api
-      port: 4711
-      targetPort: 4711
+      containerPort: 4711
 rules:
   - name: api
     condition: "Host(`leaetienne.codewyre.net`) && PathPrefix(`/api`)"
+    priority: 100
+    middlewares:
+      - name: strip-api-prefix
     services:
       - name: api
         port: api

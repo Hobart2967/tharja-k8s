@@ -3,6 +3,35 @@ webfacade:
   storageSize: 10Mi
   storage:
     mountPath: /var/www/html
+  extraMounts:
+    - name: website-configuration-json
+      mountPath: /usr/share/nginx/html/configuration.json
+      sourcePath: configuration.json
+      configMap:
+        name: website-configuration-json
+        items:
+        - key: "content"
+          path: "configuration.json"
+          mode: 0644
+    - name: website-default-conf
+      mountPath: /etc/nginx/conf.d/default.conf
+      sourcePath: default.conf
+      configMap:
+        name: website-default-conf
+        items:
+        - key: "content"
+          path: "default.conf"
+          mode: 0644
+    - name: website-nginx-conf
+      mountPath: /etc/nginx/nginx.conf
+      sourcePath: nginx.conf
+      configMap:
+        name: website-nginx-conf
+        items:
+        - key: "content"
+          path: "nginx.conf"
+          mode: 0644
+
 rules:
   - name: website
     hostname:

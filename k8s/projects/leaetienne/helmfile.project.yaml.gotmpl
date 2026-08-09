@@ -1,0 +1,17 @@
+---
+{{ $passwordSecret := (exec "sh" (list "-c" "kubectl -n project-wedding-leaetienne get secret net-codewyre-leaetienne -o json")) | fromJson }}
+{{ $password := $passwordSecret.data.password }}
+
+{{ $dbSecret := (exec "sh" (list "-c" "kubectl -n project-wedding-leaetienne get secret database-leaetienne -o json")) | fromJson }}
+{{ $dbPassword := $dbSecret.data.password }}
+
+releases:
+  - name: project
+    namespace: project-wedding-leaetienne
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - cpu:
+          max: 2
+        memory:
+          max: 1Gi

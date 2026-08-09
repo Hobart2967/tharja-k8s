@@ -1,0 +1,5 @@
+---
+helmfiles:
+  - ./helmfile.project.yaml.gotmpl
+  - ./helmfile.api.yaml.gotmpl
+  - ./helmfile.website.yaml.gotmpl

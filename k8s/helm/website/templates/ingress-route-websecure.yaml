@@ -47,7 +47,7 @@ spec:
       accessLogs: true
       metrics: true
       tracing: true
-    priority: 10
+    priority: {{ $rule.priority | default 10 }}
     services:
     {{ range $service := $rule.services -}}
     - kind: Service

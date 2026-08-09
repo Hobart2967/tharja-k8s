@@ -6,21 +6,22 @@
 {{ $dbPassword := $dbSecret.data.password }}
 
 releases:
-  - name: project
-    namespace: project-wedding-leaetienne
-    createNamespace: true
-    chart: ../../helm/project
-    values:
-      - memory:
-          max: 512Mi
-
-  - name: website
-    chart: ../../helm/website
+  - name: prefix-middleware
+    chart: bedag/raw
     namespace: project-wedding-leaetienne
     createNamespace: true
     values:
-      - ./values/website.yaml
-      - ./values/dns.yaml.gotmpl
+      - templates:
+        - |
+          apiVersion: traefik.io/v1alpha1
+          kind: Middleware
+          metadata:
+            name: strip-api-prefix
+            namespace: project-wedding-leaetienne
+          spec:
+            stripPrefix:
+              prefixes:
+                - /api
 
   - name: database
     chart: ../../helm/mariadb-database
@@ -72,7 +73,7 @@ releases:
           apiVersion: v1
           kind: ConfigMap
           metadata:
-            name: configuration-json
+            name: api-configuration-json
             namespace: project-wedding-leaetienne
           data:
             content: |
