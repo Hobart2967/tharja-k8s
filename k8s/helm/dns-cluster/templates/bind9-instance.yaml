@@ -17,7 +17,9 @@ spec:
   clusterRef: public-dns
   config:
     allowTransfer: {{ .Values.allowedTransferServers}}
-  configMapRefs: null
+    allowQuery:
+      - acl:internal  # Reference the cluster's ACL
+    recursion: true
   image: null
   primaryServers: null
   replicas: 1

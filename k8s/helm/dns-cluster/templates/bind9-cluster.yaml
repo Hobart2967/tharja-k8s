@@ -8,6 +8,11 @@ metadata:
     bindy.firestoned.io/allow-zone-namespaces: "*"
 spec:
   namespace: {{ .Release.Namespace }}
+  global:
+    recursion: true
+  acls:
+    internal:
+      {{ .Values.allowedQueryClients | toYaml | nindent 6 }}
   primary:
     replicas: 0 # Workaround: Manually create Bind9Instance resources to also be able to annotate them with bindy.firestoned.io/allow-zone-namespaces: "*"
     service:
