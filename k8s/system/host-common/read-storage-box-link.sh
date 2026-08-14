@@ -21,7 +21,7 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
   storageClasses:
   - name: smb-csi
     annotations:
-      storageclass.kubernetes.io/is-default-class: "true"
+      storageclass.kubernetes.io/is-default-class: "false"
     parameters:
       source: "//${DOMAIN}/backup/${HOST_NICKNAME}"
       # if csi.storage.k8s.io/provisioner-secret is provided, will create a sub directory
