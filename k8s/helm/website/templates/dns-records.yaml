@@ -35,7 +35,7 @@ spec:
   mailServer: {{ .mailServer }}
   priority: {{ .priority }}
   {{ else if eq .type "CNAME" -}}
-  canonicalName: {{ .canonicalName }}
+  target: {{ .target }}
   {{ else if eq .type "NS" -}}
   nameserver: {{ .nameserver }}
   {{ end -}}

@@ -22,8 +22,44 @@ releases:
     chart: ../../helm/cert-request
     values:
       - dnsNames:
-          - marcoklein.engineer
+        - marcoklein.engineer
+        - avsn.de
+        - adventurespiele.net
+        #- codewyre.net # TODO: Enable to enable outlook connection support
+        #- sone.online
+        #- soneonline.com
+        #- devforyou.de
 
+  - name: mail-proxy-conf
+    chart: bedag/raw
+    namespace: sys-mail
+    createNamespace: true
+    values:
+      - templates:
+        - |
+          kind: ConfigMap
+          apiVersion: v1
+          metadata:
+            name: mailserver-extra-config
+            labels:
+              app: mailserver
+          data:
+            postfix-main.cf: |
+              postscreen_upstream_proxy_protocol = haproxy
+            postfix-master.cf: |
+              smtp/inet/postscreen_upstream_proxy_protocol=haproxy
+              submission/inet/smtpd_upstream_proxy_protocol=haproxy
+              submissions/inet/smtpd_upstream_proxy_protocol=haproxy
+            dovecot.cf: |
+              haproxy_trusted_networks = <YOUR POD CIDR>
+              service imap-login {
+                inet_listener imap {
+                  haproxy = yes
+                }
+                inet_listener imaps {
+                  haproxy = yes
+                }
+              }
   - name: mail
     namespace: sys-mail
     createNamespace: true

@@ -11,10 +11,18 @@ dnsRecords:
   - name: mail
     type: MX
     priority: "10"
-    mailServer: "mail.avsn.de."
+    mailServer: "mail.marcoklein.engineer."
 
   - name: www
     type: A
+
+  - name: autodiscover
+    type: CNAME
+    target: marcoklein.engineer
+
+  - name: autoconfig
+    type: CNAME
+    target: marcoklein.engineer
 
 - zone: net-adventurespiele
   records:

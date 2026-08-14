@@ -11,4 +11,6 @@ spec:
     - match: HostSNI(`*`)
       services:
         - name: mail-docker-mailserver
-          port: smtp
+          port: smtp-proxy
+          proxyProtocol:
+            version: 2
