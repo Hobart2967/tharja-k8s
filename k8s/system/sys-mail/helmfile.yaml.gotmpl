@@ -33,9 +33,16 @@ releases:
       - sys-mail/marcoklein-engineer-mail
     values:
       - certificate: marcoklein-engineer-mail-certificate
+        persistent_volume_claims:
+          mail-data:
+            size: 100Gi
+            storageClass: local-path-projects-retained
+          mail-state:
+            storageClass: local-path-projects-retained
+
         deployment:
           env:
-            OVERRIDE_HOSTNAME: marcoklein.engineer
+            OVERRIDE_HOSTNAME: mail.marcoklein.engineer
 
   - name: mail-accounts
     namespace: sys-mail
@@ -61,19 +68,19 @@ releases:
     values:
       - endpoints:
           - name: ml-smtp
-            port: 30025
+            port: 25
             protocol: TCP
           - name: ml-imap
-            port: 30143
+            port: 143
             protocol: TCP
           - name: ml-imap-secure
-            port: 30993
+            port: 993
             protocol: TCP
           - name: ml-sub
-            port: 30587
+            port: 587
             protocol: TCP
           - name: ml-sub-secure
-            port: 30465
+            port: 465
             protocol: TCP
 
   - name: mail-ingress

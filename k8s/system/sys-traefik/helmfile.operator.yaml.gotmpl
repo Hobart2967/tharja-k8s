@@ -38,7 +38,6 @@ releases:
       - name: traefik-base-config
         config: |
           additionalArguments:
-            - "--entrypoints.metrics.address=:9100"
             - "--providers.kubernetescrd.allowCrossNamespace=true"
             - "--entrypoints.web.forwardedheaders.insecure=true"
             - "--entrypoints.websecure.forwardedheaders.insecure=true"
@@ -85,12 +84,6 @@ releases:
           websecure:
             port: 8443
             exposedPort: 443
-
-          # Do I want to expose this?
-          metrics:
-            port: 39100 # 9100
-            expose:
-              default: false
 
       - resources:
           requests:
