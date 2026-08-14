@@ -28,13 +28,16 @@ agent:
       program: named
 
     # Mail server – postfix
+    # Only watch the long-lived docker-mailserver pod; setup-mailbox Job pods are
+    # temporary and their log files disappear after the TTL cleanup, which triggers
+    # these stale-file warnings from CrowdSec's inotify watcher.
     - namespace: sys-mail
-      podName: mail-*
+      podName: mail-docker-mailserver-*
       program: postfix
 
     # Mail server – dovecot
     - namespace: sys-mail
-      podName: mail-*
+      podName: mail-docker-mailserver-*
       program: dovecot
 
     # Grafana (kube-prometheus-stack)
