@@ -1,5 +1,9 @@
-{{ $apiKeySecretRef := .Values.apiKeySecretRef | default (dict "name" (printf "%s-crowdsec-bouncer" .Release.Name) "key" "api-key") }}
-{{ $apiKeySecret := lookup "v1" "Secret" .Release.Namespace $apiKeySecretRef.name }}
+{{- $apiKeySecretRef := .Values.apiKeySecretRef | default (dict "name" (printf "%s-crowdsec-bouncer" .Release.Name) "key" "api-key") -}}
+{{- $apiKeySecret := lookup "v1" "Secret" .Release.Namespace $apiKeySecretRef.name -}}
+{{- $apiKey := "" -}}
+{{- if and $apiKeySecret $apiKeySecret.data (hasKey $apiKeySecret.data $apiKeySecretRef.key) -}}
+{{- $apiKey = index $apiKeySecret.data $apiKeySecretRef.key | b64dec -}}
+{{- end -}}
 {{- $lapiHost := .Values.lapiHost -}}
 {{- if and .Values.lapiPort (not (regexMatch ":[0-9]+$" $lapiHost)) -}}
 {{- $lapiHost = printf "%s:%s" $lapiHost .Values.lapiPort -}}
@@ -13,7 +17,7 @@ spec:
   plugin:
     crowdsec-bouncer-traefik-plugin:
       enabled: true
-      crowdSecLapiKey: {{ (index $apiKeySecret.data $apiKeySecretRef.key) | b64dec | quote }}
+      crowdSecLapiKey: {{ $apiKey | quote }}
       crowdSecLapiHost: {{ $lapiHost | quote }}
       crowdSecLapiScheme: {{ .Values.lapiScheme | quote }}
       crowdSecMode: {{ .Values.mode | quote }}
