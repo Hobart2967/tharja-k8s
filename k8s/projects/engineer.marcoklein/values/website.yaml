@@ -1,5 +1,9 @@
+webfacade:
+  storage:
+    mountPath: /usr/share/nginx/html
 rules:
-- hostname:
+- name: website
+  hostname:
     name: www
     zone: engineer-marcoklein
   aliases:
@@ -8,7 +12,8 @@ rules:
   services:
     - name: website
       port: http
-- hostname:
+- name: webmail
+  hostname:
     name: mail
     zone: engineer-marcoklein
   services:
