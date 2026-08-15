@@ -10,6 +10,9 @@ releases:
     namespace: sys-crowdsec
     createNamespace: true
     chart: ../../helm/project
+    values:
+      - memory:
+          max: 1Gi
 
   - name: crowdsec
     namespace: sys-crowdsec
@@ -37,11 +40,21 @@ releases:
         clientTrustedIPs:
           - 10.42.0.1/32
 
+  - name: crowdsec-web-ui-lapi-user
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - crowdsec
+    chart: ../../helm/crowdsec-lapi-user
+    values:
+      - ./values/crowdsec-web-ui-lapi-user.yaml.gotmpl
+
   - name: crowdsec-web-ui
     namespace: sys-crowdsec
     createNamespace: true
     needs:
       - crowdsec
+      - crowdsec-web-ui-lapi-user
     chart: zekker6/crowdsec-web-ui
     values:
       - env:
@@ -51,4 +64,20 @@ releases:
             value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:8080"
           - name: "CONFIG_INSTANCE_LAPI_URL"
             value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:8080"
+          - name: "CONFIG_INSTANCE_LAPI_AUTH_USERNAME"
+            value: "crowdsec-web-ui"
+          - name: "CONFIG_INSTANCE_LAPI_AUTH_PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                name: crowdsec-ui
+                key: password
+          - name: "CONFIG_INSTANCE_METRICS_URL"
+            value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:6060/metrics"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 

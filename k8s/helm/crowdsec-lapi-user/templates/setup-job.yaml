@@ -1,0 +1,113 @@
+{{- $username := required "user.username is required" .Values.user.username }}
+{{- $password := .Values.user.password | default "" }}
+{{- $secretName := .Values.user.passwordSecretRef.name | default "" }}
+{{- $secretKey := .Values.user.passwordSecretRef.key | default "" }}
+{{- $selector := required "lapi.podSelector is required" .Values.lapi.podSelector }}
+{{- if and (eq $password "") (or (eq $secretName "") (eq $secretKey "")) }}
+{{- fail "Either user.password or user.passwordSecretRef.{name,key} must be set" }}
+{{- end }}
+{{- if and (ne $password "") (and (ne $secretName "") (ne $secretKey "")) }}
+{{- fail "Set either user.password or user.passwordSecretRef, not both" }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-crowdsec-lapi-user-{{ $username | replace "@" "-" | replace "." "-" }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  template:
+    spec:
+      serviceAccountName: crowdsec-lapi-user-job
+      restartPolicy: Never
+      containers:
+        - name: setup-crowdsec-lapi-user
+          image: {{ .Values.kubectl.image | quote }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LAPI_USER_NAME
+              value: {{ $username | quote }}
+            {{- if and (ne $secretName "") (ne $secretKey "") }}
+            - name: LAPI_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName | quote }}
+                  key: {{ $secretKey | quote }}
+            {{- else }}
+            - name: LAPI_USER_PASSWORD
+              value: {{ $password | quote }}
+            {{- end }}
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              echo "Waiting for CrowdSec LAPI pod to reach Running"
+              timeout_seconds={{ .Values.lapi.waitTimeoutSeconds }}
+              poll_interval={{ .Values.lapi.pollIntervalSeconds }}
+              while [ "$timeout_seconds" -gt 0 ]; do
+                POD_PHASE="$(kubectl -n {{ .Release.Namespace }} get pods -l {{ $selector | quote }} -o jsonpath='{.items[0].status.phase}' 2>/dev/null || true)"
+                if [ "$POD_PHASE" = "Running" ]; then
+                  break
+                fi
+
+                sleep "$poll_interval"
+                timeout_seconds=$((timeout_seconds - poll_interval))
+              done
+
+              if [ "$POD_PHASE" != "Running" ]; then
+                echo "CrowdSec LAPI pod did not reach Running state in time"
+                exit 1
+              fi
+
+              POD_NAME="$(kubectl -n {{ .Release.Namespace }} get pods -l {{ $selector | quote }} -o jsonpath='{.items[0].metadata.name}')"
+              if [ -z "$POD_NAME" ]; then
+                echo "No CrowdSec LAPI pod found for selector {{ $selector }}"
+                exit 1
+              fi
+
+              echo "Waiting for CrowdSec LAPI status to become healthy"
+              timeout_seconds={{ .Values.lapi.waitTimeoutSeconds }}
+              while [ "$timeout_seconds" -gt 0 ]; do
+                set +e
+                STATUS_OUTPUT="$(kubectl -n {{ .Release.Namespace }} exec "$POD_NAME" -- cscli lapi status 2>&1)"
+                STATUS_EXIT_CODE=$?
+                set -e
+
+                if [ "$STATUS_EXIT_CODE" -eq 0 ]; then
+                  break
+                fi
+
+                sleep "$poll_interval"
+                timeout_seconds=$((timeout_seconds - poll_interval))
+              done
+
+              if [ "$STATUS_EXIT_CODE" -ne 0 ]; then
+                printf '%s\n' "$STATUS_OUTPUT"
+                echo "CrowdSec LAPI did not become ready in time"
+                exit 1
+              fi
+
+              if [ -z "$LAPI_USER_PASSWORD" ]; then
+                echo "LAPI user password is empty"
+                exit 1
+              fi
+
+              set +e
+              ADD_OUTPUT="$(kubectl -n {{ .Release.Namespace }} exec "$POD_NAME" -- cscli machines add "$LAPI_USER_NAME" --password "$LAPI_USER_PASSWORD" -f /dev/null 2>&1)"
+              ADD_EXIT_CODE=$?
+              set -e
+
+              printf '%s\n' "$ADD_OUTPUT"
+              if [ "$ADD_EXIT_CODE" -ne 0 ]; then
+                HAS_ALREADY_EXISTS="$(printf '%s\n' "$ADD_OUTPUT" | grep -q "user already exist" && echo 1 || echo 0)"
+                if [ "$HAS_ALREADY_EXISTS" -eq 0 ]; then
+                  echo "Encountered an error while registering machine user"
+                  exit "$ADD_EXIT_CODE"
+                fi
+              fi
+
+              echo "CrowdSec LAPI machine user ensured: $LAPI_USER_NAME"

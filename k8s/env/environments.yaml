@@ -171,6 +171,12 @@ environments:
         hostNickname: tharja
         secretVault: ha34ot6ty3cy4rkp54jgvdluae
         secretsMap:
+          crowdsec-ui:
+            item: 3satfjh3ug7wxlfnjg2eultuwm
+            namespaces:
+              - sys-crowdsec
+            fields:
+              - password
           roundcube-db-roundcube:
             item: ws3w6g5bii4ajcd6hif7se2zay
             namespaces:

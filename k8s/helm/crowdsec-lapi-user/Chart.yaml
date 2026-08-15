@@ -1,0 +1,6 @@
+apiVersion: v2
+name: crowdsec-lapi-user
+description: Registers a machine user in CrowdSec LAPI using a post-deploy Job
+type: application
+version: 0.1.0
+appVersion: "1.0"

@@ -1,0 +1,13 @@
+{{ $passwordSecret := (exec "sh" (list "-c" "kubectl -n sys-crowdsec get secret crowdsec-ui -o json")) | fromJson }}
+{{ $password := $passwordSecret.data.password }}
+
+user:
+  username: crowdsec-web-ui
+  password: {{ $password | b64dec | quote }}
+
+# Alternative to plain-text password above:
+# user:
+#   username: crowdsec-web-ui
+#   passwordSecretRef:
+#     name: crowdsec-web-ui-lapi-user
+#     key: password
