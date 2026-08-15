@@ -1,4 +1,7 @@
-container_runtime: containerd
+container_runtime: docker
+prometheus:
+  enabled: true
+  level: full
 
 agent:
   # Acquire logs from running pods for threat detection
@@ -6,26 +9,31 @@ agent:
     - namespace: sys-traefik
       podName: traefik-operator-*
       program: traefik
+      poll_without_inotify: true
 
     # Minecraft game server
     - namespace: project-minecraft-avsn
       podName: avsn-minecraft-*
       program: minecraft
+      poll_without_inotify: true
 
     # ARK game servers
     - namespace: project-ark
       podName: ark-*
       program: syslog
+      poll_without_inotify: true
 
     # LocalStack security proxy
     - namespace: sys-localstack
       podName: localstack-localstack-security-*
       program: syslog
+      poll_without_inotify: true
 
     # DNS / bind9 (bindy-managed Bind9Instance)
     - namespace: sys-dns
       podName: public-dns-*
       program: named
+      poll_without_inotify: true
 
     # Mail server – postfix
     # Only watch the long-lived docker-mailserver pod; setup-mailbox Job pods are
@@ -34,21 +42,25 @@ agent:
     - namespace: sys-mail
       podName: mail-docker-mailserver-*
       program: postfix
+      poll_without_inotify: true
 
     # Mail server – dovecot
     - namespace: sys-mail
       podName: mail-docker-mailserver-*
       program: dovecot
+      poll_without_inotify: true
 
     # Grafana (kube-prometheus-stack)
     - namespace: monitoring
       podName: prometheus-grafana-*
       program: grafana
+      poll_without_inotify: true
 
     # ntfy notification server
     - namespace: sys-ntfy
       podName: ntfy-*
       program: ntfy
+      poll_without_inotify: true
 
   env:
     - name: COLLECTIONS
@@ -69,7 +81,21 @@ agent:
       cpu: 500m
       memory: 256Mi
 
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus-grafana
+
 lapi:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus-grafana
+
   resources:
     requests:
       cpu: 100m

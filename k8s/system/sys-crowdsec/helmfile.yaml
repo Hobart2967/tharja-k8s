@@ -2,6 +2,8 @@
 repositories:
   - name: crowdsecurity
     url: https://crowdsecurity.github.io/helm-charts
+  - name: zekker6
+    url: https://zekker6.github.io/helm-charts/
 
 releases:
   - name: sys-crowdsec
@@ -34,3 +36,19 @@ releases:
         streamStartupBlock: false
         clientTrustedIPs:
           - 10.42.0.1/32
+
+  - name: crowdsec-web-ui
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - crowdsec
+    chart: zekker6/crowdsec-web-ui
+    values:
+      - env:
+          - name: "TZ"
+            value: "Europe/Berlin"
+          - name: "CROWDSEC_URL"
+            value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:8080"
+          - name: "CONFIG_INSTANCE_LAPI_URL"
+            value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:8080"
+

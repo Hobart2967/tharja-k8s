@@ -1,0 +1,415 @@
+{{ $adminSecretSecret := (exec "sh" (list "-c" (printf "kubectl -n %s get secret grafana-admin -o json" .Release.Namespace))) | fromJson }}
+{{- $adminSecret := "" -}}
+{{- if and $adminSecretSecret $adminSecretSecret.data (hasKey $adminSecretSecret.data "password") -}}
+{{- $adminSecret = index $adminSecretSecret.data "password" | b64dec -}}
+{{- else }}
+{{ fail "Grafana admin password secret 'grafana-admin' not found or missing 'password' key" -}}
+{{- end -}}
+
+kubeEtcd:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+defaultRules:
+  rules:
+    kubeApiserverAvailability: false
+    kubeApiserverBurnrate: false
+    kubeApiserverHistogram: false
+    kubeApiserverSlos: false
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    shards: 1
+    retention: 7d
+    retentionSize: 10GB
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+    additionalScrapeConfigs:
+      - job_name: blackbox-kubernetes-services
+        metrics_path: /probe
+        params:
+          module:
+            - http_2xx
+        kubernetes_sd_configs:
+          - role: service
+        relabel_configs:
+          - source_labels:
+              - __meta_kubernetes_service_annotation_prometheus_io_probe
+            action: keep
+            regex: true
+          - source_labels:
+              - __address__
+            target_label: __param_target
+          - target_label: __address__
+            replacement: blackbox-exporter:9115
+          - source_labels:
+              - __param_target
+            target_label: instance
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels:
+              - __meta_kubernetes_namespace
+            target_label: kubernetes_namespace
+          - source_labels:
+              - __meta_kubernetes_service_name
+            target_label: kubernetes_name
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+
+grafana:
+  adminUser: admin
+  adminPassword: {{ $adminSecret }}
+  envValueFrom:
+    NTFY_GRAFANA_TOKEN:
+      secretKeyRef:
+        name: ntfy-grafana
+        key: access_token
+  additionalDataSources:
+    - name: loki
+      uid: loki
+      type: loki
+      access: proxy
+      url: http://loki:3100
+      isDefault: false
+      editable: false
+  sidecar:
+    datasources:
+      name: prometheus
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ""
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboards:
+    default:
+      system:
+        gnetId: 1860
+        revision: 40
+        datasource:
+          - name: DS_PROMETHEUS
+            value: prometheus
+      ssh:
+        gnetId: 17514
+        revision: 3
+        datasource:
+          - name: DS_LOKI
+            value: loki
+      certificates:
+        gnetId: 13230
+        revision: 2
+        datasource:
+          - name: DS_PROMETHEUS
+            value: prometheus
+      crowdsec:
+        gnetId: 24049
+        revision: 1
+        datasource:
+          - name: Prometheus_Source
+            value: prometheus
+          - name: query0
+            value: loki
+      crowdsec-overview:
+        json: |
+          {
+            "annotations": {
+              "list": [
+                {
+                  "builtIn": 1,
+                  "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+                  "enable": true,
+                  "hide": true,
+                  "iconColor": "rgba(0, 211, 255, 1)",
+                  "name": "Annotations & Alerts",
+                  "type": "dashboard"
+                }
+              ]
+            },
+            "editable": true,
+            "fiscalYearStartMonth": 0,
+            "graphTooltip": 0,
+            "id": null,
+            "links": [],
+            "panels": [
+              {
+                "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+                "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "reqps" }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+                "id": 1,
+                "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+                "targets": [
+                  { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (bouncer, route) (rate(cs_lapi_bouncer_requests_total[5m]))", "legendFormat": "{{"{{"}}bouncer{{"}}"}} / {{"{{"}}route{{"}}"}}", "refId": "A" }
+                ],
+                "title": "Bouncer requests by bouncer / route",
+                "type": "timeseries"
+              },
+              {
+                "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+                "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "reqps" }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+                "id": 2,
+                "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+                "targets": [
+                  { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (route, method) (rate(cs_lapi_route_requests_total[5m]))", "legendFormat": "{{"{{"}}method{{"}}"}} {{"{{"}}route{{"}}"}}", "refId": "A" }
+                ],
+                "title": "LAPI route traffic",
+                "type": "timeseries"
+              },
+              {
+                "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+                "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "s" }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+                "id": 3,
+                "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+                "targets": [
+                  { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(cs_lapi_request_duration_seconds_bucket[5m])))", "legendFormat": "{{"{{"}}endpoint{{"}}"}}", "refId": "A" }
+                ],
+                "title": "LAPI p95 latency by endpoint",
+                "type": "timeseries"
+              },
+              {
+                "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+                "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }, "unit": "reqps" }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+                "id": 4,
+                "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "reduceOptions": { "calcs": [ "lastNotNull" ], "fields": "", "values": false }, "textMode": "value_and_name" },
+                "targets": [
+                  { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum(rate(cs_lapi_bouncer_requests_total[5m]))", "legendFormat": "bouncer requests", "refId": "A" }
+                ],
+                "title": "Total bouncer requests / 5m",
+                "type": "stat"
+              }
+            ],
+            "refresh": "30s",
+            "schemaVersion": 39,
+            "style": "dark",
+            "tags": [ "crowdsec" ],
+            "templating": {
+              "list": [
+                {
+                  "current": { "selected": true, "text": "prometheus", "value": "prometheus" },
+                  "hide": 0,
+                  "includeAll": false,
+                  "label": "Prometheus source",
+                  "multi": false,
+                  "name": "Prometheus_Source",
+                  "options": [],
+                  "query": "prometheus",
+                  "refresh": 1,
+                  "regex": "",
+                  "type": "datasource"
+                }
+              ]
+            },
+            "time": { "from": "now-6h", "to": "now" },
+            "timepicker": {},
+            "timezone": "browser",
+            "title": "CrowdSec overview",
+            "uid": "crowdsec-overview",
+            "version": 1,
+            "weekStart": ""
+          }
+      crowdsec-active-blocks:
+        json: |
+          {
+            "annotations": {
+              "list": [
+                {
+                  "builtIn": 1,
+                  "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+                  "enable": true,
+                  "hide": true,
+                  "iconColor": "rgba(0, 211, 255, 1)",
+                  "name": "Annotations & Alerts",
+                  "type": "dashboard"
+                }
+              ]
+            },
+            "editable": true,
+            "fiscalYearStartMonth": 0,
+            "graphTooltip": 0,
+            "id": null,
+            "links": [],
+            "panels": [
+              {
+                "datasource": { "type": "loki", "uid": "${Loki_Source}" },
+                "gridPos": { "h": 10, "w": 24, "x": 0, "y": 0 },
+                "id": 1,
+                "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending" },
+                "targets": [
+                  { "datasource": { "type": "loki", "uid": "${Loki_Source}" }, "editorMode": "code", "expr": "{container=\"crowdsec-lapi\"} |= \"decision\" |~ \"ban|captcha|reject\"", "queryType": "range", "refId": "A" }
+                ],
+                "title": "Decision log stream",
+                "type": "logs"
+              },
+              {
+                "datasource": { "type": "loki", "uid": "${Loki_Source}" },
+                "fieldConfig": { "defaults": { "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] } }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+                "id": 2,
+                "options": { "cellHeight": "sm", "showHeader": true },
+                "targets": [
+                  { "datasource": { "type": "loki", "uid": "${Loki_Source}" }, "expr": "{container=\"crowdsec-lapi\"} |~ \"decision\" | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)` | regexp `(?P<action>ban|captcha|reject)` | line_format `ip={{"{{"}}.ip{{"}}"}} action={{"{{"}}.action{{"}}"}}`", "legendFormat": "{{"{{"}}ip{{"}}"}}", "refId": "A" }
+                ],
+                "title": "Active block candidates by IP + action",
+                "type": "table"
+              },
+              {
+                "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+                "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }, "unit": "reqps" }, "overrides": [] },
+                "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+                "id": 3,
+                "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+                "targets": [
+                  { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (route) (rate(cs_lapi_route_requests_total[5m]))", "legendFormat": "{{"{{"}}route{{"}}"}}", "refId": "A" }
+                ],
+                "title": "LAPI route request rate",
+                "type": "timeseries"
+              }
+            ],
+            "refresh": "30s",
+            "schemaVersion": 39,
+            "style": "dark",
+            "tags": [ "crowdsec" ],
+            "templating": {
+              "list": [
+                {
+                  "current": { "selected": true, "text": "prometheus", "value": "prometheus" },
+                  "hide": 0,
+                  "includeAll": false,
+                  "label": "Prometheus source",
+                  "multi": false,
+                  "name": "Prometheus_Source",
+                  "options": [],
+                  "query": "prometheus",
+                  "refresh": 1,
+                  "regex": "",
+                  "type": "datasource"
+                },
+                {
+                  "current": { "selected": true, "text": "loki", "value": "loki" },
+                  "hide": 0,
+                  "includeAll": false,
+                  "label": "Loki source",
+                  "multi": false,
+                  "name": "Loki_Source",
+                  "options": [],
+                  "query": "loki",
+                  "refresh": 1,
+                  "regex": "",
+                  "type": "datasource"
+                }
+              ]
+            },
+            "time": { "from": "now-6h", "to": "now" },
+            "timepicker": {},
+            "timezone": "browser",
+            "title": "CrowdSec active blocks",
+            "uid": "crowdsec-active-blocks",
+            "version": 1,
+            "weekStart": ""
+          }
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: local-path
+    size: 2Gi
+  service:
+    type: ClusterIP
+    port: 3000
+  alerting:
+    contactpoints.yaml:
+      apiVersion: 1
+      contactPoints:
+        - orgId: 1
+          name: ntfy
+          receivers:
+            - uid: ntfy-server-alerts
+              type: webhook
+              disableResolveMessage: true
+              settings:
+                url: http://ntfy-ntfy.sys-ntfy.svc.cluster.local:80/server_alerts
+                httpMethod: POST
+                authorization_scheme: Bearer
+                authorization_credentials: $NTFY_GRAFANA_TOKEN
+
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
