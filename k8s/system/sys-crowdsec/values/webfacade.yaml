@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: cs
+      zone: net-codewyre
+    services:
+      - name: crowdsec-web-ui
+        port: http
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: cs
+    type: A

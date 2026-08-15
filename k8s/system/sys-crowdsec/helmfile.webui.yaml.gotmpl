@@ -11,7 +11,12 @@ releases:
     createNamespace: true
     chart: zekker6/crowdsec-web-ui
     values:
-      - env:
+      - persistence:
+          data:
+            enabled: true
+            storageClass: local-path-projects-retained
+            mountPath: /app/data
+        env:
           - name: "TZ"
             value: "Europe/Berlin"
           - name: "CROWDSEC_URL"
@@ -41,3 +46,10 @@ releases:
             cpu: 500m
             memory: 768Mi
 
+
+  - name: webfacade
+    chart: ../../helm/website
+    namespace: sys-crowdsec
+    createNamespace: true
+    values:
+      - ./values/webfacade.yaml

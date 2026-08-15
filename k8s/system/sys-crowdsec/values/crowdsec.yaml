@@ -3,6 +3,23 @@ prometheus:
   enabled: true
   level: full
 
+config:
+  scenarios:
+    # Relaxed replacement for crowdsecurity/http-crawl-non_statics.
+    # The upstream default can be too strict for API-heavy UIs and mobile apps.
+    local-http-crawl-non_statics.yaml: |
+      type: leaky
+      name: local/http-crawl-non_statics-relaxed
+      description: "Detect aggressive crawl on non static resources (relaxed local tuning)"
+      filter: "evt.Meta.log_type in ['http_access-log', 'http_error-log'] && evt.Parsed.static_ressource == 'false' && evt.Parsed.verb in ['GET', 'HEAD']"
+      distinct: "evt.Parsed.file_name"
+      capacity: 120
+      leakspeed: 200ms
+      labels:
+        service: http
+        type: crawl
+        remediation: true
+
 agent:
   # Acquire logs from running pods for threat detection
   additionalAcquisition:
@@ -82,6 +99,8 @@ agent:
         LePresidente/grafana
         crowdsecurity/sshd
       # Jgigantino31/ntfy
+    - name: DISABLE_SCENARIOS
+      value: crowdsecurity/http-crawl-non_statics
 
   resources:
     requests:
