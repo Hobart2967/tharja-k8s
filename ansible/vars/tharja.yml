@@ -1,10 +1,10 @@
 dns:
-  disable_recursion: true
+  disable_recursion: false
 
 config:
   secret_vault: 64iqhopdnz56fpxgk5mr3uhqpe
 
 secrets:
   crowdsec_api_key:
-    item: 'tejriu4qqc7lpvgnyrcthe3r2y'
+    item: 'lvhm6np2blx7l322efwetpapxi'
     field: password

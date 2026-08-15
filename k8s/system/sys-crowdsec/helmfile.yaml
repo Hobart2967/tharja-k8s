@@ -1,0 +1,4 @@
+---
+helmfiles:
+  - path: ./helmfile.common.yaml.gotmpl
+  - path: ./helmfile.webui.yaml.gotmpl

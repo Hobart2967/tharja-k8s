@@ -73,6 +73,7 @@
       - libreadline-dev
       - libssl-dev
       - libsqlite3-dev
+      - crowdsec-firewall-bouncer
 
 - name: Ensure Cert Readers group exists
   ansible.builtin.group:
@@ -93,3 +94,7 @@
       value: "2099999999"
     - name: fs.inotify.max_queued_events
       value: "2099999999"
+
+- name: Install crowdsec bouncer
+
+  include_tasks: tasks/ground-zero/crowdsec/task.yml

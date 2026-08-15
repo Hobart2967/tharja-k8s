@@ -5,6 +5,15 @@ prometheus:
 
 agent:
   # Acquire logs from running pods for threat detection
+  additionalAcquisition:
+    # Host ssh auth logs
+    - source: file
+      filenames:
+        - /var/log/auth.log
+      labels:
+        type: syslog
+      poll_without_inotify: true
+
   acquisition:
     - namespace: sys-traefik
       podName: traefik-operator-*
@@ -71,6 +80,7 @@ agent:
         crowdsecurity/dovecot
         mstilkerich/bind9
         LePresidente/grafana
+        crowdsecurity/sshd
       # Jgigantino31/ntfy
 
   resources:

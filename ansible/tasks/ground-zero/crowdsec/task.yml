@@ -1,0 +1,27 @@
+---
+
+# remove /var/lib/crowdsec/pending-registration
+- name: Remove pending-registration file
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/crowdsec/pending-registration
+    state: absent
+
+# Generate yaml from ./crowdsec-firewall-bouncer.yaml.local.j2
+- name: Generate crowdsec-firewall-bouncer.yaml.local
+  become: true
+  ansible.builtin.template:
+    src: ./crowdsec-firewall-bouncer.yaml.local.j2
+    dest: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local
+    owner: root
+    group: root
+    mode: '0600'
+
+
+# restart service crowdsec-firewall-bouncer
+- name: Restart crowdsec-firewall-bouncer service
+  become: true
+  ansible.builtin.systemd:
+    name: crowdsec-firewall-bouncer
+    state: restarted
+    enabled: true

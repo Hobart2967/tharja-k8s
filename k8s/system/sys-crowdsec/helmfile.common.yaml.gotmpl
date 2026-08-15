@@ -1,0 +1,90 @@
+---
+repositories:
+  - name: crowdsecurity
+    url: https://crowdsecurity.github.io/helm-charts
+  - name: zekker6
+    url: https://zekker6.github.io/helm-charts/
+
+releases:
+  - name: sys-crowdsec
+    namespace: sys-crowdsec
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 1Gi
+
+  - name: crowdsec
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - sys-crowdsec
+    chart: crowdsecurity/crowdsec
+    version: 0.19.1
+    values:
+      - ./values/crowdsec.yaml
+
+  - name: crowdsec-bouncer
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - crowdsec
+    chart: ../../helm/crowdsec-bouncer
+    values:
+      - lapiHost: crowdsec-service.sys-crowdsec.svc.cluster.local
+        lapiPort: "8080"
+        lapiScheme: http
+        mode: stream
+        updateMaxFailure: -1
+        streamStartupBlock: false
+        clientTrustedIPs:
+          - 10.42.0.1/32
+
+  - name: crowdsec-host-tunnel
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - crowdsec
+    chart: bedag/raw
+    values:
+      - templates:
+          - |
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: crowdsec-lapi-host-node-tunnel
+              namespace: sys-crowdsec
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: lapi-tunnel
+              template:
+                metadata:
+                  labels:
+                    app: lapi-tunnel
+                spec:
+                  hostNetwork: true
+                  dnsPolicy: ClusterFirstWithHostNet
+                  containers:
+                  - name: tunnel
+                    image: alpine/socat:latest
+                    args:
+                    - "tcp-listen:8080,bind=127.0.0.1,fork,reuseaddr"
+                    - "tcp-connect:crowdsec-service.sys-crowdsec.svc.cluster.local:8080"
+                    resources:
+                      limits:
+                        cpu: 50m
+                        memory: 32Mi
+                      requests:
+                        cpu: 10m
+                        memory: 16Mi
+
+  - name: crowdsec-web-ui-lapi-user
+    namespace: sys-crowdsec
+    createNamespace: true
+    needs:
+      - crowdsec
+    chart: ../../helm/crowdsec-lapi-user
+    values:
+      - ./values/crowdsec-web-ui-lapi-user.yaml.gotmpl
