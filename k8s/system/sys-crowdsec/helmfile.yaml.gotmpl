@@ -71,8 +71,14 @@ releases:
               secretKeyRef:
                 name: crowdsec-ui
                 key: password
-          - name: "CONFIG_INSTANCE_METRICS_URL"
+          - name: "CONFIG_INSTANCE_METRICS_0_NAME"
+            value: "LAPI"
+          - name: "CONFIG_INSTANCE_METRICS_0_URL"
             value: "http://crowdsec-service.sys-crowdsec.svc.cluster.local:6060/metrics"
+          - name: "CONFIG_INSTANCE_METRICS_1_NAME"
+            value: "Agent"
+          - name: "CONFIG_INSTANCE_METRICS_1_URL"
+            value: "http://crowdsec-agent-service.sys-crowdsec.svc.cluster.local:6060/metrics"
         resources:
           requests:
             cpu: 100m
