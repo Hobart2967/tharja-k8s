@@ -87,7 +87,8 @@ webfacade:
     - name: cache
       path: ./cache
 rules:
-  - hostname:
+  - name: website
+    hostname:
       name: www
       zone: net-adventurespiele
     aliases:
@@ -100,3 +101,19 @@ rules:
     services:
       - name: website
         port: http
+  - name: webmail-de-avsn
+    hostname:
+      name: mail
+      zone: de-avsn
+    services:
+    - name: webmail-roundcube
+      namespace: project-engineer-marcoklein
+      port: http
+  - name: webmail-net-adventurespiele
+    hostname:
+      name: mail
+      zone: net-adventurespiele
+    services:
+    - name: webmail-roundcube
+      namespace: project-engineer-marcoklein
+      port: http
