@@ -1,13 +1,53 @@
+# The chart's Docker mode mounts the node's /var/log tree used by the explicit
+# file acquisitions below. Keep it until those acquisitions are migrated.
 container_runtime: docker
 prometheus:
   enabled: true
   level: full
 
 config:
+  profiles.yaml: |
+    name: mail_fast_spam_duration
+    filters:
+      - "Alert.GetScenario() == 'local/dovecot-bf-fast' || Alert.GetScenario() == 'local/postfix-sasl-bf'"
+    decisions:
+      - type: ban
+        duration: 5m
+    on_success: break
+    ---
+    name: default_ip_remediation
+    #debug: true
+    filters:
+    - Alert.Remediation == true && Alert.GetScope() == "Ip"
+    decisions:
+    - type: ban
+      duration: 24h
+    #duration_expr: Sprintf('%dh', (GetDecisionsCount(Alert.GetValue()) + 1) * 4)
+    # notifications:
+    #   - slack_default  # Set the webhook in /etc/crowdsec/notifications/slack.yaml before enabling this.
+    #   - splunk_default # Set the splunk url and token in /etc/crowdsec/notifications/splunk.yaml before enabling this.
+    #   - http_default   # Set the required http parameters in /etc/crowdsec/notifications/http.yaml before enabling this.
+    #   - email_default  # Set the required email parameters in /etc/crowdsec/notifications/email.yaml before enabling this.
+    on_success: break
+    ---
+    name: default_range_remediation
+    #debug: true
+    filters:
+    - Alert.Remediation == true && Alert.GetScope() == "Range"
+    decisions:
+    - type: ban
+      duration: 24h
+    #duration_expr: Sprintf('%dh', (GetDecisionsCount(Alert.GetValue()) + 1) * 4)
+    # notifications:
+    #   - slack_default  # Set the webhook in /etc/crowdsec/notifications/slack.yaml before enabling this.
+    #   - splunk_default # Set the splunk url and token in /etc/crowdsec/notifications/splunk.yaml before enabling this.
+    #   - http_default   # Set the required http parameters in /etc/crowdsec/notifications/http.yaml before enabling this.
+    #   - email_default  # Set the required email parameters in /etc/crowdsec/notifications/email.yaml before enabling this.
+    on_success: break
   scenarios:
     # Relaxed replacement for crowdsecurity/http-crawl-non_statics.
     # The upstream default can be too strict for API-heavy UIs and mobile apps.
-    local-http-crawl-non_statics.yaml: |
+    local-http-crawl-non-statics.yaml: |
       type: leaky
       name: local/http-crawl-non_statics-relaxed
       description: "Detect aggressive crawl on non static resources (relaxed local tuning)"
@@ -19,6 +59,72 @@ config:
         service: http
         type: crawl
         remediation: true
+    local-postfix-sasl-bf.yaml: |
+      type: leaky
+      name: local/postfix-sasl-bf
+      description: "Detect Postfix SASL authentication bruteforce"
+      filter: "evt.Meta.log_type == 'postfix' && (evt.Meta.log_type_enh == 'spam-attempt' || (evt.Parsed.message contains 'SASL LOGIN authentication failed' || evt.Line.Raw contains 'SASL LOGIN authentication failed'))"
+      groupby: evt.Meta.source_ip
+      capacity: 3
+      leakspeed: 10s
+      blackhole: 5m
+      labels:
+        service: postfix
+        behavior: "smtp:bruteforce"
+        classification:
+          - attack.T1110
+        confidence: 3
+        spoofable: 0
+        remediation: true
+    local-dovecot-bf-fast.yaml: |
+      type: leaky
+      name: local/dovecot-bf-fast
+      description: "Detect Dovecot bruteforce by password mismatch string"
+      debug: false
+      filter: "evt.Meta.log_type == 'dovecot_logs' && (evt.Parsed.message contains 'Password mismatch' || evt.Line.Raw contains 'Password mismatch')"
+      groupby: evt.Meta.source_ip
+      capacity: 3
+      leakspeed: "10s"
+      labels:
+        confidence: 3
+        spoofable: 0
+        classification:
+          - attack.T1110
+        behavior: "pop3/imap:bruteforce"
+        label: "Dovecot Bruteforce Fast detection"
+        service: dovecot
+        remediation: true
+
+
+  # parsers:
+  #   s01-parse:
+  #     00-mailserver-k3s-multiplexer.yaml: |
+  #       name: hobart2967/mailserver-k3s-multiplexer
+  #       description: "Präziser K3s-Multiplexer für docker-mailserver"
+  #       filter: "evt.Line.Labels.type == 'mailserver-k3s'"
+  #       # Do not use `onsuccess: next_stage` here. The bundled Postfix and
+  #       # Dovecot parsers are also in s01-parse; advancing the event would
+  #       # skip them, so no mail-auth scenario could ever receive an event.
+  #       pattern_syntax:
+  #         MAIL_PROGRAM: 'postfix(?:/[A-Za-z0-9._-]+)*/smtpd|dovecot'
+  #       grok:
+  #         # docker-mailserver emits lines like:
+  #         #   postfix/smtpd[12345]: ...
+  #         #   dovecot: ...
+  #         # We keep the full postfix service path ending in smtpd, because the
+  #         # postfix hub parser expects it. Dovecot stays normalized to dovecot.
+  #         pattern: ".*%{MAIL_PROGRAM:true_program}(?:\\[%{INT}\\])?:%{SPACE}%{GREEDYDATA:clean_message}"
+  #         apply_on: Line.Raw
+  #       statics:
+  #         # Keep the program normalized for dovecot, but preserve postfix/smtpd.
+  #         # `parsed`, rather than `target`, is required to update a Parsed
+  #         # field. Postfix's parser filters on programs ending in `/smtpd`.
+  #         - parsed: program
+  #           expression: evt.Parsed.true_program
+  #         - target: Line.Raw
+  #           expression: evt.Parsed.clean_message
+  #         - target: evt.Parsed.message
+  #           expression: evt.Parsed.clean_message
 
 agent:
   # Acquire logs from running pods for threat detection
@@ -30,6 +136,14 @@ agent:
       labels:
         type: syslog
       poll_without_inotify: true
+    # - source: file
+    #   filenames:
+    #     - /var/log/containers/mail-docker-mailserver-*_sys-mail_*.log
+    #   poll_without_inotify: true
+    #   force_inotify: true
+    #   labels:
+    #     # Ein einzigartiger Typ verhindert, dass Traefik/Nginx diese Zeilen anfassen
+    #     type: mailserver-k3s
 
   acquisition:
     - namespace: sys-traefik
@@ -70,7 +184,7 @@ agent:
       program: postfix
       poll_without_inotify: true
 
-    # Mail server – dovecot
+    # # Mail server – dovecot
     - namespace: sys-mail
       podName: mail-docker-mailserver-*
       program: dovecot
@@ -88,7 +202,14 @@ agent:
       program: ntfy
       poll_without_inotify: true
 
+    # - namespace: sys-mail
+    #   podName: mail-docker-mailserver-*
+    #   program: docker-mailserver
+    #   poll_without_inotify: true
+
   env:
+    - name: GOMEMLIMIT
+      value: "1GiB"
     - name: COLLECTIONS
       value: >-
         crowdsecurity/traefik
@@ -105,10 +226,10 @@ agent:
   resources:
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 500m
-      memory: 256Mi
+      memory: 2Gi
 
   metrics:
     enabled: true
@@ -127,16 +248,18 @@ lapi:
 
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
       cpu: 500m
-      memory: 256Mi
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
 
   # The Traefik bouncer key is stored in the crowdsec-bouncer-key K8s secret.
   # The secret must be pre-created via host-secrets (1Password vault entry:
   # "crowdsec-bouncer-key" with field "api-key").
   env:
+    - name: GOMEMLIMIT
+      value: "1GiB"
     - name: BOUNCER_KEY_TRAEFIK
       valueFrom:
         secretKeyRef:

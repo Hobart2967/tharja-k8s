@@ -11,8 +11,10 @@ releases:
     createNamespace: true
     chart: ../../helm/project
     values:
-      - memory:
-          max: 1Gi
+      - cpu:
+          max: 1
+        memory:
+          max: 4Gi
 
   - name: crowdsec
     namespace: sys-crowdsec
@@ -20,7 +22,7 @@ releases:
     needs:
       - sys-crowdsec
     chart: crowdsecurity/crowdsec
-    version: 0.19.1
+    version: 0.24.0
     values:
       - ./values/crowdsec.yaml
 

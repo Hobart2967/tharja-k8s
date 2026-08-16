@@ -1,3 +1,5 @@
+crowdsec:
+  enabled: false
 webfacade:
   image: hobart2967/lea-etienne-photos-web:latest
   storageSize: 10Mi
