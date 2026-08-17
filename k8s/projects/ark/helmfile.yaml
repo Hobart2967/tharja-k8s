@@ -17,16 +17,16 @@ releases:
     values:
       - endpoints:
         - name: ark-rcon
-          port: 27030 # 27020
+          port: 27020
           protocol: TCP
         - name: ark-query
-          port: 27035 # 27015
+          port: 27015
           protocol: UDP
         - name: ark-game
-          port: 37777 # 7777
+          port: 7777
           protocol: UDP
         - name: ark-game-ext
-          port: 37778 # 7778
+          port: 7778
           protocol: UDP
 
   - name: ark

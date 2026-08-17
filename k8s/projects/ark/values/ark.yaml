@@ -1,4 +1,13 @@
+resources:
+  requests:
+    memory: 4Gi
+    cpu: 2
+  limits:
+    memory: 12Gi
+    cpu: 4
 serverConfig:
+  arkServerName: HarkSurvival
+  sessionName: HarkSurvival
   mods:
     # Dino bars
     # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057

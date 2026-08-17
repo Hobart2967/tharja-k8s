@@ -19,6 +19,8 @@ spec:
         - name: {{ .Release.Name }}
           image: "hermsi/ark-server:latest"
           imagePullPolicy: IfNotPresent
+          tty: true       # <-- Crucial line: Allocates a pseudo-TTY
+          stdin: true     # <-- Crucial line: Keeps standard input open
           #command:
           #  - /bin/bash
           #  - -lc
@@ -46,6 +48,8 @@ spec:
           env:
             - name: ARK_SERVER_VOLUME
               value: /app
+            - name: ARK_EXTRA_OPTS
+              value: " -servergamelog -log"
             - name: SERVER_NAME
               valueFrom:
                 configMapKeyRef:
@@ -102,6 +106,9 @@ spec:
                   name: {{ .Release.Name }}
                   key: GAME_MOD_IDS
           volumeMounts:
+            - name: instance-config
+              mountPath: /app/arkmanager/instances/main.cfg
+              subPath: instance.cfg
             - name: ark-data
               mountPath: /ark-data
             - name: ark-app
@@ -125,3 +132,11 @@ spec:
         - name: ark-backup
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-backup
+        - name: instance-config
+          configMap:
+            # Provide the name of the ConfigMap you want to mount.
+            name: {{ .Release.Name }}-instance-config
+            # An array of keys from the ConfigMap to create as files
+            items:
+            - key: "content"
+              path: "instance.cfg"
