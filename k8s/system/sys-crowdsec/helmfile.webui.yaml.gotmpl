@@ -38,6 +38,26 @@ releases:
             value: "Agent"
           - name: "CONFIG_INSTANCE_METRICS_1_URL"
             value: "http://crowdsec-agent-service.sys-crowdsec.svc.cluster.local:6060/metrics"
+          - name: "CONFIG_CROWDSEC_SYNC_REFRESH_INTERVAL"
+            value: "5m"
+          - name: "CONFIG_CROWDSEC_SYNC_LOOKBACK"
+            value: "6h"
+          - name: "CONFIG_CROWDSEC_SYNC_IDLE_REFRESH_INTERVAL"
+            value: "30m"
+          - name: "CONFIG_CROWDSEC_SYNC_RECONCILE_RECENT_INTERVAL"
+            value: "30m"
+          - name: "CONFIG_CROWDSEC_SYNC_RECONCILE_ACTIVE_INTERVAL"
+            value: "15m"
+          - name: "CONFIG_CROWDSEC_SYNC_RECONCILE_OLD_INTERVAL"
+            value: "6h"
+          - name: "CONFIG_CROWDSEC_SYNC_RECONCILE_WINDOWS_PER_REFRESH"
+            value: "1"
+          - name: "CONFIG_CROWDSEC_SYNC_BOOTSTRAP_RETRY_DELAY"
+            value: "3m"
+          - name: "CONFIG_CROWDSEC_SYNC_ALERT_SYNC_CHUNK"
+            value: "2h"
+
+
         resources:
           requests:
             cpu: 100m

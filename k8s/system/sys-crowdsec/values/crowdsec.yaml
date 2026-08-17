@@ -7,7 +7,7 @@ prometheus:
 
 config:
   profiles.yaml: |
-    name: mail_fast_spam_duration
+    name: 00_mail_fast_spam_duration
     filters:
       - "Alert.GetScenario() == 'local/dovecot-bf-fast' || Alert.GetScenario() == 'local/postfix-sasl-bf'"
     decisions:
@@ -47,9 +47,9 @@ config:
   scenarios:
     # Relaxed replacement for crowdsecurity/http-crawl-non_statics.
     # The upstream default can be too strict for API-heavy UIs and mobile apps.
-    local-http-crawl-non-statics.yaml: |
+    00-local-http-crawl-non-statics.yaml: |
       type: leaky
-      name: local/http-crawl-non_statics-relaxed
+      name: 00-local/http-crawl-non_statics-relaxed
       description: "Detect aggressive crawl on non static resources (relaxed local tuning)"
       filter: "evt.Meta.log_type in ['http_access-log', 'http_error-log'] && evt.Parsed.static_ressource == 'false' && evt.Parsed.verb in ['GET', 'HEAD']"
       distinct: "evt.Parsed.file_name"
@@ -59,9 +59,9 @@ config:
         service: http
         type: crawl
         remediation: true
-    local-postfix-sasl-bf.yaml: |
+    00-local-postfix-sasl-bf.yaml: |
       type: leaky
-      name: local/postfix-sasl-bf
+      name: 00-local/postfix-sasl-bf
       description: "Detect Postfix SASL authentication bruteforce"
       filter: "evt.Meta.log_type == 'postfix' && (evt.Meta.log_type_enh == 'spam-attempt' || (evt.Parsed.message contains 'SASL LOGIN authentication failed' || evt.Line.Raw contains 'SASL LOGIN authentication failed'))"
       groupby: evt.Meta.source_ip
@@ -76,9 +76,9 @@ config:
         confidence: 3
         spoofable: 0
         remediation: true
-    local-dovecot-bf-fast.yaml: |
+    00-local-dovecot-bf-fast.yaml: |
       type: leaky
-      name: local/dovecot-bf-fast
+      name: 00-local/dovecot-bf-fast
       description: "Detect Dovecot bruteforce by password mismatch string"
       debug: false
       filter: "evt.Parsed.program == 'dovecot' && (evt.Parsed.message contains 'Password mismatch' || evt.Line.Raw contains 'Password mismatch')"
