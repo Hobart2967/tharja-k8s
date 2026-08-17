@@ -84,6 +84,11 @@ spec:
             - name: game
               containerPort: {{ .Values.serverConfig.serverPort }}
               protocol: TCP
+            {{ range .Values.extraPorts }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort }}
+              protocol: TCP
+            {{ end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

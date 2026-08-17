@@ -1,4 +1,4 @@
-replicaCount: 0
+replicaCount: 1
 persistence:
   worlds:
     size: 200Gi
@@ -223,7 +223,7 @@ serverConfig:
 
 extraPorts: []
 #  - name: dynmap
-#    port: 8123
-#    targetPort: 8123
+#    port: 8888
+#    targetPort: 8888
 
 extraIngressRoutes: []

@@ -1,7 +1,7 @@
 extraPorts:
   - name: dynmap
-    port: 8123
-    targetPort: 8123
+    port: 8888
+    targetPort: 8888
 serverConfig:
   motd: "Willkommen auf dem avsn.de Minecraft Server!"
   serverName: "Avsn.de Minecraft Server"
