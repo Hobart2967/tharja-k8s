@@ -17,4 +17,5 @@ spec:
     replicas: 0 # Workaround: Manually create Bind9Instance resources to also be able to annotate them with bindy.firestoned.io/allow-zone-namespaces: "*"
     service:
       spec:
-        type: LoadBalancer
+        type: ClusterIP
+        externalTrafficPolicy: Local
