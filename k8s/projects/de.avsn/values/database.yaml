@@ -9,3 +9,10 @@ users:
         host: "%"
         privileges:
         - "ALL PRIVILEGES"
+resources:
+  limits:
+    cpu: 1
+    memory: 1768Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
