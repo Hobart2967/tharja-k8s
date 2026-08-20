@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: docker
+      zone: net-codewyre
+    services:
+      - name: zot
+        port: zot
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: docker
+    type: A

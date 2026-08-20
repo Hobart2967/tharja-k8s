@@ -1,0 +1,115 @@
+#
+---
+repositories:
+  - name: project-zot
+    url: https://zotregistry.dev/helm-charts
+
+releases:
+  - name: sys-docker-registry
+    namespace: sys-docker-registry
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 512Mi
+        cpu:
+          max: 500m
+
+  - name: zot-htpasswd
+    namespace: sys-docker-registry
+    createNamespace: true
+    chart: ../../helm/htpasswd
+    values:
+      - name: custom-zot-secret
+        secrets:
+          - name: admin-user
+
+  - name: zot
+    namespace: sys-docker-registry
+    chart: project-zot/zot
+    version: 0.1.122
+    needs:
+      - zot-htpasswd
+    createNamespace: true
+    values:
+      - namespace: sys-docker-registry
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        service:
+          type: ClusterIP
+        ingress:
+          enabled: true
+          className: traefik-operator
+          hosts:
+            - host: docker.codewyre.net
+              paths:
+                - path: /
+        mountSecret: false
+        externalSecrets:
+          - secretName: custom-zot-secret
+            mountPath: "/secrets/custom"
+        persistence: true
+        pvc:
+          storage: 64Gi
+          storageClassName: local-path
+        mountConfig: true
+        configFiles:
+          config.json: |-
+            {
+              "storage": { "rootDirectory": "/var/lib/registry" },
+              "extensions": {
+                "ui": {
+                  "enable": true
+                },
+                "search": {
+                  "enable": true,
+                  "cve": {
+                    "updateInterval": "2h"
+                  }
+                }
+              },
+              "http": {
+                "compat": ["docker2s2"],
+                "address": "0.0.0.0",
+                "port": "5000",
+                "auth": {
+                  "htpasswd": {
+                    "path": "/secrets/custom/htpasswd"
+                  }
+                },
+                "accessControl": {
+                  "repositories": {
+                    "**": {
+                      "policies": [{
+                        "users": ["user"],
+                        "actions": ["read"]
+                      }],
+                      "defaultPolicy": []
+                    }
+                  },
+                  "adminPolicy": {
+                    "users": ["admin"],
+                    "actions": ["read", "create", "update", "delete"]
+                  }
+                }
+              },
+              "log": { "level": "debug" }
+            }
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: prometheus-operator
+
+  - name: webfacade
+    chart: ../../helm/website
+    namespace: sys-docker-registry
+    createNamespace: true
+    values:
+      - ./values/webfacade.yaml

@@ -171,6 +171,13 @@ environments:
         hostNickname: tharja
         secretVault: ha34ot6ty3cy4rkp54jgvdluae
         secretsMap:
+          admin-user:
+            item: xrlg7kwckl6lpuplpt4scutfyu
+            namespaces:
+              - sys-docker-registry
+            fields:
+              - username
+              - password
           crowdsec-ui:
             item: 3satfjh3ug7wxlfnjg2eultuwm
             namespaces:
