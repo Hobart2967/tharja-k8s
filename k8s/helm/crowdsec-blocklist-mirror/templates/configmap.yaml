@@ -1,0 +1,42 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-blocklists-config
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    config_version: v1.0
+    crowdsec_config:
+      lapi_key: {{ .Values.crowdsec.lapi.key }}
+      lapi_url: {{ .Values.crowdsec.lapi.url }}
+      update_frequency: {{ .Values.updateFrequency }}
+      include_scenarios_containing: []
+      exclude_scenarios_containing: []
+      only_include_decisions_from: []
+      insecure_skip_verify: false
+      supported_decisions_types:
+        - ban
+
+    blocklists:
+{{ .Values.blocklists | toYaml | nindent 6 }}
+
+    listen_uri: 127.0.0.1:41412
+    tls:
+      cert_file:
+      key_file:
+
+    metrics:
+      enabled: true
+      endpoint: /metrics
+
+    # logging configuration
+    log_media: file
+    log_dir: /var/log/
+    log_level: info
+    log_max_size: 40
+    log_max_age: 30
+    log_max_backups: 3
+    compress_logs: true
+    # enable access log of the HTTP server
+    enable_access_logs: true

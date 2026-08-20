@@ -1,0 +1,21 @@
+image:
+  repository: crowdsecurity/blocklist-mirror
+  tag: v0.0.6
+  pullPolicy: IfNotPresent
+
+crowdsec:
+  lapi:
+    key: "change-me"
+    url: http://crowdsec-service.sys-crowdsec.svc.cluster.local:8080
+
+updateFrequency: 10s
+
+blocklists: []
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
