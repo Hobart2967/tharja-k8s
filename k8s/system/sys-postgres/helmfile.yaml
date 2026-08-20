@@ -1,0 +1,22 @@
+---
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts
+
+releases:
+  - name: project
+    namespace: sys-postgres
+    createNamespace: true
+    chart: ../../helm/project
+#    values:
+#      - memory:
+#          max: 512Mi
+
+  - name: cloudnative-pg
+    chart: cnpg/cloudnative-pg
+    namespace: sys-postgres
+    createNamespace: true
+    values:
+      - crds:
+          create: false
+

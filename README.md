@@ -64,6 +64,7 @@ It provides:
   - (e.g.) to connect to Hetzner Storage Box
 - ✅ DNS via bind9
 - ✅ MariaDB Databases
+- ✅ Postgres Databases (CNPG)
 - ✅ Lets Encrypt / ACME Pebble (Local with self signed CA)
 - ✅ VPN Client
 - ✅ LocalStack Platform
@@ -72,6 +73,12 @@ It provides:
 ## Requires
 
 - Requires 1Password CLI and 1Password to be installed on the provisioning client.
+
+## Kustomize
+```sh
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+sudo mv kustomize /usr/local/bin/
+```
 
 ## Environments
 

@@ -1,0 +1,14 @@
+{{- $cnpgVersion := "1.22.1" }}
+{{ $tpl :=  (exec "sh" (list "-c" "kustomize build https://github.com/cloudnative-pg/cloudnative-pg/config/helm/?ref=v1.22.1"))}}
+repositories:
+  - name: cnpg
+    url: https://cloudnative-pg.github.io/charts
+
+releases:
+  - name: cnpg-crds
+    chart: bedag/raw
+    namespace: default
+    values:
+      - templates:
+          - |
+            {{ $tpl | nindent 12 }}
