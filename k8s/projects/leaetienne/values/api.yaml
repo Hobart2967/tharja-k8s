@@ -1,5 +1,5 @@
 webfacade:
-  image: hobart2967/lea-etienne-photos-api:latest
+  image: docker.codewyre.net/hobart2967/lea-etienne-photos-api:latest
   storageSize: 40Gi
   storage:
     mountPath: /usr/share/image-api-server/.storage

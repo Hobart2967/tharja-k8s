@@ -1,7 +1,7 @@
 crowdsec:
   enabled: false
 webfacade:
-  image: hobart2967/lea-etienne-photos-web:latest
+  image: docker.codewyre.net/hobart2967/lea-etienne-photos-web:latest
   storageSize: 10Mi
   storage:
     mountPath: /var/www/html
