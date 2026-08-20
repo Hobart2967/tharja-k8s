@@ -18,4 +18,3 @@ spec:
     service:
       spec:
         type: ClusterIP
-        externalTrafficPolicy: Local

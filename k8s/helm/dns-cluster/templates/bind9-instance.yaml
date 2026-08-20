@@ -20,7 +20,8 @@ spec:
     allowQuery:
       - acl:internal  # Reference the cluster's ACL
     recursion: true
-  image: null
+  image:
+    imagePullPolicy: {{ .Values.image.imagePullPolicy }}
   primaryServers: null
   replicas: 1
   rndcSecretRef: null

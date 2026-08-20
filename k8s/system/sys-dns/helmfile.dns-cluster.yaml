@@ -4,6 +4,11 @@ releases:
     namespace: sys-dns
     createNamespace: true
     chart: ../../helm/project
+    values:
+      - memory:
+          max: 1Gi
+        cpu:
+          max: 1
 
   # - name: dns-traefik-endpoint
   #   chart: ../../helm/traefik-endpoint

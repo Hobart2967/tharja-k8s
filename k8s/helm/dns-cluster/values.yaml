@@ -1,3 +1,5 @@
 clusterSize: 1
 allowedTransferServers: []
 allowedQueryClients: []
+image:
+  imagePullPolicy: IfNotPresent
