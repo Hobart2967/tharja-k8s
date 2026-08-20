@@ -53,3 +53,16 @@
     dest: "/home/hobart/.kube/config"
     remote_src: yes
     mode: '0644'
+
+- name: Create registries.yaml in /etc/rancher/k3s
+  become: true
+  ansible.builtin.template:
+    src: registries.yaml.j2
+    dest: /etc/rancher/k3s/registries.yaml
+    mode: '0600'
+
+- name: Restart k3s service to apply changes
+  become: true
+  ansible.builtin.systemd:
+    name: k3s
+    state: restarted

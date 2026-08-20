@@ -1,0 +1,11 @@
+mirrors:
+  docker.codewyre.net:
+    endpoint:
+      - https://docker.codewyre.net/v2
+configs:
+  <REGISTRY>:
+    auth:
+      username: {{ secrets.docker_registry.username }}
+      password: {{ secrets.docker_registry.password }}
+      # "username:password" base64 encoded
+      auth: {{ (secrets.docker_registry.username + ':' + secrets.docker_registry.password) | b64encode }}
