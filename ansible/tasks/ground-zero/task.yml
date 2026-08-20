@@ -75,6 +75,12 @@
       - libsqlite3-dev
       - crowdsec-firewall-bouncer
 
+- name: Link resolv conf
+  ansible.builtin.file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+
 - name: Ensure Cert Readers group exists
   ansible.builtin.group:
     name: certreaders
