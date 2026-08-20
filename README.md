@@ -54,7 +54,8 @@ It provides:
   - ✅ Traefik bouncer plugin integration (`crowdsec-bouncer-traefik-plugin`)
   - ✅ Per-site opt-out via `crowdsec.enabled` in website chart
 - ✅ Ntfy service
-- [ ] GameServers
+- ✅ Docker registry
+- ✅ GameServers
   - ✅ Minecraft
     - ✅ Plugin management via k8s
   - ✅ ARK
