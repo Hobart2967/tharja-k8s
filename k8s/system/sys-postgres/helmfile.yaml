@@ -16,6 +16,7 @@ releases:
     chart: cnpg/cloudnative-pg
     namespace: sys-postgres
     createNamespace: true
+    version: 0.29.0
     values:
       - crds:
           create: false
