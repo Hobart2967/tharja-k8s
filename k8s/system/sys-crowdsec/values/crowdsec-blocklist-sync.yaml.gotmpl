@@ -1,0 +1,6 @@
+{{- $services := list "ssh" "apache" "mail" "imap" }}
+blocklists:
+  {{- range $service := $services }}
+  - name: blocklist-de-{{ $service }}
+    url: http://api.blocklist.de/getlast.php?time=7200&service={{ $service }}
+  {{- end }}

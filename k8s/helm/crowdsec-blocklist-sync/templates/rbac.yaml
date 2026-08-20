@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crowdsec-blocklist-syncer-sa
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: crowdsec-blocklist-syncer-cluster-role
+rules:
+  # Permitted to scan across all namespaces to locate the LAPI Pod
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+  # Permitted to execute the injection command directly into the pod
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: crowdsec-blocklist-syncer-cluster-rb
+subjects:
+- kind: ServiceAccount
+  name: crowdsec-blocklist-syncer-sa
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: crowdsec-blocklist-syncer-cluster-role
+  apiGroup: rbac.authorization.k8s.io

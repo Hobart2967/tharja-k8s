@@ -1,0 +1,8 @@
+---
+releases:
+  - name: crowdsec-blocklist-sync-jobs
+    namespace: sys-crowdsec
+    createNamespace: true
+    chart: ../../helm/crowdsec-blocklist-sync
+    values:
+      - ./values/crowdsec-blocklist-sync.yaml.gotmpl

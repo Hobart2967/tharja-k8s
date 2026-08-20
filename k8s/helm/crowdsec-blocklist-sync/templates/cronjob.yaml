@@ -1,0 +1,68 @@
+{{ $release := .Release }}
+{{ $values := .Values }}
+{{- range $blocklist := .Values.blocklists }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $release.Name }}-{{ $blocklist.name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  schedule: {{ $values.schedule }} # Runs every 2 hours
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: crowdsec-blocklist-syncer-sa # Uses the SA from the previous step
+          restartPolicy: OnFailure
+          containers:
+          - name: syncer
+            image: alpine/k8s:1.28.2
+            env:
+            - name: BLOCKLIST_URL
+              value: "{{ $blocklist.url }}" # Your plain-text URL
+            - name: BAN_DURATION
+              value: "4h"
+            - name: REASON
+              value: "blocklist-{{$blocklist.name}}"
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+
+              echo "1. Downloading and cleaning plain-text blocklist..."
+              echo $BLOCKLIST_URL
+
+              # Downloads the file, strips out comments (#) and blank lines, leaving only clean IPs/subnets
+              curl -L -s "$BLOCKLIST_URL" | grep -E -v '^(#|//|\s*$)' | awk '{print $1}' > /tmp/clean_ips.txt
+
+              if [ ! -s /tmp/clean_ips.txt ]; then
+                echo "Error: Downloaded list is empty or failed to fetch."
+                exit 1
+              fi
+
+
+
+              TOTAL_IPS=$(wc -l < /tmp/clean_ips.txt)
+              echo "Successfully parsed $TOTAL_IPS raw entries."
+
+              echo "2. Locating active CrowdSec LAPI Pod..."
+              LAPI_POD=$(kubectl get pods -n {{ $release.Namespace }} -l k8s-app=crowdsec,type=lapi -o jsonpath='{.items[0].metadata.name}')
+
+              if [ -z "$LAPI_POD" ]; then
+                echo "Error: Could not find the CrowdSec LAPI Pod."
+                exit 1
+              fi
+              echo "Target LAPI pod identified: $LAPI_POD"
+
+              echo "3. Streaming plain-text list directly into cscli import..."
+              # -i- tells cscli to read straight from standard input line by line
+              tail -n 10 /tmp/clean_ips.txt
+              wc -l /tmp/clean_ips.txt
+              cat /tmp/clean_ips.txt | kubectl exec -i "$LAPI_POD" -n {{ $release.Namespace }} -- \
+                cscli decisions import -i - --format values --reason "$REASON" --duration "$BAN_DURATION"
+
+              echo "Sync completed successfully."
+{{- end }}
