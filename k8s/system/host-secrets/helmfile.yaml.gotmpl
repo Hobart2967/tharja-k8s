@@ -2,18 +2,25 @@
 bases:
 - ../../env/environments.yaml
 ---
+{{ $values := .Values }}
+{{ $namespaces := (exec "sh" (list "-c" (printf "%s%s%s" "echo '" (.Values.secretsMap | toJson) "' | jq '[.[].namespaces[]] | unique' "))) | fromJson }}
+
 {{ $secretsContent := exec "sh" (list "-c" (printf "%s%s%s" "op item list --vault " .Values.secretVault " --format=json | op item get - --format=json --reveal | jq -s '.' | jq 'map(.fields |= (map({key: (.label // .id), value: .})| from_entries)) | map({key: .id, value: .}) | from_entries'")) }}
 {{ $secrets := $secretsContent | fromJson }}
 
 releases:
-  - name: host-secrets
-    namespace: default
+  {{- range $namespace := $namespaces }}
+  - name: host-secrets-{{ $namespace }}
+    namespace: {{ $namespace }}
+    createNamespace: true
     chart: ../../helm/host-secrets
     version: 0.1.0
     values:
-      - secrets:
+      - namespace: {{ $namespace }}
+        secrets:
           {{ $secrets | toYaml | nindent 10 }}
-        {{ .Values | toYaml | nindent 8 }}
+        {{ $values | toYaml | nindent 8 }}
+  {{- end }}
 
   - name: mailboxes
     namespace: sys-mail
