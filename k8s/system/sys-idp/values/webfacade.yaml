@@ -1,0 +1,16 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: login
+      zone: net-codewyre
+    services:
+      - name: authentik-server
+        port: http
+
+dnsRecords:
+- zone: net-codewyre
+  records:
+  - name: login
+    type: A

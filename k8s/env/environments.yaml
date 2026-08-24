@@ -325,3 +325,17 @@ environments:
               - project-wedding-leaetienne
             fields:
               - password
+          authentik-secret-key:
+            item: q5kvb76nscm7tvf66cdeu2judu
+            namespaces:
+              - sys-idp
+            fields:
+              - password
+          authentik-bootstrap:
+            item: 5ramaqjctk2imseqwun3jaymdq
+            namespaces:
+              - sys-idp
+            fields:
+              - AUTHENTIK_BOOTSTRAP_EMAIL
+              - AUTHENTIK_BOOTSTRAP_PASSWORD
+              - AUTHENTIK_BOOTSTRAP_TOKEN

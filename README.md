@@ -55,6 +55,7 @@ It provides:
   - ✅ Per-site opt-out via `crowdsec.enabled` in website chart
 - ✅ Ntfy service
 - ✅ Docker registry
+- ✅ Authentik IDP, ready to use and configure.
 - ✅ GameServers
   - ✅ Minecraft
     - ✅ Plugin management via k8s

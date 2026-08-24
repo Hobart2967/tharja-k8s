@@ -1,0 +1,41 @@
+---
+{{ $tpl := readFile "./values/database.yaml" }}
+repositories:
+  - name: authentik
+    url: https://charts.goauthentik.io
+
+releases:
+  - name: project
+    namespace: sys-idp
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - memory:
+          max: 2Gi
+        cpu:
+          max: 4
+
+  - name: database
+    chart: bedag/raw
+    namespace: sys-idp
+    values:
+      - templates:
+          - |
+            {{ $tpl | nindent 12}}
+
+
+  - name: authentik
+    chart: authentik/authentik
+    namespace: sys-idp
+    needs:
+      - database
+    values:
+      - ./values/authentik.yaml
+    hooks:
+
+
+  - name: webfacade
+    chart: ../../helm/website
+    namespace: sys-idp
+    values:
+      - ./values/webfacade.yaml

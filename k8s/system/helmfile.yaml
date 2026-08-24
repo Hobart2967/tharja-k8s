@@ -22,6 +22,7 @@ helmfiles:
   - path: ./sys-crowdsec/helmfile.yaml.gotmpl
   - path: ./sys-storage/helmfile.yaml
   - path: ./sys-docker-registry/helmfile.yaml
+  - path: ./sys-idp/helmfile.yaml.gotmpl
   - path: ./sys-ntfy/helmfile.yaml.gotmpl
 
   - path: ./dns-zones/helmfile.yaml

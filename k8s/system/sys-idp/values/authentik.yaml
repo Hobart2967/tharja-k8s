@@ -1,0 +1,70 @@
+global:
+  envFrom:
+    - secretRef:
+        name: authentik-bootstrap
+
+authentik:
+  secret_key: "file:///authentik-secret-key/password"
+  # This sends anonymous usage-data, stack traces on errors and
+  # performance data to sentry.io, and is fully opt-in
+  error_reporting:
+      enabled: true
+  postgresql:
+    name: file:///authentik-postgres-app/dbname
+    host: file:///authentik-postgres-app/host
+    port: file:///authentik-postgres-app/port
+    user: file:///authentik-postgres-app/username
+    password: file:///authentik-postgres-app/password
+worker:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2
+      memory: 1024Mi
+  volumes:
+    - name: authentik-secret-key
+      secret:
+        secretName: authentik-secret-key
+    - name: authentik-postgres-app
+      secret:
+        secretName: authentik-postgres-app
+  volumeMounts:
+    - name: authentik-secret-key
+      mountPath: /authentik-secret-key
+      readOnly: true
+    - name: authentik-postgres-app
+      mountPath: /authentik-postgres-app
+      readOnly: true
+server:
+  resources:
+    requests:
+      cpu: 1
+      memory: 512Mi
+    limits:
+      cpu: 2
+      memory: 1024Mi
+  volumes:
+    - name: authentik-secret-key
+      secret:
+        secretName: authentik-secret-key
+    - name: authentik-postgres-app
+      secret:
+        secretName: authentik-postgres-app
+  volumeMounts:
+    - name: authentik-secret-key
+      mountPath: /authentik-secret-key
+      readOnly: true
+    - name: authentik-postgres-app
+      mountPath: /authentik-postgres-app
+      readOnly: true
+  ingress:
+      # Specify kubernetes ingress controller class name
+      ingressClassName: traefik
+      enabled: true
+      hosts:
+          - login.codewyre.net
+
+postgresql:
+  enabled: false

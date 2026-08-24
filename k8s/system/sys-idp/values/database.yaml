@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-postgres
+spec:
+  instances: 1
+
+  # Example of rolling update strategy:
+  # - unsupervised: automated update of the primary once all
+  #                 replicas have been upgraded (default)
+  # - supervised: requires manual supervision to perform
+  #               the switchover of the primary
+  primaryUpdateStrategy: unsupervised
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: 500m
+    limits:
+      memory: "1024Mi"
+      cpu: 1
+
+  # Require 1Gi of space
+  storage:
+    storageClass: local-path-projects-retained
+    size: 8Gi
