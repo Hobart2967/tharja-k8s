@@ -1,0 +1,18 @@
+repositories:
+  - name: emberstack
+    url: https://emberstack.github.io/helm-charts
+
+releases:
+  - name: project
+    namespace: sys-reflector
+    createNamespace: true
+    chart: ../../helm/project
+#    values:
+#      - memory:
+#          max: 512Mi
+
+  - name: reflector
+    chart: emberstack/reflector
+    namespace: sys-reflector
+    createNamespace: true
+    installed: true

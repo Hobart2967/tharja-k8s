@@ -10,6 +10,7 @@ helmfiles:
   - path: ./crds-mariadb/helmfile.yaml
   - path: ./crds-cert-manager/helmfile.yaml
   - path: ./crds-traefik/helmfile.yaml
+  - path: ./sys-reflector/helmfile.yaml
   - path: ./host-common/helmfile.yaml.gotmpl
   - path: ./sys-default/helmfile.yaml
   - path: ./sys-kube/helmfile.yaml
