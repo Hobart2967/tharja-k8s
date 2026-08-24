@@ -68,14 +68,7 @@ releases:
     needs:
       - sys-mail/marcoklein-engineer-mail
     values:
-      - resource:
-          requests:
-            memory: 512Mi
-            cpu: 128m
-          limits:
-            memory: 1Gi
-            cpu: 1
-        certificate: marcoklein-engineer-mail-certificate
+      - certificate: marcoklein-engineer-mail-certificate
         persistent_volume_claims:
           mail-data:
             size: 100Gi
@@ -84,6 +77,13 @@ releases:
             storageClass: local-path-projects-retained
 
         deployment:
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 128m
+            limits:
+              memory: 1Gi
+              cpu: 1
           env:
             OVERRIDE_HOSTNAME: mail.marcoklein.engineer
 

@@ -4,7 +4,7 @@ localstack:
   resources:
     requests:
       memory: "512Mi"
-      cpu: "500m"
+      cpu: "128m"
     limits:
       memory: "1Gi"
       cpu: "500m"
