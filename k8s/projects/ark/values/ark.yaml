@@ -8,7 +8,7 @@ resources:
 serverConfig:
   arkServerName: "HarkEvolvedI"
   sessionName: "HarkEvolvedI"
-  mods:j
+  mods:
     # Dino bars
     # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057
     - "1618319057"
