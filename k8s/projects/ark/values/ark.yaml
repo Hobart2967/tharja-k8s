@@ -6,9 +6,9 @@ resources:
     memory: 12Gi
     cpu: 4
 serverConfig:
-  arkServerName: HarkSurvival
-  sessionName: HarkSurvival
-  mods:
+  arkServerName: "HarkEvolvedI"
+  sessionName: "HarkEvolvedI"
+  mods:j
     # Dino bars
     # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057
     - "1618319057"
