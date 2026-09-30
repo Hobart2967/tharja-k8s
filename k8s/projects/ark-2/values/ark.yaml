@@ -11,6 +11,7 @@ serverConfig:
     query: 27016
     game: 7779
     gameExt: 7780
+
   arkServerName: "HarkEvolvedII"
   sessionName: "HarkEvolvedII"
   mods:
