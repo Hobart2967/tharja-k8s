@@ -25,7 +25,7 @@ jobs:
       - name: Add k8s Auth
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.K8S_AUTH }}" | base64 -d > ~/.kube/config
+          echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
       - name: Sync Helmfile
         run: |
           cd k8s/projects/engineer.marcoklein
