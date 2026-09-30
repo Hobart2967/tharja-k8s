@@ -20,6 +20,9 @@ data:
     ark_ServerPassword=${SERVER_PASSWORD}                               # ARK server password, empty: no password required to login
     ark_ServerAdminPassword=${ADMIN_PASSWORD}                           # ARK server admin password, KEEP IT SAFE!
     ark_MaxPlayers=${MAX_PLAYERS}                                       # Number MAX of player
+    ark_Port={{ .Values.ports.game }}                                                # ARK server port
+    ark_QueryPort={{ .Values.ports.query }}                                            # ARK server query port
+    ark_RCONPort={{ .Values.ports.rcon }}                                              # ARK server R
     # ark_bRawSockets=""                                                # Uncomment if you want to use ark raw socket (instead of steam p2p) [Not recommended]
 
     # ----- Mods ----- #

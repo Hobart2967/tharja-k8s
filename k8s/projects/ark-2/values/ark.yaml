@@ -1,11 +1,10 @@
 ingress:
   name: ark-2
+ports:
+  rcon: 27021
+  query: 27016
+  game: 7779
 serverConfig:
-  ports:
-    rcon: 27021
-    query: 27016
-    game: 7779
-    gameExt: 7780
   arkServerName: "HarkEvolvedII"
   sessionName: "HarkEvolvedII"
 arkServerPasswordSecretName: ark-server-password-ii

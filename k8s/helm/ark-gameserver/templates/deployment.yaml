@@ -34,16 +34,16 @@ spec:
           #    exec /usr/sbin/gosu steam /steam-entrypoint.sh
           ports:
             - name: game
-              containerPort: 7777
+              containerPort: {{ .Values.ports.game }}
               protocol: UDP
             - name: game-ext
-              containerPort: 7778
+              containerPort: {{ add .Values.ports.game 1 }}
               protocol: UDP
             - name: query
-              containerPort: 27015
+              containerPort: {{ .Values.ports.query }}
               protocol: UDP
             - name: rcon
-              containerPort: 27020
+              containerPort: {{ .Values.ports.rcon }}
               protocol: TCP
           env:
             - name: ARK_SERVER_VOLUME
