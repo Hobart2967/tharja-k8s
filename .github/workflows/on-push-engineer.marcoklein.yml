@@ -13,7 +13,9 @@ on:
 permissions:
   contents: read
   packages: read
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  queue: single
 jobs:
   on_push:
     name: Release
