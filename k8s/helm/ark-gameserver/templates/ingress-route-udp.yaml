@@ -1,7 +1,7 @@
 {{- $portsList := list "query" "game" "game-ext" }}
 {{- $release := .Release }}
 {{ $values := .Values }}
-{{- range $index, $port := $portsList }}
+{{- range $index := $portsList }}
 ---
 kind: IngressRouteUDP
 apiVersion: traefik.io/v1alpha1
