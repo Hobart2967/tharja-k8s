@@ -2,7 +2,7 @@ name: Hark Evolved II
 on:
   push:
     paths:
-      - 'k8s/projects/ark/**'
+      - 'k8s/projects/ark-2/**'
       - 'k8s/helm/project/**'
       - 'k8s/helm/traefik-endpoint/**'
       - 'k8s/helm/ark-gameserver/**'
