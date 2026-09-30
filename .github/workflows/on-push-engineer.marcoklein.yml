@@ -25,6 +25,8 @@ jobs:
       - name: Download and install yq
         run: |
           export ARCH=$(uname -m)
+          echo "Detected architecture: ${ARCH}"
+          echo "Downloading yq for architecture: https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz"
           wget https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz -O yq.tar.gz
           tar -xzf yq.tar.gz -C /usr/local/bin yq
           rm yq.tar.gz
