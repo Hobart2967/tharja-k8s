@@ -2,6 +2,7 @@ name: Hark Evolved I
 on:
   push:
     paths:
+      - '.github/workflows/on-push-hark-evolved-i.yml'
       - 'k8s/projects/ark/**'
       - 'k8s/helm/project/**'
       - 'k8s/helm/traefik-endpoint/**'
@@ -63,3 +64,6 @@ jobs:
         if: github.ref_name == 'main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Restart Ark Server
+        run: |
+          kubectl rollout restart deployment ark -n project-ark

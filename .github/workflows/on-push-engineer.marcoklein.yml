@@ -2,6 +2,7 @@ name: engineer.marcoklein
 on:
   push:
     paths:
+      - '.github/workflows/on-push-engineer.marcoklein.yml'
       - 'k8s/projects/engineer.marcoklein/**'
       - 'k8s/helm/mariadb-database/**'
       - 'k8s/helm/website/**'
