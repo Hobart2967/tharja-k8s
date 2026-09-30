@@ -39,7 +39,7 @@ jobs:
           tar -xzf yq.tar.gz
           ls -l
           rm yq.tar.gz
-          mv /usr/local/bin/yq_linux_${ARCH} /usr/local/bin/yq
+          mv yq_linux_${ARCH} /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
       - name: Add k8s Auth
         run: |
