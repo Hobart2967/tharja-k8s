@@ -54,11 +54,11 @@ jobs:
           echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
       - name: Sync Helmfile
         run: |
-          cd k8s/projects/engineer.marcoklein
+          cd k8s/projects/ark
           helmfile template
       - name: Sync Helmfile
         run: |
-          cd k8s/projects/engineer.marcoklein
+          cd k8s/projects/ark
           helmfile sync
         if: github.ref_name == 'main'
         env:
