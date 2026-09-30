@@ -2,7 +2,7 @@ name: engineer.marcoklein
 on:
   push:
     paths:
-      - 'projects/engineer.marcoklein/**'
+      - 'k8s/projects/engineer.marcoklein/**'
   workflow_dispatch:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
   # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
