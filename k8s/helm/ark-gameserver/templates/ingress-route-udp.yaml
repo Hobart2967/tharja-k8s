@@ -1,6 +1,6 @@
-{{- $portsList := dict "query" .Values.ports.query "game" .Values.ports.game "game-ext" .Values.ports.gameExt }}
+{{- $portsList := list "query" "game" "game-ext" }}
 {{- $release := .Release }}
-
+{{ $values := .Values }}
 {{- range $index, $port := $portsList }}
 ---
 kind: IngressRouteUDP
@@ -10,9 +10,9 @@ metadata:
   namespace: {{ $release.Namespace }}
 spec:
   entryPoints:
-    - ark-{{ $index }}
+    - {{ $values.ingress.name }}-{{ $index }}
   routes:
     - services:
         - name: {{ $release.Name }}
-          port: {{ $port }}
+          port: {{ $index }}
 {{- end }}

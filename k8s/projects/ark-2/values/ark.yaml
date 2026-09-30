@@ -1,3 +1,5 @@
+ingress:
+  name: ark-2
 serverConfig:
   ports:
     rcon: 27021

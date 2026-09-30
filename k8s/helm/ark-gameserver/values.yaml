@@ -1,6 +1,8 @@
 replicaCount: 1
 arkServerPasswordSecretName: ark-server-password
 arkServerAdminPasswordSecretName: ark-server-password
+ingress:
+  name: ark
 serverConfig:
   arkServerName: An Ark Server
   sessionName: An Ark Session

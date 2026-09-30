@@ -16,16 +16,16 @@ releases:
     createNamespace: true
     values:
       - endpoints:
-        - name: ark-rcon
+        - name: ark-2-rcon
           port: 27021
           protocol: TCP
-        - name: ark-query
+        - name: ark-2-query
           port: 27016
           protocol: UDP
-        - name: ark-game
+        - name: ark-2-game
           port: 7779
           protocol: UDP
-        - name: ark-game-ext
+        - name: ark-2-game-ext
           port: 7780
           protocol: UDP
 

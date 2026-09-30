@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   entryPoints:
-    - ark-rcon
+    - {{ .Values.ingress.name }}-rcon
   routes:
     - match: HostSNI(`*`)
       services:
         - name: {{ .Release.Name }}
-          port: {{ .Values.ports.rcon}}
+          port: rcon
