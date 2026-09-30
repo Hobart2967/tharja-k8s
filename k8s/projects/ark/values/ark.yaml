@@ -9,6 +9,10 @@ serverConfig:
   arkServerName: "HarkEvolvedI"
   sessionName: "HarkEvolvedI"
   mods:
+    # Dino Tracker
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=924933745
+    - "924933745"
+
     # Dino bars
     # https://steamcommunity.com/sharedfiles/filedetails/?id=1618319057
     - "1618319057"
@@ -16,38 +20,6 @@ serverConfig:
     # Spoiling bin
     # https://steamcommunity.com/sharedfiles/filedetails/?id=916788716
     - "916788716"
-
-    # Death Recovery
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=751991809
-    - "751991809"
-
-    # Dino Tracker
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=924933745
-    - "924933745"
-
-    # Human Stacks
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1333158793
-    - "1333158793"
-
-    # eco's RP Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=741203089
-    - "741203089"
-
-    # GunSmoke Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1580163189
-    - "1580163189"
-
-    # Big Walls
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=541612317
-    - "541612317"
-
-    # Mining Drill
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1252358730
-    - "1252358730"
-
-    # Camping Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=926567353
-    - "926567353"
 
     # Autorun mod
     # https://steamcommunity.com/sharedfiles/filedetails/?id=801082391
@@ -57,18 +29,6 @@ serverConfig:
     # https://steamcommunity.com/sharedfiles/filedetails/?id=2783538786
     - "2783538786"
 
-    # Stackable Foundations
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=760884349
-    - "760884349"
-
-    # Paintable Rugs, Wall Art & Lighting
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
-    - "1446292779"
-
-    # Paintable Structures and Interior Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
-    - "1592192369"
-
     # Auto Trough
     # https://steamcommunity.com/sharedfiles/filedetails/?id=543394681
     - "543394681"
@@ -77,17 +37,69 @@ serverConfig:
     # https://steamcommunity.com/sharedfiles/filedetails/?id=731604991
     - "731604991"
 
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
-    # Planting v1.3a (PvP friendly)
-    - "1115844828"
-
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
-    # Silica Pearl Factory v2.1a
-    - "839984647"
+    # Death Recovery
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=751991809
+    - "751991809"
 
     # https://steamcommunity.com/sharedfiles/filedetails/?id=2863707757
     # Better Map
     - "2863707757"
+
+
+    # Human Stacks
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1333158793
+    # - "1333158793"
+    # Zu viel Quality of Life
+
+    # eco's RP Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=741203089
+    # - "741203089"
+    # Backlog
+
+    # GunSmoke Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1580163189
+    # - "1580163189"
+    # Backlog
+
+    # Big Walls
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=541612317
+    # - "541612317"
+    # Backlog
+
+    # Mining Drill
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1252358730
+    # - "1252358730"
+    # Buggy
+
+    # Camping Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=926567353
+    # - "926567353"
+    # Backlog
+
+    # Stackable Foundations
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=760884349
+    # - "760884349"
+    # Ist in Strucutres Plus bereits enthalten
+
+    # Paintable Rugs, Wall Art & Lighting
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
+    # - "1446292779"
+    # Backlog
+
+    # Paintable Structures and Interior Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
+    # - "1592192369"
+    # Backlog
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
+    # Planting v1.3a (PvP friendly)
+    # - "1115844828"
+    # Zu viel Quality of Life
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
+    # Silica Pearl Factory v2.1a
+    # - "839984647"
+    # Zu viel Quality of Life
 
     # # https://steamcommunity.com/sharedfiles/filedetails/?id=539464369
     # # Advanced Architecture Mod
