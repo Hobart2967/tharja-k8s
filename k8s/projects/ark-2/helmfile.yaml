@@ -10,7 +10,7 @@ releases:
         cpu:
           max: 4
 
-  - name: ark-traefik-endpoint
+  - name: ark-2-traefik-endpoint
     chart: ../../helm/traefik-endpoint
     namespace: sys-traefik
     createNamespace: true
