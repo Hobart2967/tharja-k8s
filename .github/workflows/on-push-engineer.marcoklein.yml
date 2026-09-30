@@ -1,0 +1,35 @@
+name: engineer.marcoklein
+on:
+  push:
+    paths:
+      - 'projects/engineer.marcoklein/**'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  on_push:
+    name: Release
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/helmfile/helmfile:v1.1.0
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Add k8s Auth
+        run: |
+          echo "${{ secrets.K8S_AUTH }}" | base64 -d > ~/.kube/config
+      - name: Sync Helmfile
+        run: |
+          cd k8s/projects/engineer.marcoklein
+          helmfile template
+      - name: Sync Helmfile
+        run: |
+          cd k8s/projects/engineer.marcoklein
+          helmfile sync
+        if: github.ref_name == 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
