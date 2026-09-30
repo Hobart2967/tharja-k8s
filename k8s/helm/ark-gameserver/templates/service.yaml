@@ -12,13 +12,13 @@ spec:
   ports:
     - name: ark-game
       port: {{ .Values.ports.game }}
-      targetPort: {{ .Values.ports.game }}
+      targetPort: 7777
     - name: ark-game-ext
       port: {{ .Values.ports.gameExt }}
-      targetPort: {{ .Values.ports.gameExt }}
+      targetPort: 7778
     - name: ark-query
       port: {{ .Values.ports.query }}
-      targetPort: {{ .Values.ports.query }}
+      targetPort: 27015
     - name: ark-rcon
       port: {{ .Values.ports.rcon }}
-      targetPort: {{ .Values.ports.rcon }}
+      targetPort: 27020

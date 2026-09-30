@@ -13,6 +13,7 @@ serverConfig:
   mods: []
     # id: 1234567
     # state: <game|disabled>
+gameConfig: {}
 persistence:
   size: 10Gi
 ports:

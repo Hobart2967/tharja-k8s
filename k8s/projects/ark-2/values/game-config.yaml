@@ -1,0 +1,137 @@
+gameConfig:
+  ServerSettings:
+    PerPlatformMaxStructuresMultiplier: 3.00000
+    MaxPlatformSaddleStructureLimit: 800
+  /script/shootergame.shootergamemode:
+    LayEggIntervalMultiplier: 0.1
+    MatingIntervalMultiplier: 0.1
+    EggHatchSpeedMultiplier: 30.0
+    BabyMatureSpeedMultiplier: 30.0
+    PlayerBaseStatMultipliers:
+      Health: 1.0 # 0
+      Stamina: 1.0 # 1
+      Torpidity: 1.0 # 2
+      Oxygen: 1.0 # 3
+      Food: 1.0 # 4
+      Water: 1.0 # 5
+      Temperature: 1.0 # 6
+      Weight: 20.0 # 7
+      MeleeDamageMultiplier: 1.0 # 8
+      SpeedMultiplier: 1.0 # 9
+      TemperatureFortitude: 1.0 # 10
+    PerLevelStatsMultiplier_Player:
+      Health: 1.0 # 0
+      Stamina: 1.0 # 1
+      Torpidity: 1.0 # 2
+      Oxygen: 1.0 # 3
+      Food: 1.0 # 4
+      Water: 1.0 # 5
+      Temperature: 1.0 # 6
+      Weight: 20.0 # 7
+      MeleeDamageMultiplier: 1.0 # 8
+      SpeedMultiplier: 1.0 # 9
+      TemperatureFortitude: 1.0 # 10
+    PerLevelStatsMultiplier_DinoTamed:
+      Health: 1.0 # 0
+      Stamina: 1.0 # 1
+      Torpidity: 1.0 # 2
+      Oxygen: 1.0 # 3
+      Food: 1.0 # 4
+      Water: 1.0 # 5
+      Temperature: 1.0 # 6
+      Weight: 20.0 # 7
+      MeleeDamageMultiplier: 1.0 # 8
+      SpeedMultiplier: 1.0 # 9
+      TemperatureFortitude: 1.0 # 10
+    SupplyCrateLootQualityMultiplier: 5.0
+    PerPlatformMaxStructuresMultiplier: 5
+    OverridePlayerLevelEngramPoints:
+      - 0
+      - 12
+      - 12
+      - 12
+      - 12
+      - 12
+      - 12
+      - 12
+      - 12
+      - 18
+      - 18
+      - 18
+      - 18
+      - 18
+      - 18
+      - 18
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 50
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 160
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 275
+      - 999
+      - 999
+      - 999

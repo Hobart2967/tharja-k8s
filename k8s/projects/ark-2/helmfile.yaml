@@ -34,4 +34,13 @@ releases:
     namespace: project-ark-2
     createNamespace: true
     values:
+      - resources:
+          requests:
+            memory: 4Gi
+            cpu: 500m
+          limits:
+            memory: 12Gi
+            cpu: 4
       - ./values/ark.yaml
+      - ./values/mods.yaml
+      - ./values/game-config.yaml

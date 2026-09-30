@@ -1,0 +1,42 @@
+---
+{{ $values := .Values }}
+{{ $typeDict := (dict
+  "Health" 0
+  "Stamina" 1
+  "Torpidity" 2
+  "Oxygen" 3
+  "Food" 4
+  "Water" 5
+  "Temperature" 6
+  "Weight" 7
+  "MeleeDamageMultiplier" 8
+  "SpeedMultiplier" 9
+  "TemperatureFortitude" 10) }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-instance-config
+  namespace: {{ .Release.Namespace }}
+data:
+#
+  content: |-
+    {{- range $key, $value := $values.gameConfig }}
+    [{{ $key }}]
+    {{- range $subKey, $subValue := $value }}
+    {{- if kindIs "slice" $subValue }}
+    {{- range $subListItem := $subValue }}
+    {{ $subKey }}={{ $subListItem }}
+    {{- end }}
+    {{- else if kindIs "map" $subValue }}
+    {{- range $subMapKey, $subMapValue := $subValue }}
+    {{- if hasKey $typeDict $subMapKey }}
+    {{ $subKey }}[{{ index $typeDict $subMapKey }}]={{ $subMapValue }}
+    {{- else }}
+    {{- fail (printf "Unknown key in %s: %s" $subKey $subMapKey) }}
+    {{- end }}
+    {{- end }}
+    {{- else }}
+    {{ $subKey }}={{ $subValue }}
+    {{- end }}
+    {{- end }}
+    {{ end }}
