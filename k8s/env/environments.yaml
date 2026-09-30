@@ -121,6 +121,13 @@ environments:
             fields:
               - admin_password
               - password
+          ark-server-password-ii:
+            item: rwvbvxet7zoeodrj5pzbwhrc2a
+            namespaces:
+              - project-ark-2
+            fields:
+              - admin_password
+              - password
           home-server-bastion:
             item: null
             namespaces:
@@ -279,6 +286,13 @@ environments:
             item: mgqe2zbksqx7trviusnl4aggty
             namespaces:
               - project-ark
+            fields:
+              - admin_password
+              - password
+          ark-server-password-ii:
+            item: fmel6xelcazeoaziprmndjcf54
+            namespaces:
+              - project-ark-2
             fields:
               - admin_password
               - password

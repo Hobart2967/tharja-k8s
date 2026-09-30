@@ -6,3 +6,5 @@ serverConfig:
     gameExt: 7780
   arkServerName: "HarkEvolvedII"
   sessionName: "HarkEvolvedII"
+arkServerPasswordSecretName: ark-server-password-ii
+arkServerAdminPasswordSecretName: ark-server-password-ii
