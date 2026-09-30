@@ -1,0 +1,7 @@
+gameUserSettingsConfig:
+  ServerSettings:
+    TamingSpeedMultiplier: 3.000000
+    HarvestAmountMultiplier: 2.500000
+    NightTimeSpeedScale: 1.35
+    DayTimeSpeedScale: 0.85
+

@@ -15,10 +15,9 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: {{ .Release.Name }}-instance-config
+  name: {{ .Release.Name }}-game-ini
   namespace: {{ .Release.Namespace }}
 data:
-#
   content: |-
     {{- range $key, $value := $values.gameConfig }}
     [{{ $key }}]
@@ -36,7 +35,11 @@ data:
     {{- end }}
     {{- end }}
     {{- else }}
+    {{- if kindIs "bool" $subValue }}
+    {{ $subKey }}={{ ternary "1" "0" $subValue }}
+    {{- else }}
     {{ $subKey }}={{ $subValue }}
+    {{- end }}
     {{- end }}
     {{- end }}
     {{ end }}

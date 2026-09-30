@@ -1,0 +1,28 @@
+---
+{{ $values := .Values }}
+{{ $ignoredProperties := (list
+  "sessionsettings:sessionname"
+  "serversettings:serverpassword"
+  "serversettings:rconport"
+  "serversettings:serveradminpassword"
+  "/script/engine.gamesession:maxplayers"
+) }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-game-user-settings-ini
+  namespace: {{ .Release.Namespace }}
+data:
+  content: |-
+    {{- range $key, $value := $values.gameUserSettingsConfig }}
+    [{{ $key }}]
+    {{- range $subKey, $subValue := $value }}
+    {{- if not (has ((printf "%s:%s" $key $subKey) | lower) $ignoredProperties) }}
+    {{- if kindIs "bool" $subValue }}
+    {{ $subKey }}={{ ternary "1" "0" $subValue }}
+    {{- else }}
+    {{ $subKey }}={{ $subValue }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{ end }}
