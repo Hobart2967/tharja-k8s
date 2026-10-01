@@ -5,4 +5,4 @@ gameUserSettingsConfig:
     NightTimeSpeedScale: 1.35
     DayTimeSpeedScale: 0.85
     ActiveMods: 1618319057
-
+    AllowThirdPersonPlayer: true
