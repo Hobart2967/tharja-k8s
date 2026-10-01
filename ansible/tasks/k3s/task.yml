@@ -39,6 +39,15 @@
       disable+:
         - local-storage
 
+- name: "Configure kubelet container log rotation"
+  become: true
+  copy:
+    dest: /etc/rancher/k3s/config.yaml.d/kubelet-log-rotation.yaml
+    content: |
+      kubelet-arg+:
+        - container-log-max-size=20Mi
+        - container-log-max-files=5
+
 - name: "Create kubeconfig directory for user"
   become: true
   file:

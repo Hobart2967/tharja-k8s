@@ -161,7 +161,7 @@ releases:
               # logged here.  If you *do* define an error logfile for a <VirtualHost>
               # container, that host's errors will be logged there and not here.
               #
-              ErrorLog ${APACHE_LOG_DIR}/error.log
+              ErrorLog /proc/self/fd/2
 
               #
               # LogLevel: Control the severity of messages logged to the error_log.
@@ -244,6 +244,7 @@ releases:
               LogFormat "%h %l %u %t \"%r\" %>s %O" common
               LogFormat "%{Referer}i -> %U" referer
               LogFormat "%{User-agent}i" agent
+              CustomLog /proc/self/fd/1 combined
 
               # Include of directories ignores editors' and dpkg's backup files,
               # see README.Debian for details.
