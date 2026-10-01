@@ -4,3 +4,5 @@ serverConfig:
 service:
   type: LoadBalancer
   externalTrafficPolicy: Local
+arkManager:
+  extraConfig: ""
