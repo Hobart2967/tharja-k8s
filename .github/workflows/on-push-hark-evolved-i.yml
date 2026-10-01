@@ -6,7 +6,7 @@ on:
       - 'k8s/projects/ark/**'
       - 'k8s/helm/project/**'
       - 'k8s/helm/traefik-endpoint/**'
-      - 'k8s/helm/ark-gameserver/**'
+      #- 'k8s/helm/ark-gameserver/**'
   workflow_dispatch:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
   # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
