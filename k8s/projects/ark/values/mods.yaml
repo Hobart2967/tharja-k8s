@@ -37,60 +37,65 @@ serverConfig:
     # - "2863707757"
 
 
+
+    # BACKLOG -- THESE MODS MAY QUALIFY THEMSELVES IN THE FUTURE
+    # BACKLOG -- THESE MODS MAY QUALIFY THEMSELVES IN THE FUTURE
+
+    # GunSmoke Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1580163189
+    # - "1580163189"
+
+    # Big Walls
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=541612317
+    # - "541612317"
+
+    # Camping Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=926567353
+    # - "926567353"
+
+    # Paintable Rugs, Wall Art & Lighting
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
+    # - "1446292779"
+
+    # Paintable Structures and Interior Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
+    # - "1592192369"
+
+    # eco's RP Decor
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=741203089
+    # - "741203089"
+
+
+    # -----------------------------------
+    # POSSIBLE MODS -- THEY COME WITH A FEW BUGS
+    # -----------------------------------
+
+    # Mining Drill
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1252358730
+    # - "1252358730"
+
+
+    # -----------------------------------
+    # TOO MUCH QUALITY OF LIFE
+    # -----------------------------------
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
+    # Silica Pearl Factory v2.1a
+    # - "839984647"
+
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
+    # Planting v1.3a (PvP friendly)
+    # - "1115844828"
+
     # Human Stacks
     # https://steamcommunity.com/sharedfiles/filedetails/?id=1333158793
     # - "1333158793"
     # Zu viel Quality of Life
 
-    # eco's RP Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=741203089
-    # - "741203089"
-    # Backlog
 
-    # GunSmoke Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1580163189
-    # - "1580163189"
-    # Backlog
-
-    # Big Walls
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=541612317
-    # - "541612317"
-    # Backlog
-
-    # Mining Drill
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1252358730
-    # - "1252358730"
-    # Buggy
-
-    # Camping Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=926567353
-    # - "926567353"
-    # Backlog
-
-    # Stackable Foundations
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=760884349
-    # - "760884349"
-    # Ist in Strucutres Plus bereits enthalten
-
-    # Paintable Rugs, Wall Art & Lighting
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1446292779
-    # - "1446292779"
-    # Backlog
-
-    # Paintable Structures and Interior Decor
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1592192369
-    # - "1592192369"
-    # Backlog
-
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=1115844828
-    # Planting v1.3a (PvP friendly)
-    # - "1115844828"
-    # Zu viel Quality of Life
-
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=839984647
-    # Silica Pearl Factory v2.1a
-    # - "839984647"
-    # Zu viel Quality of Life
+    # -----------------------------------
+    # OLD MODS -- THEY DON'T WORK ANYMORE
+    # -----------------------------------
 
     # # https://steamcommunity.com/sharedfiles/filedetails/?id=539464369
     # # Advanced Architecture Mod
@@ -107,3 +112,5 @@ serverConfig:
     # # Stats bars
     # # https://steamcommunity.com/sharedfiles/filedetails/?id=737297870
     # - "737297870"
+  
+
