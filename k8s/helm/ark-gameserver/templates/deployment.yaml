@@ -109,6 +109,12 @@ spec:
             - name: instance-config
               mountPath: /app/arkmanager/instances/main.cfg
               subPath: instance.cfg
+            - name: game-ini
+              mountPath: /app/server/ShooterGame/Saved/Config/LinuxServer/Game.ini
+              subPath: Game.ini
+            - name: game-user-settings-ini
+              mountPath: /app/server/ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini
+              subPath: GameUserSettings.ini
             - name: ark-data
               mountPath: /ark-data
             - name: ark-app
@@ -140,3 +146,19 @@ spec:
             items:
             - key: "content"
               path: "instance.cfg"
+        - name: game-ini
+          configMap:
+            # Provide the name of the ConfigMap you want to mount.
+            name: {{ .Release.Name }}-game-ini
+            # An array of keys from the ConfigMap to create as files
+            items:
+            - key: "content"
+              path: "Game.ini"
+        - name: game-user-settings-ini
+          configMap:
+            # Provide the name of the ConfigMap you want to mount.
+            name: {{ .Release.Name }}-game-user-settings-ini
+            # An array of keys from the ConfigMap to create as files
+            items:
+            - key: "content"
+              path: "GameUserSettings.ini"
