@@ -12,9 +12,9 @@ arkServerAdminPasswordSecretName: ark-server-password-ii
 arkManager:
   extraConfig: ""
 service:
-  enabled: false
+  enabled: true
 deploymentStrategy:
   type: Recreate
 network:
   hostPorts:
-    enabled: true
+    enabled: false
