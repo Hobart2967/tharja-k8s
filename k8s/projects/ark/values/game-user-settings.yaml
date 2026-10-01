@@ -74,7 +74,9 @@ gameUserSettingsConfig:
     GreaterRiftActivationMultiplier: 1.000000
     ShowAnniversaryContent: True
     ServerAdminPassword: 310826
-
+  MessageOfTheDay:
+    Duration: 10
+    Message: Big Dick
 
 
 
