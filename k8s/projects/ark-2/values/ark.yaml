@@ -13,6 +13,8 @@ arkManager:
   extraConfig: ""
 service:
   enabled: false
+deploymentStrategy:
+  type: Recreate
 network:
   hostPorts:
     enabled: true

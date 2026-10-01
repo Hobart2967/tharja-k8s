@@ -142,6 +142,12 @@ service:
   type: ClusterIP
   externalTrafficPolicy: ""
 
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+
 network:
   hostPorts:
     enabled: false

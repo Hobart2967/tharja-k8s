@@ -8,3 +8,5 @@ network:
     enabled: true
 arkManager:
   extraConfig: ""
+deploymentStrategy:
+  type: Recreate
