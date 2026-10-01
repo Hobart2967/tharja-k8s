@@ -54,7 +54,7 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
-      - name: Sync Helmfile
+      - name: Template Helmfile
         run: |
           cd k8s/projects/ark-2
           helmfile template
