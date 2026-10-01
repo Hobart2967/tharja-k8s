@@ -12,13 +12,17 @@ spec:
   ports:
     - name: game
       port: {{ .Values.ports.game }}
+      protocol: UDP
       targetPort: game
     - name: game-ext
       port: {{ add .Values.ports.game 1 }}
+      protocol: UDP
       targetPort: game-ext
     - name: query
       port: {{ .Values.ports.query }}
+      protocol: UDP
       targetPort: query
     - name: rcon
       port: {{ .Values.ports.rcon }}
+      protocol: TCP
       targetPort: rcon
