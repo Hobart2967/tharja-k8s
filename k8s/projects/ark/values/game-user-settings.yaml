@@ -7,11 +7,11 @@ gameUserSettingsConfig:
 
     #New Settings:
     #Mods:
-    ActiveMods: "1618319057"
+    ActiveMods: "924933745,1618319057,801082391"
 
     #Primary Settings:
     ItemStackSizeMultiplier: 3.000000
-    AllowThirdPersonPlayer: True
+    allowThirdPersonPlayer: True
     PerPlatformMaxStructuresMultiplier: 5.000000
     ShowMapPlayerLocation: False
     DisableStructureDecayPvE: True
