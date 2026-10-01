@@ -7,7 +7,7 @@ gameUserSettingsConfig:
 
     #New Settings:
     #Mods:
-    ActiveMods: 1618319057
+    ActiveMods: "1618319057"
 
     #Primary Settings:
     ItemStackSizeMultiplier: 3.000000
