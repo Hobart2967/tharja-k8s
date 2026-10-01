@@ -4,5 +4,81 @@ gameUserSettingsConfig:
     HarvestAmountMultiplier: 2.500000
     NightTimeSpeedScale: 1.35
     DayTimeSpeedScale: 0.85
+
+    #New Settings:
+    #Mods:
     ActiveMods: 1618319057
-    AllowThirdPersonPlayer: true
+
+    #Primary Settings:
+    ItemStackSizeMultiplier: 3.000000
+    AllowThirdPersonPlayer: True
+    PerPlatformMaxStructuresMultiplier: 5.000000
+    ShowMapPlayerLocation: False
+    DisableStructureDecayPvE: True
+
+    #PVP Settings:
+    PreventOfflinePvP: True
+    PvPDinoDecay: False
+    EnablePvPGamma: True
+    PreventOfflinePvPInterval: 0.010000
+
+    #PVE Settings:
+    ServerPVE: False
+    PvEDinoDecayPeriodMultiplier: 1.000000
+    DisablePvEGamma: False
+    DisableDinoDecayPvE: False
+    AllowFlyerCarryPvE: False
+    AllowCaveBuildingPvE: False
+    StructurePickupTimeAfterPlacement: 90.000000
+
+    #Chat Settings:
+    GlobalVoiceChat: False
+    ProximityChat: False
+
+    #Miscellaneous:
+    DifficultyOffset: 0.120000
+    ListenServerTetherDistanceMultiplier: 1.000000
+    RaidDinoCharacterFoodDrainMultiplier: 1.000000
+    StructurePreventResourceRadiusMultiplier: 1.000000
+    AllowRaidDinoFeeding: False
+    NoTributeDownloads: False
+    AlwaysNotifyPlayerLeft: False
+    DontAlwaysNotifyPlayerJoined: False
+    ServerHardcore: False
+    ServerCrosshair: True
+    ServerForceNoHUD: False
+    OnlyAllowSpecifiedEngrams: False
+    PreventDownloadSurvivors: False
+    PreventDownloadItems: False
+    PreventDownloadDinos: False
+    AdminLogging: False
+    ForceAllowCaveFlyers: False
+    OverrideStructurePlatformPrevention: False
+    AllowAnyoneBabyImprintCuddle: False
+    DisableImprintDinoBuff: False
+    ShowFloatingDamageText: False
+    PreventDiseases: False
+    NonPermanentDiseases: True
+    EnableExtraStructurePreventionVolumes: False
+    PreventTribeAlliances: False
+    bAllowFlyerSpeedLeveling: False
+    ActiveMapMod: 0
+    TheMaxStructuresInRange: 10500.000000
+    OxygenSwimSpeedStatMultiplier: 1.000000
+    TribeNameChangeCooldown: 1.000000
+    PlatformSaddleBuildAreaBoundsMultiplier: 1.000000
+    StructurePickupHoldDuration: 0.500000
+    AllowIntegratedSPlusStructures: True
+    AllowHideDamageSourceFromLogs: True
+    KickIdlePlayersPeriod: 3600.000000
+    AutoSavePeriodMinutes: 15.000000
+    MaxTamedDinos: 5000.000000
+    RCONServerGameLogBuffer: 600.000000
+    AllowHitMarkers: True
+    GreaterRiftActivationMultiplier: 1.000000
+    ShowAnniversaryContent: True
+    ServerAdminPassword: 310826
+
+
+
+
