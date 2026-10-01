@@ -138,8 +138,14 @@ persistence:
   size: 10Gi
 
 service:
+  enabled: true
   type: ClusterIP
   externalTrafficPolicy: ""
+
+network:
+  hostPorts:
+    enabled: false
+    hostIP: ""
 
 ports:
   rcon: 27020

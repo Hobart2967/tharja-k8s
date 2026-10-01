@@ -2,7 +2,8 @@ serverConfig:
   arkServerName: "HarkEvolvedI"
   sessionName: "HarkEvolvedI"
 service:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
+  enabled: false
+hostPorts:
+  enabled: true
 arkManager:
   extraConfig: ""

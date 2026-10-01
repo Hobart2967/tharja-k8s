@@ -37,15 +37,39 @@ spec:
             - name: game
               containerPort: {{ .Values.ports.game }}
               protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.game }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
             - name: game-ext
               containerPort: {{ add .Values.ports.game 1 }}
               protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ add .Values.ports.game 1 }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
             - name: query
               containerPort: {{ .Values.ports.query }}
               protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.query }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
             - name: rcon
               containerPort: {{ .Values.ports.rcon }}
               protocol: TCP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.rcon }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
           env:
             - name: ARK_SERVER_VOLUME
               value: /app

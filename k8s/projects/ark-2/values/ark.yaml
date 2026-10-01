@@ -1,8 +1,5 @@
 ingress:
   name: ark-2
-service:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
 ports:
   rcon: 27021
   query: 27016
@@ -14,3 +11,7 @@ arkServerPasswordSecretName: ark-server-password-ii
 arkServerAdminPasswordSecretName: ark-server-password-ii
 arkManager:
   extraConfig: ""
+service:
+  enabled: false
+hostPorts:
+  enabled: true
