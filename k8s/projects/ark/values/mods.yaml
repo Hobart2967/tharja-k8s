@@ -10,7 +10,7 @@ serverConfig:
 
     # Autorun mod
     # https://steamcommunity.com/sharedfiles/filedetails/?id=801082391
-     - "801082391"
+    # - "801082391"
 
     # Auto Poop Collector
     # https://steamcommunity.com/sharedfiles/filedetails/?id=2783538786
@@ -18,19 +18,19 @@ serverConfig:
 
     # Auto Trough
     # https://steamcommunity.com/sharedfiles/filedetails/?id=543394681
-     - "543394681"
+    # - "543394681"
 
     # Stuctures Plus
     # https://steamcommunity.com/sharedfiles/filedetails/?id=731604991
-     - "731604991"
+    # - "731604991"
 
     # Death Recovery
     # https://steamcommunity.com/sharedfiles/filedetails/?id=751991809
-     - "751991809"
+    # - "751991809"
 
     # https://steamcommunity.com/sharedfiles/filedetails/?id=2863707757
     # Better Map
-     - "2863707757"
+    # - "2863707757"
 
 
 
