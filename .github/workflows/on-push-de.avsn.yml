@@ -1,0 +1,78 @@
+name: de.avsn
+on:
+  push:
+    paths:
+      - '.github/workflows/on-push-de.avsn.yml'
+      - 'k8s/projects/de.avsn/**'
+      - 'k8s/helm/mariadb-database/**'
+      - 'k8s/helm/website/**'
+      - 'k8s/helm/postnuke/**'
+      - 'k8s/helm/project/**'
+  workflow_dispatch:
+  # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
+  # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
+  workflow_call:
+env:
+  namespace: project-de-avsn
+  deployments: website
+  project_dir: k8s/projects/de.avsn
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  queue: single
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  on_push:
+    name: Release
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/helmfile/helmfile:v1.1.0
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Download and install yq
+        run: |
+          mkdir ~/.yqtmp
+          cd ~/.yqtmp
+          export ARCH=$(uname -m)
+          echo "Detected architecture: ${ARCH}"
+          if [[ "${ARCH}" == "x86_64" ]]; then
+            ARCH="amd64"
+          elif [[ "${ARCH}" == "aarch64" ]]; then
+            ARCH="arm64"
+          else
+            echo "Unsupported architecture: ${ARCH}"
+            exit 1
+          fi
+          echo "Downloading yq for architecture: https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz"
+          wget https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz -O yq.tar.gz
+          tar -xzf yq.tar.gz
+          ls -l
+          rm yq.tar.gz
+          mv yq_linux_${ARCH} /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+      - uses: actions/checkout@v3
+      - name: Add k8s Auth
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+      - name: Template Helmfile
+        run: |
+          cd ${{ env.project_dir }}
+          helmfile template
+      - name: Sync Helmfile
+        run: |
+          cd ${{ env.project_dir }}
+          helmfile sync
+        if: github.ref_name == 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Restart Deployments
+        run: |
+          for deployment in ${{ env.deployments }}; do
+            kubectl rollout restart deployment $deployment -n ${{ env.namespace }}
+          done

@@ -1,4 +1,8 @@
 ---
+repositories:
+  - name: bedag
+    url:  https://bedag.github.io/helm-charts
+
 releases:
   - name: project
     namespace: project-de-avsn
