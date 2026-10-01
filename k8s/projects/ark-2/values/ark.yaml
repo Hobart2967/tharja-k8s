@@ -9,3 +9,5 @@ serverConfig:
   sessionName: "HarkEvolvedII"
 arkServerPasswordSecretName: ark-server-password-ii
 arkServerAdminPasswordSecretName: ark-server-password-ii
+arkManager:
+  extraConfig: ""

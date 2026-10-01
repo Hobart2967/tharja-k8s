@@ -1,6 +1,12 @@
 replicaCount: 1
 arkServerPasswordSecretName: ark-server-password
 arkServerAdminPasswordSecretName: ark-server-password
+arkManager:
+  extraConfig: |
+    arkflag_unbuffered=true
+    arkflag_log=true
+    arkflag_servergamelog=true
+    arkopt_crossplay=true
 ingress:
   name: ark
 serverConfig:

@@ -65,7 +65,4 @@ data:
     ###           CUSTOM CONFIG              ###
     ############################################
     ############################################
-    arkflag_unbuffered=true
-    arkflag_log=true
-    arkflag_servergamelog=true
-    arkopt_crossplay=true
+    {{ .Values.arkManager.extraConfig | indent 4 }}
