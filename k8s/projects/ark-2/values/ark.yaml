@@ -13,5 +13,6 @@ arkManager:
   extraConfig: ""
 service:
   enabled: false
-hostPorts:
-  enabled: true
+network:
+  hostPorts:
+    enabled: true

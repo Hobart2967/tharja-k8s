@@ -3,7 +3,8 @@ serverConfig:
   sessionName: "HarkEvolvedI"
 service:
   enabled: false
-hostPorts:
-  enabled: true
+network:
+  hostPorts:
+    enabled: true
 arkManager:
   extraConfig: ""
