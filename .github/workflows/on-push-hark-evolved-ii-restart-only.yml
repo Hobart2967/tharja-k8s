@@ -1,0 +1,37 @@
+name: Hark Evolved II - Restart
+on:
+  workflow_dispatch:
+  # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
+  # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
+  workflow_call:
+env:
+  namespace: project-ark-2
+  deployments: ark
+  project_dir: k8s/projects/ark-2
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  queue: single
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  on_push:
+    name: Release
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/helmfile/helmfile:v1.1.0
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Add k8s Auth
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+      - name: Restart Deployments
+        run: |
+          for deployment in ${{ env.deployments }}; do
+            kubectl rollout restart deployment $deployment -n ${{ env.namespace }}
+          done
