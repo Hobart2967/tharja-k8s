@@ -10,7 +10,7 @@ serverConfig:
 
     # Autorun mod
     # https://steamcommunity.com/sharedfiles/filedetails/?id=801082391
-     - "801082391"
+    # - "801082391"
 
     # Auto Poop Collector
     # https://steamcommunity.com/sharedfiles/filedetails/?id=2783538786
