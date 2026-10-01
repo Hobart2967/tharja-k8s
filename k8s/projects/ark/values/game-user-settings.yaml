@@ -5,10 +5,6 @@ gameUserSettingsConfig:
     NightTimeSpeedScale: 1.35
     DayTimeSpeedScale: 0.85
 
-    #New Settings:
-    #Mods:
-    ActiveMods: "924933745,1618319057,801082391"
-
     #Primary Settings:
     ItemStackSizeMultiplier: 3.000000
     allowThirdPersonPlayer: True
