@@ -6,7 +6,7 @@ serverConfig:
 
     # Spoiling bin
     # https://steamcommunity.com/sharedfiles/filedetails/?id=916788716
-    - "916788716"
+    #- "916788716"
 
     # Death Recovery
     # https://steamcommunity.com/sharedfiles/filedetails/?id=751991809
