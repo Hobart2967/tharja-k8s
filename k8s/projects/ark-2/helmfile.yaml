@@ -10,24 +10,24 @@ releases:
         cpu:
           max: 4
 
-  - name: ark-2-traefik-endpoint
-    chart: ../../helm/traefik-endpoint
-    namespace: sys-traefik
-    createNamespace: true
-    values:
-      - endpoints:
-        - name: ark-2-rcon
-          port: 27021
-          protocol: TCP
-        - name: ark-2-query
-          port: 27016
-          protocol: UDP
-        - name: ark-2-game
-          port: 7779
-          protocol: UDP
-        - name: ark-2-game-ext
-          port: 7780
-          protocol: UDP
+  # - name: ark-2-traefik-endpoint
+  #   chart: ../../helm/traefik-endpoint
+  #   namespace: sys-traefik
+  #   createNamespace: true
+  #   values:
+  #     - endpoints:
+  #       - name: ark-2-rcon
+  #         port: 27021
+  #         protocol: TCP
+  #       - name: ark-2-query
+  #         port: 27016
+  #         protocol: UDP
+  #       - name: ark-2-game
+  #         port: 7779
+  #         protocol: UDP
+  #       - name: ark-2-game-ext
+  #         port: 7780
+  #         protocol: UDP
 
   - name: ark
     chart: ../../helm/ark-gameserver

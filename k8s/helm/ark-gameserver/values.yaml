@@ -19,8 +19,8 @@ serverConfig:
   preUpdateBackup: true
   warnOnStop: true
   mods: []
-    # id: 1234567
-    # state: <game|disabled>
+    #- id: 1234567
+    #  state: <game|disabled>
 gameConfig: {}
 gameUserSettingsConfig:
   ServerSettings:
@@ -136,6 +136,11 @@ gameUserSettingsConfig:
 
 persistence:
   size: 10Gi
+
+service:
+  type: ClusterIP
+  externalTrafficPolicy: ""
+
 ports:
   rcon: 27020
   query: 27015
