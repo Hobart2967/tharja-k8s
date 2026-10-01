@@ -15,6 +15,7 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-status
       containers:
         - name: {{ .Release.Name }}
           image: "hermsi/ark-server:latest"
@@ -128,6 +129,27 @@ spec:
             limits:
               memory: {{ .Values.resources.limits.memory }}
               cpu: {{ .Values.resources.limits.cpu }}
+        - name: ark-status-checker
+          image: "alpine/k8s:1.28.2"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              while true; do
+                kubectl exec -n "{{ .Release.Namespace }}" "$(POD_NAME)" -c "{{ .Release.Name }}" -- \
+                  su -s /bin/bash steam -c "arkmanager status" || true
+                sleep 30
+              done
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       volumes:
         - name: ark-data
           persistentVolumeClaim:
