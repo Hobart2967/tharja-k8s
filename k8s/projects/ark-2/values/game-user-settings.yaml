@@ -1,8 +1,11 @@
 gameUserSettingsConfig:
+  ServerSettings:
+    ActiveMapMod: ""
   RNStacks:
     GlobalStackSize: 200
     GlobalItemWeightPercent: 0.1
     WeightReductionDisabled: true
+
   AutoPoopCollector:
     MaxSlots: 500
 
