@@ -11,12 +11,18 @@ on:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
   # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
   workflow_call:
-permissions:
-  contents: read
-  packages: read
+env:
+  namespace: project-ark
+  deployments: ark
+  project_dir: k8s/projects/ark
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   queue: single
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   on_push:
     name: Release
@@ -55,15 +61,17 @@ jobs:
           echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
       - name: Template Helmfile
         run: |
-          cd k8s/projects/ark
+          cd ${{ env.project_dir }}
           helmfile template
       - name: Sync Helmfile
         run: |
-          cd k8s/projects/ark
+          cd ${{ env.project_dir }}
           helmfile sync
         if: github.ref_name == 'main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Restart Ark Server
+      - name: Restart Deployments
         run: |
-          kubectl rollout restart deployment ark -n project-ark
+          for deployment in ${{ env.deployments }}; do
+            kubectl rollout restart deployment $deployment -n ${{ env.namespace }}
+          done
