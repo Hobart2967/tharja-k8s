@@ -4,6 +4,9 @@
 
 {{ $dbSecret := (exec "sh" (list "-c" "kubectl -n project-wedding-leaetienne get secret database-leaetienne -o json")) | fromJson }}
 {{ $dbPassword := $dbSecret.data.password }}
+repositories:
+  - name: bedag
+    url:  https://bedag.github.io/helm-charts
 
 releases:
   - name: project
@@ -16,6 +19,7 @@ releases:
 
   - name: website-config
     chart: bedag/raw
+    version: 2.0.2
     namespace: project-wedding-leaetienne
     createNamespace: true
     values:
