@@ -20,11 +20,11 @@ gameConfig:
       Health: 1.5
       Stamina: 4.0
       Torpidity: 1.0
-      Oxygen: 1.0
-      Food: 1.0
-      Water: 1.0
+      Oxygen: 6.0
+      Food: 5.0
+      Water: 5.0
       Temperature: 1.0
-      Weight: 2.0
+      Weight: 4.0
       MeleeDamageMultiplier: 2.0
       SpeedMultiplier: 2.0
       TemperatureFortitude: 1.0

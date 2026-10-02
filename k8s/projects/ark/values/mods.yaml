@@ -32,7 +32,13 @@ serverConfig:
     # Better Map
      - "2863707757"
 
+    # Spoiling bin
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=916788716
+     - "916788716"
 
+    # Stackable Foundations
+    # https://steamcommunity.com/sharedfiles/filedetails/?id=760884349
+     - "760884349"
 
     # BACKLOG -- THESE MODS MAY QUALIFY THEMSELVES IN THE FUTURE
     # BACKLOG -- THESE MODS MAY QUALIFY THEMSELVES IN THE FUTURE
@@ -109,8 +115,6 @@ serverConfig:
     # # https://steamcommunity.com/sharedfiles/filedetails/?id=737297870
     # - "737297870"
   
-    # Spoiling bin
-    # https://steamcommunity.com/sharedfiles/filedetails/?id=916788716
-    # - "916788716"
+
     # Server won't show in lobby if this mod is loaded aswell
 
