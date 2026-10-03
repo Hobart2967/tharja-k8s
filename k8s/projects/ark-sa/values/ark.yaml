@@ -6,6 +6,7 @@ ports:
   game: 7781
 serverConfig:
   arkServerName: "HarkAscendedI"
+  timeZone: "Europe/Berlin"
 arkServerPasswordSecretName: ark-server-password-sa
 arkServerAdminPasswordSecretName: ark-server-password-sa
 service:
