@@ -1,0 +1,14 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+data:
+  TZ: "{{ .Values.serverConfig.timeZone }}"
+  SERVER_NAME: "{{ .Values.serverConfig.arkServerName }}"
+  MAP: "{{ .Values.serverConfig.serverMap }}"
+  MAX_PLAYERS: "{{ .Values.serverConfig.maxPlayers }}"
+  UPDATE_ON_BOOT: "{{ .Values.serverConfig.updateOnStart }}"
+  BACKUP_ON_STOP: "{{ .Values.serverConfig.backupOnStop }}"
+  BACKUP_BEFORE_UPDATE: "{{ .Values.serverConfig.preUpdateBackup }}"
+  MOD_LIST: "{{range $i, $v := .Values.serverConfig.mods }}{{if $i }},{{end}}{{$v}}{{end}}"

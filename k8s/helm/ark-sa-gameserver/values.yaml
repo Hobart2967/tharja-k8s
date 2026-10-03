@@ -1,0 +1,46 @@
+replicaCount: 1
+arkServerPasswordSecretName: ark-server-password
+arkServerAdminPasswordSecretName: ark-server-password
+ingress:
+  name: ark
+serverConfig:
+  timeZone: "Europe/Berlin"
+  arkServerName: An Ark Server
+  serverMap: TheIsland_WP
+  maxPlayers: 10
+  updateOnStart: true
+  backupOnStop: true
+  preUpdateBackup: true
+  mods: []
+    #- 1234567
+
+persistence:
+  size: 10Gi
+
+service:
+  enabled: true
+  type: ClusterIP
+  externalTrafficPolicy: ""
+
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+
+network:
+  hostPorts:
+    enabled: false
+    hostIP: ""
+
+ports:
+  rcon: 27020
+  query: 27015
+  game: 7777
+resources:
+  requests:
+    memory: 4Gi
+    cpu: 1
+  limits:
+    memory: 8Gi
+    cpu: 3

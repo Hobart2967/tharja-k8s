@@ -296,6 +296,13 @@ environments:
             fields:
               - admin_password
               - password
+          ark-server-password-sa:
+            item: f7c4njubiyfxdybuv66ywtxedq
+            namespaces:
+              - project-ark-sa
+            fields:
+              - admin_password
+              - password
           home-server-bastion:
             item: syywokky6f4fj7dar74pvfrwlm
             namespaces:

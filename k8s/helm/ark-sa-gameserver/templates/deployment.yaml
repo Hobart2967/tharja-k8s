@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: {{ .Values.deploymentStrategy.type }}
+    {{- if and (eq .Values.deploymentStrategy.type "RollingUpdate") .Values.deploymentStrategy.rollingUpdate }}
+    rollingUpdate:
+{{ toYaml .Values.deploymentStrategy.rollingUpdate | nindent 6 }}
+    {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-status
+      containers:
+        - name: {{ .Release.Name }}
+          image: "johnnyknighten/ark-sa-server:latest"
+          imagePullPolicy: IfNotPresent
+          tty: true       # <-- Crucial line: Allocates a pseudo-TTY
+          stdin: true     # <-- Crucial line: Keeps standard input open
+          ports:
+            - name: game
+              containerPort: {{ .Values.ports.game }}
+              protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.game }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
+            - name: game-ext
+              containerPort: {{ add .Values.ports.game 1 }}
+              protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ add .Values.ports.game 1 }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
+            - name: query
+              containerPort: {{ .Values.ports.query }}
+              protocol: UDP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.query }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
+            - name: rcon
+              containerPort: {{ .Values.ports.rcon }}
+              protocol: TCP
+              {{- if .Values.network.hostPorts.enabled }}
+              hostPort: {{ .Values.ports.rcon }}
+              {{- if .Values.network.hostPorts.hostIP }}
+              hostIP: {{ .Values.network.hostPorts.hostIP | quote }}
+              {{- end }}
+              {{- end }}
+          env:
+            #- name: EXTRA_LAUNCH_OPTIONS
+            #  value: " -servergamelog -log"
+            - name: SERVER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SERVER_NAME
+            - name: SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.arkServerPasswordSecretName }}
+                  key: password
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.arkServerAdminPasswordSecretName }}
+                  key: admin_password
+            - name: MAP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: MAP
+            - name: MAX_PLAYERS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: MAX_PLAYERS
+            - name: UPDATE_ON_BOOT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: UPDATE_ON_BOOT
+            - name: BACKUP_ON_STOP
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: BACKUP_ON_STOP
+            - name: BACKUP_BEFORE_UPDATE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: BACKUP_BEFORE_UPDATE
+            - name: MOD_LIST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: MOD_LIST
+            - name: RCON_PORT
+              value: "{{ .Values.ports.rcon }}"
+            - name: GAME_PORT
+              value: "{{ .Values.ports.game }}"
+            - name: QUERY_PORT
+              value: "{{ .Values.ports.query }}"
+          volumeMounts:
+            - name: ark-app
+              mountPath: /ark-server/server
+            - name: ark-backup
+              mountPath: /ark-server/backups
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
+      volumes:
+        - name: ark-app
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-app
+        - name: ark-backup
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-backup

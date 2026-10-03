@@ -1,0 +1,17 @@
+ingress:
+  name: ark
+ports:
+  rcon: 27025
+  query: 27028
+  game: 7781
+serverConfig:
+  arkServerName: "HarkAscendedI"
+arkServerPasswordSecretName: ark-server-password-sa
+arkServerAdminPasswordSecretName: ark-server-password-sa
+service:
+  enabled: false
+deploymentStrategy:
+  type: Recreate
+network:
+  hostPorts:
+    enabled: true
