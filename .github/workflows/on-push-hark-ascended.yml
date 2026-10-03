@@ -3,8 +3,8 @@ on:
   push:
     paths:
       - '.github/workflows/on-push-hark-ascended.yml'
-      - 'k8s/projects/ark/**'
-      - 'k8s/helm/project/**'
+      - 'k8s/projects/ark-sa/**'
+      - 'k8s/helm/ark-sa-gameserver/**'
       - 'k8s/helm/traefik-endpoint/**'
       - 'k8s/helm/ark-gameserver/**'
   workflow_dispatch:
