@@ -1,9 +1,14 @@
 gameUserSettingsConfig:
   ServerSettings:
-    TamingSpeedMultiplier: 3.000000
+    TamingSpeedMultiplier: 6.000000
     HarvestAmountMultiplier: 2.500000
-    NightTimeSpeedScale: 1.35
-    DayTimeSpeedScale: 0.85
+    NightTimeSpeedScale: 2.0
+    DayTimeSpeedScale: 0.5
+    PlayerCharacterFoodDrainMultiplier: 1
+    PlayerCharacterWaterDrainMultiplier: 0.25
+    PlayerCharacterHealthRecoveryMultiplier: 2.0
+    PlayerResistanceMultiplier: 2.0
+    PlayerCharacterStaminaDrainMultiplier: 0.5
 
     #Primary Settings:
     ItemStackSizeMultiplier: 3.000000
