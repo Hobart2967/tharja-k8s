@@ -21,7 +21,6 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-status
       containers:
         - name: {{ .Release.Name }}
           image: "johnnyknighten/ark-sa-server:latest"
