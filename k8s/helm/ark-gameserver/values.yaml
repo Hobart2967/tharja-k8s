@@ -61,7 +61,7 @@ gameUserSettingsConfig:
     serverForceNoHud: false
     serverHardcore: false
     serverPVE: false
-    ShowMapPlayerLocation: false
+    ShowMapPlayerLocation: true
     StructureDamageMultiplier: 1
     StructureResistanceMultiplier: 1
     TamedDinoDamageMultiplier: 1
