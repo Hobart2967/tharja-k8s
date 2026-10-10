@@ -44,3 +44,4 @@ releases:
       - ./values/ark.yaml
       - ./values/mods.yaml
       - ./values/game-config.yaml
+      - ./values/game-user-settings.yaml
