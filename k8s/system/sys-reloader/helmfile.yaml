@@ -1,0 +1,18 @@
+repositories:
+  - name: stakater
+    url: https://stakater.github.io/stakater-charts
+
+releases:
+  - name: project
+    namespace: sys-reloader
+    createNamespace: true
+    chart: ../../helm/project
+#    values:
+#      - memory:
+#          max: 512Mi
+
+  - name: reloader
+    chart: stakater/reloader
+    namespace: sys-reloader
+    createNamespace: true
+    installed: true

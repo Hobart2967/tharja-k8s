@@ -1,4 +1,4 @@
-name: Hark Evolved I - Restart
+name: Hark Evolved I - Force Restart
 on:
   workflow_dispatch:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction

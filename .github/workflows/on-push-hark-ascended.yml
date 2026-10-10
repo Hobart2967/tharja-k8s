@@ -69,9 +69,3 @@ jobs:
         if: github.ref_name == 'main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Restart Deployments
-        if: github.ref_name == 'main'
-        run: |
-          for deployment in ${{ env.deployments }}; do
-            kubectl rollout restart deployment $deployment -n ${{ env.namespace }}
-          done
