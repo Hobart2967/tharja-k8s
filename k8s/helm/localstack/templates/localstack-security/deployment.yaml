@@ -3,6 +3,8 @@ apiVersion: apps/v1
 metadata:
   name: {{ .Release.Name }}-localstack-security
   namespace: {{ .Release.Namespace }}
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:
