@@ -1,6 +1,13 @@
 gameUserSettingsConfig:
   ServerSettings:
     ActiveMapMod: ""
+    IgnoreLimitMaxStructuresInRangeTypeFlag: true
+    CropGrowthSpeedMultiplier: 5
+    alwaysNotifyPlayerJoined: true
+    alwaysNotifyPlayerLeft: true
+    bAllowFlyerCarryPvE: true
+    bDisableStructureDecayPvE: true
+
   RNStacks:
     GlobalStackSize: 200
     GlobalItemWeightPercent: 0.1
