@@ -6,7 +6,6 @@ on:
       - 'k8s/projects/ark-sa/**'
       - 'k8s/helm/ark-sa-gameserver/**'
       - 'k8s/helm/traefik-endpoint/**'
-      - 'k8s/helm/ark-gameserver/**'
   workflow_dispatch:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
   # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
@@ -71,6 +70,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Restart Deployments
+        if: github.ref_name == 'main'
         run: |
           for deployment in ${{ env.deployments }}; do
             kubectl rollout restart deployment $deployment -n ${{ env.namespace }}
