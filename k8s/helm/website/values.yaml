@@ -26,6 +26,7 @@ crowdsec:
 
 webfacade:
   enabled: true
+  replicaCount: 2
   storageSize: 2Gi
   storage:
     mountPath: /var/www/html
