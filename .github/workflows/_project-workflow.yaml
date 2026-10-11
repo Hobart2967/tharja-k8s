@@ -20,9 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/helmfile/helmfile:v1.1.0
-    permissions:
-      contents: write
-      packages: write
     steps:
       - name: Download and install yq
         run: |
