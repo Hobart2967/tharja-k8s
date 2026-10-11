@@ -2,6 +2,7 @@ name: de.avsn
 on:
   push:
     paths:
+      - '.github/workflows/_project-workflow.yml'
       - '.github/workflows/on-push-de.avsn.yml'
       - 'k8s/projects/de.avsn/**'
       - 'k8s/helm/mariadb-database/**'
