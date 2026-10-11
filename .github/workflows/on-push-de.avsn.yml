@@ -27,3 +27,4 @@ jobs:
       namespace: project-de-avsn
       project_dir: k8s/projects/de.avsn
       helmfile_args: ""
+    secrets: inherit
