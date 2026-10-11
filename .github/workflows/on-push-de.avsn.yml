@@ -22,7 +22,7 @@ permissions:
 jobs:
   on_push:
     name: Release
-    uses: ./.github/workflows/_project-workflow.yaml
+    uses: ./.github/workflows/_project-workflow.yml
     with:
       namespace: project-de-avsn
       project_dir: k8s/projects/de.avsn
