@@ -1,4 +1,4 @@
-name: Planningpoker
+name: CRDs
 on:
   push:
     paths:
@@ -11,9 +11,9 @@ on:
   workflow_call:
 
 env:
-  namespace: project-planningpoker
-  deployments: website
-  project_dir: k8s/projects/planningpoker
+  #namespace: project-planningpoker
+  #deployments: website
+  project_dir: k8s/system
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
