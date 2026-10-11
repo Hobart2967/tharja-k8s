@@ -19,7 +19,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      statuses: write
     container:
       image: ghcr.io/helmfile/helmfile:v1.1.0
     steps:

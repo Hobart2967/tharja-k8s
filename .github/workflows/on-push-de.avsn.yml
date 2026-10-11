@@ -24,7 +24,7 @@ jobs:
     name: Release
     uses: ./.github/workflows/_project-workflow.yml
     permissions:
-      contents: write
+      statuses: write
     with:
       namespace: project-de-avsn
       project_dir: k8s/projects/de.avsn
