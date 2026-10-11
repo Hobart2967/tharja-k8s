@@ -63,7 +63,7 @@ jobs:
           cd ${{ env.project_dir }}
           helmfile template -f helmfile.crds.yaml
       - name: Run the action # You would run your tests before this using the output to set state/desc
-        uses: mapbox/create-status-check@v1
+        uses: mapbox/create-status-check@v2
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'HelmfileRender'
