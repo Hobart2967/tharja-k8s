@@ -53,6 +53,8 @@ jobs:
       - name: Template Helmfile
         run: |
           cd ${{ inputs.project_dir }}
+          kubectl get secret admin-user -n sys-docker-registry -o yaml
+          kubectl auth can-i get secret -n sys-docker-registry
           helmfile template ${{ inputs.helmfile_args }}
       - name: Run the action # You would run your tests before this using the output to set state/desc
         uses: guibranco/github-status-action-v2@v1
