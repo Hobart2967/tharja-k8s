@@ -22,7 +22,7 @@ data:
           {{- if not $accessKeyMap }}
             {{- $mode := default "sync" (get $values "mode") -}}
             {{- if eq $mode "template" }}
-              {{- $accessKeyMap := dict "data" (dict "username" (printf "templateuser%d" $index) "password" (printf "templatepassword%d" $index)) }}
+              {{- $accessKeyMap = dict "data" (dict "username" (printf "templateuser%d" $index) "password" (printf "templatepassword%d" $index)) }}
             {{- else }}
               {{- fail (printf "Secret %s not found for %s in namespace %s" $secretRef.name $release.Name $release.Namespace) }}
             {{- end }}

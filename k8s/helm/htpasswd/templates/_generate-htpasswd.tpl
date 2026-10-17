@@ -6,7 +6,7 @@
 {{- if not $secret }}
 {{- $mode := default "sync" (get $values "mode") -}}
 {{- if eq $mode "template" }}
-{{- $secret := dict "data" (dict "username" "templateuser" "password" "templatepassword") }}
+{{- $secret = dict "data" (dict "username" "templateuser" "password" "templatepassword") }}
 {{- else }}
 {{- fail (printf "Secret '%s' not found in namespace '%s'" $secretRef.name (default $release.Namespace $secretRef.namespace)) }}
 {{- end }}
