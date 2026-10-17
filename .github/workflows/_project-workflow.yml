@@ -2,9 +2,6 @@ name: Update via helmfile
 on:
   workflow_call:
     inputs:
-      namespace:
-        required: true
-        type: string
       project_dir:
         required: true
         type: string
@@ -16,7 +13,7 @@ on:
 
 jobs:
   on_push:
-    name: Release
+    name: Render and Sync (if main)
     runs-on: ubuntu-latest
     permissions:
       statuses: write
