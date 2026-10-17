@@ -23,7 +23,7 @@ releases:
       - name: custom-zot-secret
         secrets:
           - name: admin-user
-        mode: {{ .Values.mode }}
+        mode: {{ index .Values "mode" }}
 
   - name: zot
     namespace: sys-docker-registry

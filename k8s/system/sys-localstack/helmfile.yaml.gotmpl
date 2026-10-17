@@ -14,7 +14,7 @@ releases:
     chart: ../../helm/localstack
     values:
       - ./values/values.yaml
-      - mode: {{ .Values.mode }}
+      - mode: {{ index .Values "mode" }}
 
   - name: webfacade
     chart: ../../helm/website
