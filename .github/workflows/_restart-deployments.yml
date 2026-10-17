@@ -1,0 +1,31 @@
+name: Restart Deployments
+on:
+  workflow_call:
+    inputs:
+      deployments:
+        required: true
+        type: string
+      namespace:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  on_push:
+    name: Restart Deployments
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    container:
+      image: ghcr.io/helmfile/helmfile:v1.1.0
+    steps:
+      - name: Add k8s Auth
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+      - name: Restart Deployments
+        run: |
+          for deployment in ${{ inputs.deployments }}; do
+            kubectl rollout restart deployment $deployment -n ${{ inputs.namespace }}
+          done
+

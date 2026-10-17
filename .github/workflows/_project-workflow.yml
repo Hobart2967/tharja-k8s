@@ -1,0 +1,68 @@
+name: Update via helmfile
+on:
+  workflow_call:
+    inputs:
+      project_dir:
+        required: true
+        type: string
+        default: ""
+      helmfile_args:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  on_push:
+    name: Render and Sync (if main)
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    container:
+      image: ghcr.io/helmfile/helmfile:v1.1.0
+    steps:
+      - name: Download and install yq
+        run: |
+          mkdir ~/.yqtmp
+          cd ~/.yqtmp
+          export ARCH=$(uname -m)
+          echo "Detected architecture: ${ARCH}"
+          if [[ "${ARCH}" == "x86_64" ]]; then
+            ARCH="amd64"
+          elif [[ "${ARCH}" == "aarch64" ]]; then
+            ARCH="arm64"
+          else
+            echo "Unsupported architecture: ${ARCH}"
+            exit 1
+          fi
+          echo "Downloading yq for architecture: https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz"
+          wget https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_${ARCH}.tar.gz -O yq.tar.gz
+          tar -xzf yq.tar.gz
+          ls -l
+          rm yq.tar.gz
+          mv yq_linux_${ARCH} /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+      - uses: actions/checkout@v3
+      - name: Add k8s Auth
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+      - name: Template Helmfile
+        run: |
+          cd ${{ inputs.project_dir }}
+          helmfile template ${{ inputs.helmfile_args }}
+      - name: Run the action # You would run your tests before this using the output to set state/desc
+        uses: guibranco/github-status-action-v2@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'HelmfileRender'
+          description: 'Passed'
+          state: 'success'
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
+      - name: Sync Helmfile
+        run: |
+          cd ${{ inputs.project_dir }}
+          helmfile sync ${{ inputs.helmfile_args }}
+        if: github.ref_name == 'main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
