@@ -1,4 +1,4 @@
-name: CRDs
+name: System - CRDs
 on:
   push:
     paths:
