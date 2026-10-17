@@ -1,0 +1,78 @@
+name: System - Common
+on:
+  push:
+    paths:
+      - '.github/workflows/on-push-system-common.yml'
+      - 'k8s/helm/project/**'
+      - 'k8s/system/host-common/**'
+      - 'k8s/system/sys-default/**'
+      - 'k8s/system/sys-kube/**'
+      - 'k8s/system/sys-storage/**'
+  workflow_dispatch:
+  # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
+  # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
+  workflow_call:
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  queue: single
+permissions:
+  contents: read
+  packages: read
+
+
+jobs:
+  host-common:
+    name: Sync System - Host Common
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/host-common
+    secrets: inherit
+
+  default:
+    name: Sync System - Default
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-default
+    secrets: inherit
+
+  kube-system:
+    name: Sync System - Kube System
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-kube
+    secrets: inherit
+
+  storage:
+    name: Sync System - Storage
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-storage
+    secrets: inherit
+
+  reflector:
+    name: Sync System - Reflector
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-reflector
+    secrets: inherit
+
+  reloader:
+    name: Sync System - Reloader
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-reloader
+    secrets: inherit

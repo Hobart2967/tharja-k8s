@@ -8,9 +8,7 @@ releases:
     namespace: sys-postgres
     createNamespace: true
     chart: ../../helm/project
-#    values:
-#      - memory:
-#          max: 512Mi
+
 
   - name: cloudnative-pg
     chart: cnpg/cloudnative-pg

@@ -18,7 +18,7 @@ jobs:
     permissions:
       statuses: write
     container:
-      image: ghcr.io/helmfile/helmfile:v1.1.0
+      image: ghcr.io/helmfile/helmfile:v1.8.2
     steps:
       - name: Download and install yq
         run: |
@@ -46,10 +46,12 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+          helm version
+          helmfile --version
       - name: Template Helmfile
         run: |
           cd ${{ inputs.project_dir }}
-          helmfile template ${{ inputs.helmfile_args }}
+          helmfile template --state-values-set mode=template ${{ inputs.helmfile_args }}
       - name: Run the action # You would run your tests before this using the output to set state/desc
         uses: guibranco/github-status-action-v2@v1
         with:

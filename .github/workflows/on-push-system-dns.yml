@@ -1,0 +1,44 @@
+name: System - DNS Zones
+on:
+  push:
+    paths:
+      - '.github/workflows/on-push-system-dns.yml'
+      - 'k8s/helm/project/**'
+      - 'k8s/helm/coredns-customization/**'
+      - 'k8s/helm/dns-zone/**'
+      - 'k8s/system/dns-zones/**'
+      - 'k8s/system/sys-dns/**'
+  workflow_dispatch:
+  # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction
+  # (pushes made by GITHUB_TOKEN do not trigger on:push in other workflows).
+  workflow_call:
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  queue: single
+permissions:
+  contents: read
+  packages: read
+
+
+jobs:
+  zones:
+    name: Sync System - DNS Zones
+    uses: ./.github/workflows/_project-workflow.yml
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/dns-zones
+    secrets: inherit
+
+  dns:
+    name: Sync System - DNS System
+    uses: ./.github/workflows/_project-workflow.yml
+    needs:
+      - zones
+    permissions:
+      statuses: write
+    with:
+      project_dir: k8s/system/sys-dns
+    secrets: inherit
