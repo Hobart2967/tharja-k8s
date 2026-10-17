@@ -17,7 +17,7 @@ jobs:
     permissions:
       statuses: write
     container:
-      image: ghcr.io/helmfile/helmfile:v1.1.0
+      image: ghcr.io/helmfile/helmfile:v1.8.2
     steps:
       - name: Add k8s Auth
         run: |
