@@ -6,6 +6,13 @@
 {{ fail "Grafana admin password secret 'grafana-admin' not found or missing 'password' key" -}}
 {{- end -}}
 
+{{- $ntfySecretJson := (exec "sh" (list "-c" "kubectl -n sys-ntfy get secret ntfy-grafana -o json")) -}}
+{{- $ntfySecret := $ntfySecretJson | fromJson -}}
+{{- $ntfyToken := "" -}}
+{{- if and $ntfySecret $ntfySecret.data (hasKey $ntfySecret.data "access_token") -}}
+{{- $ntfyToken = (index $ntfySecret.data "access_token" | b64dec) -}}
+{{- end -}}
+
 kubeEtcd:
   enabled: false
 
@@ -385,7 +392,7 @@ grafana:
                 url: http://ntfy-ntfy.sys-ntfy.svc.cluster.local:80/server_alerts
                 httpMethod: POST
                 authorization_scheme: Bearer
-                authorization_credentials: $NTFY_GRAFANA_TOKEN
+                authorization_credentials: {{ $ntfyToken | quote }}
 
 prometheus-node-exporter:
   resources:
