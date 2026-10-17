@@ -46,6 +46,10 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.K8S_AUTH }}" > ~/.kube/config
+          kubectl config current-context
+          kubectl config view --minify -o jsonpath='{.contexts[0].context.cluster}{"\n"}{.contexts[0].context.user}{"\n"}{.contexts[0].context.namespace}{"\n"}'
+          helm version
+          helmfile --version
       - name: Template Helmfile
         run: |
           cd ${{ inputs.project_dir }}
