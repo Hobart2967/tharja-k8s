@@ -11,9 +11,7 @@ mkdir -p .tmp
 
 YQ_VERSION=$(yq --version 2>/dev/null || true)
 if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
-  DOMAIN=$(kubectl -n "$1" get secret $2 -o yaml  | yq eval '.data.domain | from_yaml' -)
-  echo "Domain encoded: " $DOMAIN
-  DOMAIN=$(echo "$DOMAIN" | base64 --decode)
+  DOMAIN=$(kubectl -n "$1" get secret $2 -o yaml  | yq eval '.data.domain | from_yaml | @base64d' -)
   echo "Domain decoded: " $DOMAIN
 
   HOST_NICKNAME=$(kubectl -n default get configmap host-metadata -o yaml | yq eval '.data.hostNickname' -)
