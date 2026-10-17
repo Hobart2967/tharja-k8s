@@ -20,7 +20,9 @@ data:
         {{- range $index, $secretRef := $values.security.accessKeysSecretRefs }}
           {{- $accessKeyMap := lookup "v1" "Secret" $release.Namespace $secretRef.name }}
           {{- if not $accessKeyMap }}
-            {{- fail (printf "Secret %s not found for %s in namespace %s" $secretRef.name $release.Name $release.Namespace) }}
+            {{- if not (eq .Values.mode "template") }}
+              {{- fail (printf "Secret %s not found for %s in namespace %s" $secretRef.name $release.Name $release.Namespace) }}
+            {{- end }}
           {{- end }}
           {{ $accessKeyMap.data.username | b64dec | toJson }}: {{ $accessKeyMap.data.password | b64dec | toJson }}{{ if not (eq (add $index 1) (len $values.security.accessKeysSecretRefs)) }},{{ end }}
         {{- end }}
