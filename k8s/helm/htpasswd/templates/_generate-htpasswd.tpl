@@ -1,9 +1,10 @@
 {{ define "htpasswd.generateHtpasswd" }}
+{{- $values := .Values }}
 {{- $release := .Release }}
 {{- range $secretRef := .Values.secrets }}
 {{- $secret := lookup "v1" "Secret" (default $release.Namespace $secretRef.namespace) $secretRef.name }}
 {{- if not $secret }}
-{{- $mode := default "sync" (get .Values "mode") -}}
+{{- $mode := default "sync" (get $values "mode") -}}
 {{- if eq $mode "template" }}
 {{- $secret := dict "data" (dict "username" "templateuser" "password" "templatepassword") }}
 {{- else }}
