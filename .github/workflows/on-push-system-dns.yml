@@ -33,9 +33,9 @@ jobs:
     secrets: inherit
 
   dns:
-    name: Sync System - DNS Zones
+    name: Sync System - DNS System
     uses: ./.github/workflows/_project-workflow.yml
-    dependencies:
+    needs:
       - zones
     permissions:
       statuses: write
