@@ -20,7 +20,10 @@ data:
         {{- range $index, $secretRef := $values.security.accessKeysSecretRefs }}
           {{- $accessKeyMap := lookup "v1" "Secret" $release.Namespace $secretRef.name }}
           {{- if not $accessKeyMap }}
-            {{- if not (eq .Values.mode "template") }}
+            {{- $mode := default "sync" (get .Values "mode") -}}
+            {{- if eq $mode "template" }}
+              {{- $accessKeyMap := dict "data" (dict "username" (printf "templateuser%d" $index) "password" (printf "templatepassword%d" $index)) }}
+            {{- else }}
               {{- fail (printf "Secret %s not found for %s in namespace %s" $secretRef.name $release.Name $release.Namespace) }}
             {{- end }}
           {{- end }}
