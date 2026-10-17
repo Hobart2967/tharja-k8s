@@ -12,8 +12,9 @@ mkdir -p .tmp
 YQ_VERSION=$(yq --version 2>/dev/null || true)
 if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
   DOMAIN=$(kubectl -n "$1" get secret $2 -o yaml  | yq eval '.data.domain | from_yaml' -)
-  echo $DOMAIN
+  echo "Domain encoded: " $DOMAIN
   DOMAIN=$(echo "$DOMAIN" | base64 --decode)
+  echo "Domain decoded: " $DOMAIN
 
   HOST_NICKNAME=$(kubectl -n default get configmap host-metadata -o yaml | yq eval '.data.hostNickname' -)
 
@@ -80,6 +81,7 @@ if echo "$YQ_VERSION" | grep -qi "mikefarah"; then
       - actimeo=30
       - noserverino  # keep inode behavior consistent with the strict classes
 EOF
+  cat .tmp/values.yaml
 else
   echo "This script requires mikefarah yq for parsing config YAML strings"
   exit 1
