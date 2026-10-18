@@ -1,0 +1,98 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "${Loki_Source}" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending" },
+      "targets": [
+        { "datasource": { "type": "loki", "uid": "${Loki_Source}" }, "editorMode": "code", "expr": "{container=\"crowdsec-lapi\"} |= \"decision\" |~ \"ban|captcha|reject\"", "queryType": "range", "refId": "A" }
+      ],
+      "title": "Decision log stream",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${Loki_Source}" },
+      "fieldConfig": { "defaults": { "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] } }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+      "id": 2,
+      "options": { "cellHeight": "sm", "showHeader": true },
+      "targets": [
+        { "datasource": { "type": "loki", "uid": "${Loki_Source}" }, "expr": "{container=\"crowdsec-lapi\"} |~ \"decision\" | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)` | regexp `(?P<action>ban|captcha|reject)` | line_format `ip={{.ip}} action={{.action}}`", "legendFormat": "{{ip}}", "refId": "A" }
+      ],
+      "title": "Active block candidates by IP + action",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }, "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+      "id": 3,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (route) (rate(cs_lapi_route_requests_total[5m]))", "legendFormat": "{{route}}", "refId": "A" }
+      ],
+      "title": "LAPI route request rate",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [ "crowdsec" ],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "prometheus", "value": "prometheus" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Prometheus source",
+        "multi": false,
+        "name": "Prometheus_Source",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "current": { "selected": true, "text": "loki", "value": "loki" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Loki source",
+        "multi": false,
+        "name": "Loki_Source",
+        "options": [],
+        "query": "loki",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "CrowdSec active blocks",
+  "uid": "crowdsec-active-blocks",
+  "version": 1,
+  "weekStart": ""
+}

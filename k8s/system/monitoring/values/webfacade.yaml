@@ -6,7 +6,7 @@ rules:
       name: monitoring
       zone: net-codewyre
     services:
-      - name: prometheus-grafana
+      - name: grafana
         port: http-web
 
 dnsRecords:

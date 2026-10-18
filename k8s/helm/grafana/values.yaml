@@ -1,0 +1,17 @@
+instance:
+  name: grafana
+  labels:
+    dashboards: grafana
+
+service:
+  create: true
+  name: grafana
+  type: ClusterIP
+  port: 3000
+
+persistence:
+  createPvc: true
+  existingClaim: ""
+
+dataSources: []
+contactPoints: []

@@ -1,0 +1,55 @@
+uid: fs-close-to-max
+title: "FileSystem Fill Close to Maximum"
+condition: ThresholdHit
+data:
+  - refId: FsFill
+    relativeTimeRange:
+      from: 3600
+      to: 0
+    datasourceUid: prometheus
+    model:
+      adhocFilters: []
+      datasource:
+        type: prometheus
+        uid: prometheus
+      expr: |
+        (
+          (node_filesystem_size_bytes{instance="78.46.47.87:9100", job="node-exporter", mountpoint="/", fstype!="rootfs"}
+          - node_filesystem_avail_bytes{instance="78.46.47.87:9100", job="node-exporter", mountpoint="/", fstype!="rootfs"})
+          / node_filesystem_size_bytes{instance="78.46.47.87:9100", job="node-exporter", mountpoint="/", fstype!="rootfs"}
+        ) * 100
+      editorMode: code
+      instant: true
+      interval: ""
+      intervalMs: 30000
+      maxDataPoints: 43200
+      range: false
+      refId: FsFill
+  - refId: ThresholdHit
+    datasourceUid: __expr__
+    model:
+      conditions:
+        - evaluator:
+            params:
+              - 90
+            type: gt
+          operator:
+            type: and
+          reducer:
+            params: []
+            type: last
+          type: query
+      datasource:
+        type: __expr__
+        uid: __expr__
+      expression: FsFill
+      intervalMs: 1000
+      maxDataPoints: 43200
+      refId: ThresholdHit
+      type: threshold
+noDataState: NoData
+execErrorState: Error
+for: 5m
+isPaused: false
+notificationSettings:
+  receiver: "Ntfy - Server Alerts"

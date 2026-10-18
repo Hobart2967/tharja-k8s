@@ -1,0 +1,15 @@
+{{- $instanceLabels := .Values.instance.labels | default (dict "dashboards" "grafana") -}}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Release.Name }}-crowdsec-overview
+  namespace: {{ .Release.Namespace }}
+spec:
+  allowCrossNamespaceImport: true
+  folderUID: {{ .Release.Name }}
+  instanceSelector:
+    matchLabels:
+{{ toYaml $instanceLabels | nindent 6 }}
+  json: |-
+    {{ .Files.Get "dashboards/crowdsec-overview.json" | nindent 4 }}

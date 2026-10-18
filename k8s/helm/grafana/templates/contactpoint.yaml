@@ -1,0 +1,16 @@
+{{- $instanceLabels := .Values.instance.labels | default (dict "dashboards" "grafana") -}}
+{{- $release := .Release -}}
+{{- range $contactPoint := .Values.contactPoints }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaContactPoint
+metadata:
+  name: {{ $contactPoint.name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  name: {{ $contactPoint.title }}
+  instanceSelector:
+    matchLabels:
+{{ toYaml $instanceLabels | nindent 6 }}
+  receivers:
+    - {{ $contactPoint.receiver | toYaml | nindent 6 }}
+{{- end }}

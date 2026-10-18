@@ -1,0 +1,14 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  title: {{ .Values.folderTitle }}
+  uid: {{ .Release.Name }}
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+{{- toYaml .Values.instance.labels | nindent 6 }}
+  resyncPeriod: 5m

@@ -1,0 +1,34 @@
+instance:
+  name: grafana
+  labels:
+    dashboards: grafana
+
+folderTitle: Host Monitoring
+
+gnetDashboards:
+  system:
+    gnetId: 1860
+    revision: 40
+    datasource:
+      - name: DS_PROMETHEUS
+        value: prometheus
+  ssh:
+    gnetId: 17514
+    revision: 3
+    datasource:
+      - name: DS_LOKI
+        value: loki
+  certificates:
+    gnetId: 13230
+    revision: 2
+    datasource:
+      - name: DS_PROMETHEUS
+        value: prometheus
+  crowdsec:
+    gnetId: 24049
+    revision: 1
+    datasource:
+      - name: Prometheus_Source
+        value: prometheus
+      - name: query0
+        value: loki

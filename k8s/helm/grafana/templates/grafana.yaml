@@ -1,0 +1,39 @@
+{{- $instanceName := .Values.instance.name | default .Release.Name -}}
+{{- $instanceLabels := .Values.instance.labels | default (dict "dashboards" "grafana") -}}
+{{- $existingClaim := .Values.persistence.existingClaim | default "" -}}
+{{- $pvcName := printf "%s-data" $instanceName -}}
+{{- $claimName := ternary $existingClaim $pvcName (ne $existingClaim "") -}}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: {{ $instanceName }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ toYaml $instanceLabels | nindent 4 }}
+spec:
+  disableDefaultAdminSecret: true
+  deployment:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ $instanceName | quote }}
+            {{- toYaml $instanceLabels | nindent 12 }}
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_SECURITY_ADMIN_USER
+                  valueFrom:
+                    secretKeyRef: {{ .Values.grafana.adminSecretRef.username | toYaml | nindent 22 }}
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef: {{ .Values.grafana.adminSecretRef.password | toYaml | nindent 22 }}
+              resources: {{ .Values.grafana.resources | toYaml | nindent 16 }}
+              volumeMounts:
+                - name: grafana-data
+                  mountPath: /var/lib/grafana
+          volumes:
+            - name: grafana-data
+              persistentVolumeClaim:
+                claimName: {{ $claimName | quote }}
