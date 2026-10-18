@@ -27,6 +27,18 @@ releases:
     values:
       - ./values/kube-prometheus-stack.yaml.gotmpl
 
+  - name: grafana-operator
+    namespace: monitoring
+    chart: grafana/grafana-operator
+    values:
+      - resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
   - name: loki
     namespace: monitoring
     chart: grafana/loki
