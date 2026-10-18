@@ -48,7 +48,7 @@ data:
       refId: ThresholdHit
       type: threshold
 noDataState: NoData
-execErrorState: Error
+execErrState: Error
 for: 5m
 isPaused: false
 notificationSettings:
