@@ -224,6 +224,9 @@ environments:
             extras:
               topics:
                 - server_alerts:rw
+            annotations:
+              hobart2967.github.io/ntfy-token: "true"
+              hobart2967.github.io/ntfy-user: "true"
           ntfy-homeserver:
             item: 25he6rmdshpzetnkiggdqon6b4
             namespaces:
