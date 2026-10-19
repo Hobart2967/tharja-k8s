@@ -1,6 +1,7 @@
 helmfiles:
   - path: ./crds-bindy/helmfile.yaml.gotmpl
   - path: ./crds-monitoring/helmfile.yaml
+  - path: ./crds-grafana-operator/helmfile.yaml
   - path: ./crds-mariadb/helmfile.yaml
   - path: ./crds-cert-manager/helmfile.yaml
   - path: ./crds-traefik/helmfile.yaml

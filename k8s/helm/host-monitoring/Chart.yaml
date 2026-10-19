@@ -1,0 +1,6 @@
+apiVersion: v2
+name: host-monitoring
+description: Basic dashboards and alerts for the host.
+type: application
+version: 0.1.0
+appVersion: "1.0"

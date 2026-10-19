@@ -1,0 +1,16 @@
+{{- $instanceLabels := .Values.instance.labels | default (dict "dashboards" "grafana") -}}
+{{- range $ds := .Values.dataSources }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ $.Values.instance.name | lower | replace "." "-" | replace "_" "-" }}-{{ $ds.name | lower | replace "." "-" | replace "_" "-" }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+{{ toYaml $instanceLabels | nindent 6 }}
+  datasource:
+{{ toYaml $ds | nindent 4 }}
+{{- end }}

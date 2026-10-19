@@ -5,6 +5,8 @@ on:
       - '.github/workflows/on-push-system-monitoring.yml'
       - 'k8s/helm/project/**'
       - 'k8s/helm/website/**'
+      - 'k8s/helm/grafana/**'
+      - 'k8s/helm/host-monitoring/**'
       - 'k8s/system/monitoring/**'
   workflow_dispatch:
   # Called directly by sync.yml to bypass the GITHUB_TOKEN push restriction

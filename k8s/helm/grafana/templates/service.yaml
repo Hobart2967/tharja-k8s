@@ -1,0 +1,16 @@
+{{- $instanceName := .Values.instance.name | default .Release.Name -}}
+{{- if .Values.service.create }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name | default $instanceName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ $instanceName | quote }}
+  ports:
+    - name: http-web
+      port: {{ .Values.service.port | default 3000 }}
+      targetPort: 3000
+{{- end }}

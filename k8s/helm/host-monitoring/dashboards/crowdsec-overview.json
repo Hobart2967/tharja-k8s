@@ -1,0 +1,99 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (bouncer, route) (rate(cs_lapi_bouncer_requests_total[5m]))", "legendFormat": "{{bouncer}} / {{route}}", "refId": "A" }
+      ],
+      "title": "Bouncer requests by bouncer / route",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum by (route, method) (rate(cs_lapi_route_requests_total[5m]))", "legendFormat": "{{method}} {{route}}", "refId": "A" }
+      ],
+      "title": "LAPI route traffic",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 80 } ] }, "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "histogram_quantile(0.95, sum by (le, endpoint) (rate(cs_lapi_request_duration_seconds_bucket[5m])))", "legendFormat": "{{endpoint}}", "refId": "A" }
+      ],
+      "title": "LAPI p95 latency by endpoint",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }, "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "reduceOptions": { "calcs": [ "lastNotNull" ], "fields": "", "values": false }, "textMode": "value_and_name" },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${Prometheus_Source}" }, "expr": "sum(rate(cs_lapi_bouncer_requests_total[5m]))", "legendFormat": "bouncer requests", "refId": "A" }
+      ],
+      "title": "Total bouncer requests / 5m",
+      "type": "stat"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [ "crowdsec" ],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "prometheus", "value": "prometheus" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Prometheus source",
+        "multi": false,
+        "name": "Prometheus_Source",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "CrowdSec overview",
+  "uid": "crowdsec-overview",
+  "version": 1,
+  "weekStart": ""
+}
+

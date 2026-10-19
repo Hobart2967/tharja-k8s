@@ -1,0 +1,19 @@
+{{- $instanceName := .Values.instance.name | default .Release.Name -}}
+{{- $createPvc := .Values.persistence.createPvc | default true -}}
+{{- $existingClaim := .Values.persistence.existingClaim | default "" -}}
+{{- if and $createPvc (eq $existingClaim "") (and .Values.grafana.persistence .Values.grafana.persistence.enabled) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-data" $instanceName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.grafana.persistence.size | default "2Gi" | quote }}
+{{- if .Values.grafana.persistence.storageClassName }}
+  storageClassName: {{ .Values.grafana.persistence.storageClassName | quote }}
+{{- end }}
+{{- end }}
