@@ -39,3 +39,7 @@ releases:
     version: 11.13.0
     values:
       - ./values/blackbox-exporter.yaml
+
+  - name: cadvisor-datasource
+    namespace: monitoring
+    chart: ../../helm/cadvisor-datasource

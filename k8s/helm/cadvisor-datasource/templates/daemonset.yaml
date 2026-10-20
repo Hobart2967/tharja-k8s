@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cadvisor-datasource
+  labels:
+    app.kubernetes.io/name: cadvisor-datasource
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cadvisor-datasource
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cadvisor-datasource
+    spec:
+      automountServiceAccountToken: false
+      hostNetwork: false
+      hostPID: true
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: cadvisor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --housekeeping_interval=10s
+            - --max_housekeeping_interval=15s
+            - --store_container_labels=true
+            - --docker_only=false
+            - --enable_metrics=network
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            privileged: true
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+              readOnly: true
+            - name: var-run
+              mountPath: /var/run
+              readOnly: true
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+            - name: docker
+              mountPath: /var/lib/docker
+              readOnly: true
+            - name: containerd
+              mountPath: /var/lib/containerd
+              readOnly: true
+            - name: disk
+              mountPath: /dev/disk
+              readOnly: true
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      volumes:
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: var-run
+          hostPath:
+            path: /var/run
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: docker
+          hostPath:
+            path: /var/lib/docker
+        - name: containerd
+          hostPath:
+            path: /var/lib/containerd
+        - name: disk
+          hostPath:
+            path: /dev/disk

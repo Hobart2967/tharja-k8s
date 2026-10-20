@@ -1,0 +1,20 @@
+image:
+  repository: gcr.io/cadvisor/cadvisor
+  tag: v0.49.1
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+serviceMonitor:
+  interval: 15s
+  scrapeTimeout: 10s
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

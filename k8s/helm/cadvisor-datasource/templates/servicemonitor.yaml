@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cadvisor-datasource
+  labels:
+    release: prometheus-grafana
+    app.kubernetes.io/name: cadvisor-datasource
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cadvisor-datasource
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ .Values.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          action: keep
+          regex: container_network_(receive|transmit)_bytes_total
+        - sourceLabels: [container_label_io_kubernetes_pod_name]
+          targetLabel: pod
+          action: replace
+          regex: (.+)
+        - sourceLabels: [container_label_io_kubernetes_pod_namespace]
+          targetLabel: namespace
+          action: replace
+          regex: (.+)
+        - sourceLabels: [container_label_io_kubernetes_container_name]
+          targetLabel: container
+          action: replace
+          regex: (.+)
+        - sourceLabels: [pod, namespace]
+          action: keep
+          regex: .+;.+
