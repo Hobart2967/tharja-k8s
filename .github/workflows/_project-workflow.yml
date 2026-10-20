@@ -20,6 +20,16 @@ jobs:
     container:
       image: ghcr.io/helmfile/helmfile:v1.8.2
     steps:
+      - name: Add docker auth
+        run: |
+          mkdir -p ~/.docker
+          # Merge registry auth into existing Docker config.
+          if [ ! -f ~/.docker/config.json ]; then
+            echo '{}' > ~/.docker/config.json
+          fi
+          tmpfile=$(mktemp)
+          jq '.auths["docker.codewyre.net"].auth = "${{ secrets.DOCKER_AUTH }}"' ~/.docker/config.json > "$tmpfile"
+          mv "$tmpfile" ~/.docker/config.json
       - name: Download and install yq
         run: |
           mkdir ~/.yqtmp
