@@ -285,6 +285,30 @@ environments:
               - project-de-avsn
             fields:
               - password
+          gwen-loginserver-user-password:
+            item: ees3koyfvc2iwzdb2lv36hc2ru
+            namespaces:
+              - project-gwen-test
+            fields:
+              - password
+          gwen-loginserver-root-password:
+            item: un4nulj4zq7cxjjlg64z4hal5y
+            namespaces:
+              - project-gwen-test
+            fields:
+              - password
+          gwen-worldserver-user-password:
+            item: y2yfpai3j73heps5dx4eauboju
+            namespaces:
+              - project-gwen-test
+            fields:
+              - password
+          gwen-worldserver-root-password:
+            item: 7ugzpjod7bz23felcafg6lqif4
+            namespaces:
+              - project-gwen-test
+            fields:
+              - password
           ark-server-password:
             item: mgqe2zbksqx7trviusnl4aggty
             namespaces:

@@ -6,4 +6,3 @@ helmDefaults:
 
 helmfiles:
   - path: ./system/helmfile.yaml
-  - path: ./projects/helmfile.yaml
