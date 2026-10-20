@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cadvisor-datasource
+description: cAdvisor datasource for pod/namespace network metrics
+version: 0.1.0
+appVersion: "0.49.1"
+type: application
