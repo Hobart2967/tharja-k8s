@@ -1,0 +1,51 @@
+repositories:
+  - name: gwen
+    oci: true
+    url: docker.codewyre.net/helm/gwen
+
+releases:
+  - name: project
+    namespace: project-gwen-test
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - cpu:
+          max: 2
+        memory:
+          max: 1Gi
+
+  - name: gwen
+    chart: gwen/gwen
+    version: 1.4.0-dev
+    namespace: project-gwen-test
+    createNamespace: true
+    values:
+      - login:
+          database:
+            storage:
+              className: local-path-projects-retained
+          image:
+            tag: dev
+            pullPolicy: Always
+          flyway:
+            image:
+              tag: dev
+              pullPolicy: Always
+        world:
+          image:
+            tag: dev
+            pullPolicy: Always
+          resources:
+            limits:
+              cpu: 2
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          database:
+            storage:
+              className: local-path-projects-retained
+          flyway:
+            image:
+              tag:  dev
+              pullPolicy: Always
