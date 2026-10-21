@@ -2,7 +2,10 @@
 repositories:
   - name: csi-driver-smb
     url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
-
+  - name: longhorn
+    url: https://charts.longhorn.io
+  - name: bedag
+    url:  https://bedag.github.io/helm-charts
 releases:
   - name: csi-driver-smb
     namespace: kube-system
@@ -17,3 +20,74 @@ releases:
             ./read-storage-box-link.sh "{{`{{.Release.Namespace}}`}}" "storage-box-1"
     values:
       - ./.tmp/values.yaml
+
+  - name: longhorn
+    namespace: longhorn-system
+    chart: longhorn/longhorn
+    createNamespace: true
+    values:
+      - persistence:
+          reclaimPolicy: Retain
+          defaultClass: false
+          defaultClassReplicaCount: 1
+        metrics:
+          serviceMonitor:
+            enabled: true
+
+  - name: longhorn-rws
+    namespace: longhorn-system
+    chart: bedag/raw
+    createNamespace: true
+    needs:
+      - longhorn
+    values:
+      - templates:
+          - |
+              apiVersion: storage.k8s.io/v1
+              kind: StorageClass
+              metadata:
+                name: longhorn-rwx
+              provisioner: driver.longhorn.io
+              allowVolumeExpansion: true
+              reclaimPolicy: Retain
+              volumeBindingMode: Immediate
+              parameters:
+                numberOfReplicas: "3"
+                staleReplicaTimeout: "30"
+                migratable: "false"
+                nfsOptions: "vers=4.1,noresvport"
+
+  - name: longhorn-ui-htpasswd
+    chart: ../../helm/htpasswd
+    namespace: longhorn-system
+    createNamespace: true
+    values:
+      - name: longhorn-ui-auth-htpasswd
+        secrets:
+          - name: longhorn-ui-auth
+
+  - name: longhorn-ui-auth
+    chart: bedag/raw
+    namespace: longhorn-system
+    createNamespace: true
+    values:
+      - templates:
+          - |
+              ---
+              apiVersion: traefik.io/v1alpha1
+              kind: Middleware
+              metadata:
+                name: longhorn-ui-auth
+                namespace: longhorn-system
+              spec:
+                basicAuth:
+                  secret: longhorn-ui-auth-htpasswd
+                  realm: Protected
+                  removeHeader: true
+
+  - name: longhorn-website
+    chart: ../../helm/website
+    namespace: longhorn-system
+    createNamespace: true
+    values:
+      - ./values/website.yaml

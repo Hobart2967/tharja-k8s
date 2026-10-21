@@ -1,0 +1,18 @@
+webfacade:
+  enabled: false
+
+rules:
+  - hostname:
+      name: longhorn
+      zone: net-codewyre
+    services:
+      - name: longhorn-frontend
+        port: http
+    middlewares:
+      - name: longhorn-ui-auth
+dnsRecords:
+- zone: net-codewyre
+  records:
+
+  - name: "longhorn"
+    type: A

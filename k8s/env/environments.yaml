@@ -273,6 +273,13 @@ environments:
             fields:
               - username
               - password
+          longhorn-ui-auth:
+            item: pf4jeza4hyxowfjuhg3rjsdaje
+            namespaces:
+              - longhorn-system
+            fields:
+              - username
+              - password
           de-avsn-mariadb-root:
             item: p5ppm7v5d37qw3hsd27wwol4ee
             namespaces:
