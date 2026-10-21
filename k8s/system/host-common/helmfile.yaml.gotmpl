@@ -30,6 +30,8 @@ releases:
           reclaimPolicy: Retain
           defaultClass: false
           defaultClassReplicaCount: 1
+        defaultSettings:
+          storageMinimalAvailablePercentage: 5
         metrics:
           serviceMonitor:
             enabled: true
