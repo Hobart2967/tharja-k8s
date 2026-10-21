@@ -6,8 +6,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
-    - ReadWriteOnce
-  storageClassName: local-path-projects-retained
+    - ReadWriteMany
+  storageClassName: {{ .Values.localstack.persistence.storageClassName }}
   resources:
     requests:
       storage: {{ .Values.localstack.persistence.size }}

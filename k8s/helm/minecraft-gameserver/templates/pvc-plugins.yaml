@@ -7,7 +7,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path-projects-retained
+  storageClassName: {{ .Values.persistence.plugins.storageClassName }}
   resources:
     requests:
+      size: {{ .Values.persistence.plugins.size }}
       storage: {{ .Values.persistence.plugins.size }}

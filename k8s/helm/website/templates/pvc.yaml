@@ -8,8 +8,9 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path-projects-retained
+  storageClassName: {{ .Values.webfacade.storageClassName }}
   resources:
     requests:
+      size: {{ .Values.webfacade.storageSize }}
       storage: {{ .Values.webfacade.storageSize }}
 {{ end }}

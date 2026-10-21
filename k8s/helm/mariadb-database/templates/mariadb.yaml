@@ -11,5 +11,5 @@ spec:
   resources:
     {{- toYaml .Values.resources | nindent 4 }}
   storage:
-    size: 1Gi
-    storageClassName: local-path-projects-retained
+    size: {{ .Values.persistence.size }}
+    storageClassName: {{ .Values.persistence.storageClassName }}

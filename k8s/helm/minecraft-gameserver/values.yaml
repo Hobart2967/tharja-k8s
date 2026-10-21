@@ -2,12 +2,16 @@ replicaCount: 1
 persistence:
   worlds:
     size: 200Gi
+    storageClassName: local-path-projects-retained
   backups:
     size: 50Gi
+    storageClassName: local-path-projects-retained
   pluginsAvailable:
     size: 10Gi
+    storageClassName: local-path-projects-retained
   plugins:
     size: 30Gi
+    storageClassName: local-path-projects-retained
 resources:
   limits:
     cpu: 2

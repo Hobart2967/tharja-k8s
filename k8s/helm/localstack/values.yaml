@@ -1,6 +1,7 @@
 localstack:
   persistence:
     size: "1Gi"
+    storageClassName: local-path-projects-retained
   resources:
     requests:
       memory: "512Mi"
