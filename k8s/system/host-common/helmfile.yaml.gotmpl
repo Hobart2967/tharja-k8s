@@ -32,6 +32,9 @@ releases:
           defaultClassReplicaCount: 1
         defaultSettings:
           storageMinimalAvailablePercentage: 5
+          guaranteedInstanceManagerCPU:
+            v1: "2"
+            v2: "2"
         metrics:
           serviceMonitor:
             enabled: true
@@ -54,7 +57,7 @@ releases:
               reclaimPolicy: Retain
               volumeBindingMode: Immediate
               parameters:
-                numberOfReplicas: "3"
+                numberOfReplicas: "1"
                 staleReplicaTimeout: "30"
                 migratable: "false"
                 nfsOptions: "vers=4.1,noresvport"

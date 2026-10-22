@@ -23,7 +23,7 @@ releases:
       - login:
           database:
             storage:
-              className: local-path-projects-retained
+              className: longhorn-rwx
           image:
             tag: dev
             pullPolicy: Always
@@ -44,7 +44,7 @@ releases:
               memory: 128Mi
           database:
             storage:
-              className: local-path-projects-retained
+              className: longhorn-rwx
           flyway:
             image:
               tag:  dev
