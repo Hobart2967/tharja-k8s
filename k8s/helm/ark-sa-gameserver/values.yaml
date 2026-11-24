@@ -40,7 +40,7 @@ ports:
 resources:
   requests:
     memory: 4Gi
-    cpu: 100
+    cpu: 100m
   limits:
     memory: 8Gi
     cpu: 3
