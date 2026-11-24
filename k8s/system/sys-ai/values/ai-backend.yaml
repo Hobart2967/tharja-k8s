@@ -4,6 +4,7 @@ networkPolicy:
   enabled: true
   allowedCIDRs:
     - 192.168.178.0/24
+    - 10.42.0.0/16
 
 services:
   speaches:
@@ -15,6 +16,7 @@ services:
     port: 8000
     loadBalancerSourceRanges:
       - 192.168.178.0/24
+      - 10.42.0.0/16
     storage:
       enabled: true
       size: 10Gi
@@ -38,6 +40,7 @@ services:
     port: 11434
     loadBalancerSourceRanges:
       - 192.168.178.0/24
+      - 10.42.0.0/16
     storage:
       enabled: true
       size: 20Gi
