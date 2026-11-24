@@ -28,6 +28,41 @@ spec:
             - name: http
               containerPort: {{ $svc.port }}
               protocol: TCP
+          {{- if eq $name "speaches" }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+          {{- else if eq $name "ollama" }}
+          startupProbe:
+            httpGet:
+              path: /api/tags
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/tags
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/tags
+              port: http
+            periodSeconds: 30
+          {{- end }}
           env:
             {{- toYaml $svc.env | nindent 12 }}
           {{- if $svc.storage.enabled }}
