@@ -10,6 +10,7 @@ services:
     storage:
       enabled: true
       size: 10Gi
+      storageClassName: local-path-projects-retained
       mountPath: /home/ubuntu/.cache
     resources:
       requests:
@@ -30,6 +31,7 @@ services:
     storage:
       enabled: true
       size: 20Gi
+      storageClassName: local-path-projects-retained
       mountPath: /root/.ollama
     resources:
       requests:
