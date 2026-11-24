@@ -9,7 +9,13 @@ metadata:
     app.kubernetes.io/name: {{ $name }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
 spec:
-  type: ClusterIP
+  type: LoadBalancer
+  # Preserve the original client source IP for source-range and NetworkPolicy checks.
+  externalTrafficPolicy: Local
+  {{- with $svc.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     app.kubernetes.io/name: {{ $name }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
