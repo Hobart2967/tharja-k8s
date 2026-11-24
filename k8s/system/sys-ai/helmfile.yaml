@@ -1,0 +1,17 @@
+---
+releases:
+  - name: sys-ai
+    namespace: sys-ai
+    createNamespace: true
+    chart: ../../helm/project
+    values:
+      - cpu:
+          max: "8"
+        memory:
+          max: "16Gi"
+
+  - name: ai-backend
+    namespace: sys-ai
+    chart: ../../helm/ai-backend
+    values:
+      - ./values/ai-backend.yaml
