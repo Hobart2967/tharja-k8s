@@ -1,0 +1,54 @@
+networkPolicy:
+  enabled: false
+  allowedCIDRs: []
+
+services:
+  speaches:
+    enabled: true
+    image:
+      repository: ghcr.io/speaches-ai/speaches
+      tag: latest-cpu
+      pullPolicy: IfNotPresent
+    port: 8000
+    loadBalancerSourceRanges: []
+    storage:
+      enabled: true
+      size: 10Gi
+      storageClassName: local-path-projects-retained
+      mountPath: /home/ubuntu/.cache
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: "4"
+        memory: 4Gi
+    env: []
+
+  ollama:
+    enabled: true
+    image:
+      repository: ollama/ollama
+      tag: latest
+      pullPolicy: IfNotPresent
+    port: 11434
+    loadBalancerSourceRanges: []
+    storage:
+      enabled: true
+      size: 20Gi
+      storageClassName: local-path-projects-retained
+      mountPath: /root/.ollama
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: "4"
+        memory: 6Gi
+    env:
+      - name: OLLAMA_NUM_PARALLEL
+        value: "1"
+      - name: OLLAMA_MAX_LOADED_MODELS
+        value: "1"
+      - name: OLLAMA_KEEP_ALIVE
+        value: "10m"
