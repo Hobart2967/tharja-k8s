@@ -11,6 +11,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: {{ $svc.storage.storageClassName | quote }}
   resources:
     requests:
       storage: {{ $svc.storage.size }}
