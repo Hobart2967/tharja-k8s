@@ -1,4 +1,10 @@
-# Internal-only services. Do not expose these ClusterIP services through a public Ingress.
+# Restrict external access to the home LAN/VPN subnet.
+# Confirm that VPN client source addresses are preserved and fall into this CIDR.
+networkPolicy:
+  enabled: true
+  allowedCIDRs:
+    - 192.168.178.0/24
+
 services:
   speaches:
     enabled: true
@@ -7,6 +13,8 @@ services:
       tag: latest-cpu
       pullPolicy: IfNotPresent
     port: 8000
+    loadBalancerSourceRanges:
+      - 192.168.178.0/24
     storage:
       enabled: true
       size: 10Gi
@@ -28,6 +36,8 @@ services:
       tag: latest
       pullPolicy: IfNotPresent
     port: 11434
+    loadBalancerSourceRanges:
+      - 192.168.178.0/24
     storage:
       enabled: true
       size: 20Gi
