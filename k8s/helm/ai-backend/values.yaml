@@ -1,3 +1,7 @@
+networkPolicy:
+  enabled: false
+  allowedCIDRs: []
+
 services:
   speaches:
     enabled: true
@@ -6,6 +10,7 @@ services:
       tag: latest-cpu
       pullPolicy: IfNotPresent
     port: 8000
+    loadBalancerSourceRanges: []
     storage:
       enabled: true
       size: 10Gi
@@ -27,6 +32,7 @@ services:
       tag: latest
       pullPolicy: IfNotPresent
     port: 11434
+    loadBalancerSourceRanges: []
     storage:
       enabled: true
       size: 20Gi
